@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PhishNet AI</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="logo.png" type="image/png">
+</head>
+<body>
+    <div class="page-shell">
+        <!-- Navigation bar -->
+        <nav class="main-nav">
+            <div class="nav-brand">
+                <div class="nav-brand-mark">LCC</div>
+                <div>
+                    <p>PhishNet AI</p>
+                    <span>Kaypian Campus</span>
+                </div>
+            </div>
+
+            <button type="button" class="nav-toggle" aria-label="Open navigation menu" aria-expanded="false" aria-controls="navLinks">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+
+            <div class="nav-links" id="navLinks">
+                <a href="#home">Home</a>
+                <a href="#tutorial">Tutorial</a>
+                <a href="#scanner">Scanner</a>
+                <a href="#ai-assistant">AI Assistant</a>
+                <a href="#guide">Guide</a>
+            </div>
+        </nav>
+
+        <!-- Header / hero section -->
+        <header class="hero" id="home">
+            <div class="hero-inner">
+                <aside class="hero-visual">
+                    <img src="logo.png" alt="La Concepcion College logo" class="hero-logo">
+                </aside>
+
+                <section class="hero-copy">
+                    <p class="eyebrow">La Concepcion College - Kaypian Campus</p>
+
+                    <h1>Catch Phishing Websites Fast!</h1>
+
+                    <p class="hero-subtitle">
+                        Scan suspicious links, identify phishing risks, and protect your credentials with a simple and clean detection system built for students.
+                    </p>
+
+                    <div class="hero-actions">
+                        <a href="#scanner" class="hero-button primary-button">Start Scanning</a>
+                        <a href="#tutorial" class="hero-button secondary-button">Learn How It Works</a>
+                    </div>
+                </section>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <!-- Tutorial video section -->
+            <section class="panel tutorial-panel" id="tutorial">
+                <div class="section-heading">
+                    <p class="section-label">Tutorial Video</p>
+                    <h2>How to use PhishNet AI</h2>
+                    <p class="section-text">
+                        Placeholder palang video dito
+                    </p>
+                </div>
+
+                <div class="video-wrapper">
+                    <iframe width="560" height="315" src="https://www.youtube.com/embed/yqWX86uT5jM?si=xt0FIWbfeRAs8HBf" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                </div>
+            </section>
+
+            <!-- URL input form section -->
+            <section class="panel form-panel" id="scanner">
+                <div class="section-heading">
+                    <p class="section-label">Input Form</p>
+                    <h2>Check a suspicious website URL</h2>
+                    <p class="section-text">
+                        Enter the full website address below to review its phishing risk level, inspect possible warning signs, and understand whether it is safe to open.
+                    </p>
+                </div>
+
+                <form id="urlForm" class="url-form">
+                    <label for="urlInput">Website URL</label>
+                    <div class="input-row">
+                        <input type="url" id="urlInput" name="urlInput" placeholder="https://example-site.com/login" required>
+                        <button type="submit">Analyze URL</button>
+                    </div>
+                    <p class="form-note">The system is designed to evaluate URL structure, trust indicators, and suspicious patterns that are commonly linked to phishing attacks.</p>
+                </form>
+            </section>
+
+            <!-- Static result cards section -->
+            <section class="panel results-panel" id="results">
+                <div class="section-heading">
+                    <p class="section-label">Result</p>
+                    <h2>Example detection results</h2>
+                    <p class="section-text">Soon dito makikita yung result pero for now list ko muna mga example grade results.</p>
+                </div>
+
+                <div class="result-grid" id="resultSection">
+                    <article class="result-card safe-card">
+                        <div class="result-title-row">
+                            <span class="status-badge safe-badge">Safe</span>
+                            <h3>Grade: A+</h3>
+                        </div>
+                        <p><strong>Site:</strong> www.example.com</p>
+                        <p><strong>IP Address:</strong> 192.168.1.1</p>
+                        <p><strong>Report time:</strong> March 21, 2026 - 10:00 AM</p>
+                        <p><strong>Summary:</strong> The domain structure appears normal and no strong phishing signals were detected.</p>
+                    </article>
+
+                    <article class="result-card safe-card">
+                        <div class="result-title-row">
+                            <span class="status-badge safe-badge">Very Safe</span>
+                            <h3>Grade: A</h3>
+                        </div>
+                        <p><strong>Site:</strong> delulu.edu.ph</p>
+                        <p><strong>IP Address:</strong> 198.51.100.10</p>
+                        <p><strong>Report time:</strong> March 21, 2026 - 10:10 AM</p>
+                        <p><strong>Summary:</strong> Strong trust indicators were found, though users should still confirm the exact page they are visiting.</p>
+                    </article>
+
+                    <article class="result-card caution-card">
+                        <div class="result-title-row">
+                            <span class="status-badge caution-badge">Low Risk</span>
+                            <h3>Grade: B+</h3>
+                        </div>
+                        <p><strong>Site:</strong> helloworld.com/login</p>
+                        <p><strong>IP Address:</strong> 198.51.100.24</p>
+                        <p><strong>Report time:</strong> March 21, 2026 - 10:30 AM</p>
+                        <p><strong>Summary:</strong> Mostly ssafe, but users should still verify the exact domain and confirm the page source before logging in.</p>
+                    </article>
+
+                    <article class="result-card caution-card">
+                        <div class="result-title-row">
+                            <span class="status-badge caution-badge">Moderate Risk</span>
+                            <h3>Grade: B</h3>
+                        </div>
+                        <p><strong>Site:</strong> youuutubee.com/signup</p>
+                        <p><strong>IP Address:</strong> 198.51.100.42</p>
+                        <p><strong>Report time:</strong> March 21, 2026 - 10:38 AM</p>
+                        <p><strong>Summary:</strong> The website is not immediately malicious, but it has signals that require users to be cautious before interacting.</p>
+                    </article>
+
+                    <article class="result-card warning-card">
+                        <div class="result-title-row">
+                            <span class="status-badge warning-badge">Caution</span>
+                            <h3>Grade: C+</h3>
+                        </div>
+                        <p><strong>Site:</strong> verify-campus-account.net</p>
+                        <p><strong>IP Address:</strong> 203.0.113.70</p>
+                        <p><strong>Report time:</strong> March 21, 2026 - 10:42 AM</p>
+                        <p><strong>Summary:</strong> Some suspicious patterns are present, and the page should be verified through official school channels first.</p>
+                    </article>
+
+                    <article class="result-card warning-card">
+                        <div class="result-title-row">
+                            <span class="status-badge warning-badge">Suspicious</span>
+                            <h3>Grade: C</h3>
+                        </div>
+                        <p><strong>Site:</strong> student-support-checker.net</p>
+                        <p><strong>IP Address:</strong> 203.0.113.88</p>
+                        <p><strong>Report time:</strong> March 21, 2026 - 10:45 AM</p>
+                        <p><strong>Summary:</strong> The page shows mixed trust indicators and should be treated carefully until its legitimacy is confirmed.</p>
+                    </article>
+
+                    <article class="result-card risk-card">
+                        <div class="result-title-row">
+                            <span class="status-badge risk-badge">High Risk</span>
+                            <h3>Grade: D+</h3>
+                        </div>
+                        <p><strong>Site:</strong> login-campus-alerts.ru</p>
+                        <p><strong>IP Address:</strong> 203.0.113.102</p>
+                        <p><strong>Report time:</strong> March 21, 2026 - 10:52 AM</p>
+                        <p><strong>Summary:</strong> Multiple phishing indicators were detected and the site should not be trusted without deeper investigation.</p>
+                    </article>
+
+                    <article class="result-card risk-card">
+                        <div class="result-title-row">
+                            <span class="status-badge risk-badge">Severe Risk</span>
+                            <h3>Grade: D</h3>
+                        </div>
+                        <p><strong>Site:</strong> account-reset-security.xyz</p>
+                        <p><strong>IP Address:</strong> 203.0.113.119</p>
+                        <p><strong>Report time:</strong> March 21, 2026 - 10:56 AM</p>
+                        <p><strong>Summary:</strong> The website shows strong suspicious behavior and is close to confirmed phishing activity.</p>
+                    </article>
+
+                    <article class="result-card phishing-card">
+                        <div class="result-title-row">
+                            <span class="status-badge phishing-badge">Phishing Risk</span>
+                            <h3>Grade: F</h3>
+                        </div>
+                        <p><strong>Site:</strong> www.phishingsite.com</p>
+                        <p><strong>IP Address:</strong> 203.0.113.55</p>
+                        <p><strong>Report time:</strong> March 21, 2026 - 11:00 AM</p>
+                        <p><strong>Summary:</strong> Suspicious naming pattern, risky redirects, and low trust indicators suggest possible phishing activity.</p>
+                    </article>
+                </div>
+            </section>
+
+            <!-- Two-column information section -->
+            <section class="info-grid" id="guide">
+                <section class="panel tips-panel" id="tipsSection">
+                    <div class="section-heading">
+                        <p class="section-label">Tips</p>
+                        <h2>Quick anti-phishing reminders</h2>
+                    </div>
+
+                    <div class="info-list">
+                        <article class="info-item">
+                            <span class="info-kicker">Do This</span>
+                            <h3>Check the full domain name</h3>
+                            <p>Review the spelling carefully. Fake websites often use extra letters, missing letters, or unusual domain endings.</p>
+                        </article>
+                        <article class="info-item">
+                            <span class="info-kicker">Watch Out</span>
+                            <h3>Pause when a message feels urgent</h3>
+                            <p>If a page or message pressures you to act immediately, stop first and verify it through an official source.</p>
+                        </article>
+                        <article class="info-item">
+                            <span class="info-kicker">Before You Login</span>
+                            <h3>Inspect the URL before entering data</h3>
+                            <p>Never type passwords, student IDs, or personal details unless the address bar clearly matches the real website.</p>
+                        </article>
+                    </div>
+                </section>
+
+                <aside class="panel score-guide">
+                    <div class="section-heading">
+                        <p class="section-label">Score Guide</p>
+                        <h2>How to read the URL rating</h2>
+                    </div>
+
+                    <div class="score-groups">
+                        <section class="score-group safe-group">
+                            <p class="score-group-label">Safe</p>
+                            <ul class="score-list">
+                                <li><strong>A+</strong> Highest trust level. The website appears very safe.</li>
+                                <li><strong>A</strong> Very safe, but users should still review the page carefully.</li>
+                                <li><strong>B+</strong> Mostly safe with only minor concerns.</li>
+                                <li><strong>B</strong> Acceptable but still requires caution.</li>
+                            </ul>
+                        </section>
+
+                        <section class="score-group caution-group">
+                            <p class="score-group-label">Caution</p>
+                            <ul class="score-list">
+                                <li><strong>C+</strong> Moderately suspicious and should be verified first.</li>
+                                <li><strong>C</strong> Suspicious. Do not proceed without confirmation.</li>
+                            </ul>
+                        </section>
+
+                        <section class="score-group danger-group">
+                            <p class="score-group-label">Danger</p>
+                            <ul class="score-list">
+                                <li><strong>D+</strong> High risk. Strong warning signs are present.</li>
+                                <li><strong>D</strong> Very high risk and likely unsafe.</li>
+                                <li><strong>F</strong> Confirmed or near-confirmed phishing risk. Avoid immediately.</li>
+                            </ul>
+                        </section>
+                    </div>
+                </aside>
+            </section>
+        </main>
+
+        <!-- Footer section -->
+        <footer class="site-footer">
+            <div class="footer-inner">
+                <div class="footer-top">
+                    <div class="footer-brand">
+                        <img src="logo.png" alt="La Concepcion College logo" class="footer-logo">
+                        <div>
+                            <p>&copy; 2026 PhishNet AI. All rights reserved.</p>
+                        </div>
+                    </div>
+
+                    <div class="footer-nav">
+                        <p class="footer-heading">Quick Links</p>
+                        <div class="footer-nav-links">
+                            <a href="#home">Home</a>
+                            <a href="#tutorial">Tutorial</a>
+                            <a href="#scanner">Scanner</a>
+                            <a href="#guide">Guide</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="footer-divider"></div>
+
+                <div class="footer-bottom">
+                    <div class="footer-meta">
+                        <span class="footer-chip">Student Safety</span>
+                        <span class="footer-chip">Phishing Awareness</span>
+                        <span class="footer-chip">Static Prototype</span>
+                    </div>
+
+                    <div class="footer-links">
+                        <a href="https://github.com/R3ym0nd0" target="_blank" rel="noreferrer" aria-label="GitHub">
+                            <span class="footer-icon github-icon" aria-hidden="true"></span>
+                            <span>GitHub</span>
+                        </a>
+                        <a href="https://laconcepcioncollege.com/" target="_blank" rel="noreferrer" aria-label="School Portal">
+                            <span class="footer-icon campus-icon" aria-hidden="true"></span>
+                            <span>LCC Campus</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Optional JavaScript file for future dynamic behavior -->
+    <script src="script.js"></script>
+</body>
+</html>
