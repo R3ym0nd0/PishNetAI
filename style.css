@@ -93,7 +93,10 @@ body {
     place-items: center;
     border-radius: 14px;
     background: linear-gradient(135deg, var(--lcc-blue), var(--lcc-blue-soft));
-    overflow: hidden;
+    color: #ffffff;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.12);
 }
 
 .nav-logo {
