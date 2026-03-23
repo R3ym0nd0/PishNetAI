@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>Phinny - AI Assistant</title>
     <link rel="icon" href="/public/assets/images/logo.png" type="image/png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <link rel="stylesheet" href="/public/assets/css/style.css">
     <link rel="stylesheet" href="/public/assets/css/assistant.css">
 </head>
@@ -45,8 +46,13 @@
                 <div id="aiMessagesFull" class="ai-messages assistant-messages" role="log" aria-live="polite"></div>
 
                 <form id="aiFormFull" class="ai-form assistant-form" autocomplete="off">
-                    <input id="aiInputFull" type="text" placeholder="Ask about phishing, suspicious URLs, messages, or what to do next..." aria-label="Ask the full assistant">
-                    <button type="submit">Send</button>
+                    <div class="assistant-form-top">
+                        <input id="aiInputFull" type="text" placeholder="Ask about phishing, suspicious URLs, messages, or what to do next..." aria-label="Ask the full assistant">
+                        <button type="button" id="chatFullscreenToggle" class="assistant-fullscreen-toggle" aria-expanded="false" aria-controls="aiMessagesFull" aria-label="Open full screen conversation" title="Open full screen conversation">
+                            <i class="fa-solid fa-expand assistant-fullscreen-icon" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                    <button type="submit" class="assistant-send-button">Send</button>
                 </form>
             </section>
 

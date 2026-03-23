@@ -253,6 +253,8 @@ body {
     max-width: 85%;
     line-height: 1.65;
     font-size: 0.95rem;
+    word-break: break-word;
+    overflow-wrap: anywhere;
 }
 .ai-msg.user {
     align-self: flex-end;
@@ -282,6 +284,10 @@ body {
 }
 
 .ai-msg.pending {
+    display: block;
+    align-self: flex-start;
+    width: auto;
+    max-width: min(220px, calc(100% - 12px));
     opacity: 0.95;
     color: var(--text-soft);
     background: rgba(255, 255, 255, 0.9);
@@ -291,23 +297,16 @@ body {
 }
 
 .ai-msg.pending::after {
-    content: "";
-    display: inline-block;
-    vertical-align: middle;
-    margin-left: 8px;
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: currentColor;
-    box-shadow: 10px 0 0 currentColor, 20px 0 0 currentColor;
+    content: " ...";
+    display: inline;
+    letter-spacing: 0.08em;
     animation: ai-ellipsis 1s infinite ease-in-out;
 }
 
 @keyframes ai-ellipsis {
-    0%   { transform: translateY(0); opacity: 0.45; }
-    40%  { transform: translateY(-4px); opacity: 1; }
-    80%  { transform: translateY(0); opacity: 0.45; }
-    100% { transform: translateY(0); opacity: 0.45; }
+    0%   { opacity: 0.35; }
+    50%  { opacity: 1; }
+    100% { opacity: 0.35; }
 }
 
 .ai-structured {

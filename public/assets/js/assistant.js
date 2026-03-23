@@ -17,6 +17,9 @@ const userDisplay = document.getElementById('userDisplay');
 const quickPrompts = document.querySelectorAll('.assistant-prompt');
 const authModeLabel = document.getElementById('authModeLabel');
 const collapsibleCards = document.querySelectorAll('.assistant-collapsible');
+const assistantChat = document.querySelector('.assistant-chat');
+const chatFullscreenToggle = document.getElementById('chatFullscreenToggle');
+const chatFullscreenIcon = chatFullscreenToggle ? chatFullscreenToggle.querySelector('.assistant-fullscreen-icon') : null;
 const NETLIFY_FRONTEND_ORIGIN = 'https://phishnetai.netlify.app';
 const RENDER_API_BASE = 'https://phishnetai-fb30.onrender.com';
 
@@ -240,6 +243,33 @@ function applyMobileCardState() {
     });
 }
 
+function syncFullscreenButton() {
+    if (!chatFullscreenToggle || !assistantChat) return;
+    const expanded = assistantChat.classList.contains('is-fullscreen');
+    chatFullscreenToggle.setAttribute('aria-expanded', String(expanded));
+    chatFullscreenToggle.setAttribute('aria-label', expanded ? 'Close full screen conversation' : 'Open full screen conversation');
+    chatFullscreenToggle.setAttribute('title', expanded ? 'Close full screen conversation' : 'Open full screen conversation');
+    if (chatFullscreenIcon) {
+        chatFullscreenIcon.classList.toggle('fa-expand', !expanded);
+        chatFullscreenIcon.classList.toggle('fa-compress', expanded);
+    }
+}
+
+function exitFullscreenChat() {
+    if (!assistantChat) return;
+    assistantChat.classList.remove('is-fullscreen');
+    document.body.classList.remove('assistant-chat-open');
+    syncFullscreenButton();
+}
+
+function toggleFullscreenChat() {
+    if (!assistantChat || !chatFullscreenToggle) return;
+    const willOpen = !assistantChat.classList.contains('is-fullscreen');
+    assistantChat.classList.toggle('is-fullscreen', willOpen);
+    document.body.classList.toggle('assistant-chat-open', willOpen);
+    syncFullscreenButton();
+}
+
 if (mainNav && navToggle) {
     navToggle.addEventListener('click', () => {
         const isOpen = mainNav.classList.toggle('nav-open');
@@ -306,8 +336,22 @@ collapsibleCards.forEach((card) => {
     });
 });
 
-window.addEventListener('resize', applyMobileCardState);
+if (chatFullscreenToggle) {
+    chatFullscreenToggle.addEventListener('click', toggleFullscreenChat);
+}
+
+window.addEventListener('resize', () => {
+    applyMobileCardState();
+    syncFullscreenButton();
+});
+
+document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+        exitFullscreenChat();
+    }
+});
 
 updateUserUI();
 loadHistory();
 applyMobileCardState();
+syncFullscreenButton();

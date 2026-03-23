@@ -60,6 +60,7 @@
     height: calc(100svh - 112px - 24px);
     display: flex;
     flex-direction: column;
+    position: relative;
     padding: 24px;
     border-radius: 24px;
     overflow: hidden;
@@ -70,7 +71,9 @@
 }
 
 .assistant-chat-top {
-    display: block;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     margin-bottom: 10px;
     position: sticky;
     top: 0;
@@ -100,6 +103,7 @@
     flex-direction: column;
     gap: 2px;
     min-width: 0;
+    width: 100%;
     align-items: center;
     text-align: center;
 }
@@ -111,6 +115,26 @@
     letter-spacing: 0.01em;
     text-transform: none;
     text-shadow: 0 1px 0 rgba(0, 0, 0, 0.14);
+}
+
+.assistant-fullscreen-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.24);
+    background: rgba(255, 255, 255, 0.14);
+    color: #ffffff;
+    cursor: pointer;
+    flex: 0 0 auto;
+}
+
+.assistant-fullscreen-icon {
+    font-size: 1rem;
+    line-height: 1;
 }
 
 .assistant-messages {
@@ -145,6 +169,8 @@
 
 .assistant-form {
     margin-top: 18px;
+    display: grid;
+    gap: 10px;
     padding: 0;
     border-top: none;
     background:
@@ -155,6 +181,17 @@
     z-index: 2;
     padding-top: 14px;
     border-top: 1px solid rgba(0, 51, 102, 0.08);
+}
+
+.assistant-form-top {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 10px;
+    align-items: center;
+}
+
+.assistant-send-button {
+    width: 100%;
 }
 
 .assistant-side {
@@ -170,6 +207,26 @@
     padding-right: 10px;
     scrollbar-gutter: stable both-edges;
     scrollbar-width: thin;
+}
+
+.assistant-body.assistant-chat-open {
+    overflow: hidden;
+}
+
+.assistant-body.assistant-chat-open .assistant-side {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.assistant-chat.is-fullscreen {
+    position: fixed;
+    inset: 96px 24px 24px;
+    z-index: 1200;
+    width: auto;
+    min-height: auto;
+    height: auto;
+    border-radius: 24px;
+    box-shadow: 0 26px 60px rgba(0, 24, 54, 0.28);
 }
 
 .assistant-card {
@@ -366,6 +423,11 @@
 }
 
 @media (min-width: 768px) and (max-width: 1024px) {
+    .assistant-chat-heading {
+        align-items: center;
+        text-align: center;
+    }
+
     .assistant-page {
         padding-top: 104px;
         padding-bottom: 24px;
@@ -424,6 +486,13 @@
     }
 }
 
+@media (min-width: 768px) {
+    .assistant-chat-heading {
+        align-items: center;
+        text-align: center;
+    }
+}
+
 @media (max-width: 767px) {
     .assistant-shell {
         display: flex;
@@ -443,8 +512,8 @@
     }
 
     .assistant-chat-heading {
-        align-items: flex-start;
-        text-align: left;
+        align-items: center;
+        text-align: center;
     }
 
     .assistant-page {
@@ -468,6 +537,27 @@
         position: static;
         padding: 9px 11px;
         border-radius: 16px;
+    }
+
+    .assistant-chat.is-fullscreen {
+        inset: 78px 0 0;
+        min-height: calc(100svh - 78px);
+        height: calc(100svh - 78px);
+        width: 100%;
+        margin: 0;
+        border-radius: 0;
+        padding: 16px 14px 14px;
+        box-shadow: none;
+    }
+
+    .assistant-fullscreen-toggle {
+        box-shadow: 0 10px 22px rgba(0, 51, 102, 0.18);
+    }
+
+    .assistant-chat.is-fullscreen .assistant-chat-top {
+        position: sticky;
+        top: 0;
+        z-index: 3;
     }
 
     .assistant-messages {
@@ -535,14 +625,36 @@
         height: 60svh;
     }
 
+    .assistant-form-top {
+        grid-template-columns: minmax(0, 1fr) 48px;
+        gap: 8px;
+    }
+
+    .assistant-form-top input[type="text"] {
+        padding: 11px 12px;
+        font-size: 0.95rem;
+    }
+
+    .assistant-fullscreen-toggle {
+        width: 48px;
+        height: 44px;
+        border-radius: 14px;
+    }
+
+    .assistant-chat.is-fullscreen {
+        inset: 72px 0 0;
+        min-height: calc(100svh - 72px);
+        height: calc(100svh - 72px);
+        padding: 14px 12px 12px;
+    }
+
     .assistant-form {
-        flex-direction: column;
         position: static;
         padding-top: 0;
         border-top: none;
     }
 
-    .assistant-form button {
+    .assistant-send-button {
         width: 100%;
     }
 
