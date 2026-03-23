@@ -41,7 +41,7 @@ app.use('/assets', express.static(path.join(staticDir, 'public', 'assets')));
 app.get('/style.css', (req, res) => {
   const filePath = path.join(staticDir, 'public', 'assets', 'css', 'style.css');
   const exists = fs.existsSync(filePath);
-  console.log(`[route] GET /style.css -> exists=${exists} file=${filePath}`);
+  
   if (!exists) return res.status(404).send('style.css not found');
   res.type('text/css');
   res.sendFile(filePath);
