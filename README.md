@@ -1,1 +1,1 @@
-https://pishnetai.netlify.app/
+https://phishnetai.netlify.app/
