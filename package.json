@@ -1,0 +1,29 @@
+{
+  "name": "aiphisingdetection",
+  "version": "1.0.0",
+  "description": "https://pishnetai.netlify.app/",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js",
+    "dev": "node app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/R3ym0nd0/PishNetAI.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/R3ym0nd0/PishNetAI/issues"
+  },
+  "homepage": "https://github.com/R3ym0nd0/PishNetAI#readme",
+  "dependencies": {
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "helmet": "^8.1.0",
+    "node-fetch": "^2.7.0",
+    "p-retry": "^7.1.1"
+  }
+}

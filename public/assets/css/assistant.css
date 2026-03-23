@@ -1,0 +1,552 @@
+.assistant-body {
+    background:
+        linear-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.07) 1px, transparent 1px),
+        radial-gradient(circle at top right, rgba(255, 255, 255, 0.18), transparent 28%),
+        radial-gradient(circle at 14% 18%, rgba(255, 215, 0, 0.14), transparent 24%),
+        radial-gradient(circle at bottom left, rgba(255, 255, 255, 0.12), transparent 22%),
+        linear-gradient(135deg, #003366 0%, #0d4d86 52%, #1d66a8 100%);
+    background-size:
+        42px 42px,
+        42px 42px,
+        auto,
+        auto,
+        auto,
+        auto;
+    background-attachment: fixed;
+}
+
+.assistant-page {
+    padding-top: 112px;
+    padding-bottom: 24px;
+    min-height: 100svh;
+}
+
+.nav-current {
+    background: var(--lcc-blue);
+    color: #ffffff !important;
+}
+
+.assistant-shell {
+    display: grid;
+    grid-template-columns: minmax(0, 1.45fr) 340px;
+    gap: 24px;
+    align-items: start;
+    min-height: calc(100svh - 112px - 24px);
+    height: calc(100svh - 112px - 24px);
+}
+
+@media (min-width: 1200px) and (max-width: 1440px) {
+    .assistant-shell {
+        grid-template-columns: minmax(0, 1.26fr) 360px;
+        gap: 20px;
+    }
+
+    .assistant-chat {
+        padding: 22px;
+    }
+
+    .assistant-side {
+        gap: 14px;
+    }
+
+    .assistant-card {
+        padding: 18px;
+    }
+}
+
+.assistant-chat {
+    min-height: calc(100svh - 112px - 24px);
+    height: calc(100svh - 112px - 24px);
+    display: flex;
+    flex-direction: column;
+    padding: 24px;
+    border-radius: 24px;
+    overflow: hidden;
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(244, 249, 255, 0.96) 100%);
+    border: 1px solid rgba(0, 51, 102, 0.08);
+    box-shadow: 0 22px 44px rgba(0, 51, 102, 0.12);
+}
+
+.assistant-chat-top {
+    display: block;
+    margin-bottom: 10px;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    padding: 9px 12px;
+    border-radius: 16px;
+    background:
+        linear-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.08) 1px, transparent 1px),
+        linear-gradient(125deg, rgba(255, 255, 255, 0.07) 0%, transparent 34%),
+        radial-gradient(circle at top right, rgba(255, 255, 255, 0.24), transparent 34%),
+        radial-gradient(circle at 14% 30%, rgba(255, 215, 0, 0.16), transparent 26%),
+        linear-gradient(135deg, #003366 0%, #0d4d86 52%, #1d66a8 100%);
+    background-size:
+        34px 34px,
+        34px 34px,
+        100% 100%,
+        auto,
+        auto,
+        auto;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 14px 28px rgba(0, 51, 102, 0.18);
+}
+
+.assistant-chat-heading {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+    align-items: center;
+    text-align: center;
+}
+
+.assistant-chat-heading .section-label {
+    color: #ffffff;
+    font-size: clamp(1.35rem, 1.9vw, 1.72rem);
+    font-weight: 800;
+    letter-spacing: 0.01em;
+    text-transform: none;
+    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.14);
+}
+
+.assistant-messages {
+    flex: 1;
+    max-height: none;
+    min-height: 0;
+    padding: 10px 14px 6px;
+    background:
+        radial-gradient(circle at top left, rgba(0, 51, 102, 0.05), transparent 24%),
+        linear-gradient(180deg, rgba(246, 250, 255, 0.68) 0%, rgba(236, 244, 252, 0.48) 100%);
+    border-radius: 18px;
+    overflow-y: auto;
+    scrollbar-gutter: stable both-edges;
+    scrollbar-width: thin;
+}
+
+.assistant-messages .ai-msg {
+    max-width: 92%;
+    word-break: break-word;
+    overflow-wrap: anywhere;
+}
+
+.assistant-messages .ai-msg.user {
+    max-width: min(92%, 680px);
+    margin-left: auto;
+}
+
+.assistant-messages .ai-msg.bot,
+.assistant-messages .ai-structured {
+    max-width: min(94%, 760px);
+}
+
+.assistant-form {
+    margin-top: 18px;
+    padding: 0;
+    border-top: none;
+    background:
+        linear-gradient(180deg, rgba(238, 244, 250, 0.88) 0%, rgba(238, 244, 250, 1) 100%);
+    backdrop-filter: none;
+    position: sticky;
+    bottom: 0;
+    z-index: 2;
+    padding-top: 14px;
+    border-top: 1px solid rgba(0, 51, 102, 0.08);
+}
+
+.assistant-side {
+    display: grid;
+    grid-template-rows: auto auto auto;
+    gap: 16px;
+    position: sticky;
+    top: 108px;
+    align-self: start;
+    height: calc(100svh - 112px - 24px);
+    max-height: calc(100svh - 112px - 24px);
+    overflow-y: auto;
+    padding-right: 10px;
+    scrollbar-gutter: stable both-edges;
+    scrollbar-width: thin;
+}
+
+.assistant-card {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+    border-radius: 22px;
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.96) 0%, rgba(241, 247, 253, 0.95) 100%);
+    border: 1px solid rgba(0, 51, 102, 0.08);
+    box-shadow: 0 18px 34px rgba(0, 51, 102, 0.10);
+}
+
+.session-card {
+    background:
+        radial-gradient(circle at top right, rgba(255, 255, 255, 0.42), transparent 28%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(233, 243, 252, 0.96) 100%);
+    border-color: rgba(0, 51, 102, 0.12);
+}
+
+.assistant-card-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.assistant-card-body {
+    display: block;
+}
+
+.assistant-prompt-list,
+.assistant-tip-list,
+.assistant-card-body {
+    flex: 1 1 auto;
+}
+
+.assistant-collapse-toggle {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    min-height: 36px;
+    padding: 0 12px;
+    border-radius: 999px;
+    border: 1px solid rgba(0, 51, 102, 0.10);
+    background: rgba(255, 255, 255, 0.76);
+    color: var(--lcc-blue);
+    font-size: 0.82rem;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.assistant-card-head h3 {
+    margin-top: 8px;
+    color: var(--lcc-blue);
+    font-size: 1.15rem;
+}
+
+.assistant-card .section-label {
+    color: var(--lcc-blue-soft);
+}
+
+.assistant-user-state {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 12px;
+    border-radius: 999px;
+    background: rgba(0, 51, 102, 0.07);
+    color: var(--lcc-blue);
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+.assistant-card-text {
+    color: var(--text-soft);
+    line-height: 1.7;
+    margin-bottom: 14px;
+}
+
+.assistant-auth-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.assistant-action,
+.login-actions button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 0 16px;
+    border: none;
+    border-radius: 14px;
+    background: linear-gradient(135deg, var(--lcc-blue), var(--lcc-blue-soft));
+    color: #ffffff;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.assistant-secondary-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 0 16px;
+    border-radius: 14px;
+    border: 1px solid rgba(0, 51, 102, 0.12);
+    background: #ffffff;
+    color: var(--lcc-blue);
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.login-panel {
+    display: none;
+    margin-top: 14px;
+    padding: 14px;
+    border-radius: 18px;
+    background: #ffffff;
+    border: 1px solid rgba(0, 51, 102, 0.08);
+}
+
+.login-panel.show {
+    display: grid;
+    gap: 10px;
+}
+
+.assistant-form-mode {
+    color: var(--lcc-blue);
+    font-weight: 800;
+}
+
+.login-panel label {
+    font-weight: 700;
+    color: var(--lcc-blue-dark);
+}
+
+.login-panel input {
+    width: 100%;
+    padding: 12px 14px;
+    border-radius: 14px;
+    border: 1px solid rgba(0, 51, 102, 0.1);
+    background: #f8fbfe;
+}
+
+.assistant-prompt-list,
+.assistant-tip-list {
+    display: grid;
+    gap: 10px;
+}
+
+.assistant-prompt {
+    width: 100%;
+    padding: 14px 16px;
+    border-radius: 16px;
+    border: 1px solid rgba(0, 51, 102, 0.08);
+    background: linear-gradient(180deg, #ffffff 0%, #f7fbff 100%);
+    color: var(--text-main);
+    font: inherit;
+    font-weight: 700;
+    text-align: left;
+    cursor: pointer;
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.assistant-prompt:hover {
+    transform: translateY(-1px);
+    border-color: rgba(0, 51, 102, 0.18);
+    box-shadow: 0 12px 22px rgba(0, 51, 102, 0.10);
+}
+
+.assistant-tip-list {
+    list-style: none;
+}
+
+.assistant-tip-list li {
+    position: relative;
+    padding-left: 18px;
+    color: var(--text-soft);
+    line-height: 1.7;
+}
+
+.assistant-tip-list li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 11px;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--lcc-blue-soft);
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+    .assistant-page {
+        padding-top: 104px;
+        padding-bottom: 24px;
+    }
+
+    .assistant-shell {
+        grid-template-columns: 1fr;
+        gap: 20px;
+        height: auto;
+        min-height: auto;
+    }
+
+    .assistant-chat {
+        min-height: 66svh;
+        height: 66svh;
+        padding: 20px;
+        border-radius: 22px;
+    }
+
+    .assistant-chat-top {
+        padding: 10px 12px;
+    }
+
+    .assistant-messages {
+        padding: 10px 12px 6px;
+    }
+
+    .assistant-side {
+        position: static;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-rows: none;
+        gap: 14px;
+        height: auto;
+        max-height: none;
+        overflow: visible;
+        padding-right: 0;
+    }
+
+    .session-card {
+        grid-column: 1 / -1;
+    }
+
+    .assistant-card {
+        padding: 18px;
+        border-radius: 20px;
+    }
+
+    .assistant-auth-actions {
+        flex-wrap: wrap;
+    }
+
+    .assistant-action,
+    .assistant-secondary-action {
+        flex: 1 1 180px;
+    }
+}
+
+@media (max-width: 767px) {
+    .assistant-shell {
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+        height: auto;
+        min-height: auto;
+        width: 100%;
+    }
+
+    .assistant-body.not-signed-in .assistant-side {
+        order: -1;
+    }
+
+    .assistant-body.signed-in .assistant-side {
+        order: 2;
+    }
+
+    .assistant-chat-heading {
+        align-items: flex-start;
+        text-align: left;
+    }
+
+    .assistant-page {
+        padding-top: 94px;
+        padding-bottom: 28px;
+    }
+
+    .assistant-chat,
+    .assistant-card {
+        padding: 18px;
+        border-radius: 20px;
+    }
+
+    .assistant-chat {
+        min-height: 62svh;
+        height: 62svh;
+    }
+
+    .assistant-chat-top {
+        margin-bottom: 10px;
+        position: static;
+        padding: 9px 11px;
+        border-radius: 16px;
+    }
+
+    .assistant-messages {
+        min-height: 0;
+        height: 100%;
+        padding: 8px 10px 4px;
+    }
+
+    .assistant-side {
+        position: static;
+        max-height: none;
+        height: auto;
+        overflow: visible;
+        padding-right: 0;
+        display: grid;
+        grid-template-rows: none;
+        gap: 14px;
+        width: 100%;
+        align-self: stretch;
+    }
+
+    .assistant-side .assistant-card {
+        width: 100%;
+    }
+
+    .assistant-collapse-toggle {
+        display: inline-flex;
+    }
+
+    .assistant-collapsible .assistant-card-head {
+        align-items: center;
+        margin-bottom: 0;
+    }
+
+    .assistant-collapsible .assistant-card-body {
+        margin-top: 12px;
+    }
+
+    .assistant-collapsible.is-collapsed .assistant-card-body {
+        display: none;
+    }
+
+    .session-card {
+        box-shadow: 0 18px 34px rgba(0, 51, 102, 0.18);
+    }
+
+    .assistant-auth-actions {
+        flex-direction: column;
+    }
+
+    .assistant-action,
+    .assistant-secondary-action {
+        width: 100%;
+    }
+}
+
+@media (max-width: 520px) {
+    .assistant-page {
+        padding-top: 88px;
+        padding-bottom: 22px;
+    }
+
+    .assistant-chat {
+        min-height: 60svh;
+        height: 60svh;
+    }
+
+    .assistant-form {
+        flex-direction: column;
+        position: static;
+        padding-top: 0;
+        border-top: none;
+    }
+
+    .assistant-form button {
+        width: 100%;
+    }
+
+    .session-card {
+        padding: 16px;
+    }
+}

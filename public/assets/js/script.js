@@ -43,21 +43,8 @@ const aiInput = document.getElementById('aiInput');
 const aiMessages = document.getElementById('aiMessages');
 const STORAGE_KEY = 'phish_ai_chat';
 const aiFab = document.getElementById('aiFab');
-const NETLIFY_FRONTEND_ORIGIN = 'https://phishnetai.netlify.app';
-const RENDER_API_BASE = 'https://phishnetai-fb30.onrender.com';
 
 let previousFocus = null;
-
-function getApiBase() {
-    const { origin, hostname } = window.location;
-    if (hostname === 'localhost' || hostname === '127.0.0.1') {
-        return origin;
-    }
-    if (origin === NETLIFY_FRONTEND_ORIGIN) {
-        return RENDER_API_BASE;
-    }
-    return origin;
-}
 
 function saveMessage(text, who='bot'){
     try {
@@ -90,90 +77,6 @@ function appendMessage(text, who = 'bot') {
     saveMessage(text, who);
 }
 
-function escapeHtml(str){
-    if (str === null || str === undefined) return '';
-    return String(str)
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/\"/g, '&quot;')
-        .replace(/'/g, '&#39;');
-}
-
-function isCompactAssistantReply(structured) {
-    const verdict = String(structured?.verdict || structured?.raw?.verdict || '').trim().toUpperCase();
-    return verdict === 'INPUT NEEDED' || verdict === 'ANALYSIS NOT APPLICABLE' || verdict === 'GUIDANCE';
-}
-
-function renderStructuredMessage(structured, humanText){
-    const container = document.createElement('div');
-    container.className = 'ai-msg bot ai-structured';
-    const compactReply = isCompactAssistantReply(structured);
-    if (compactReply) {
-        container.classList.add('ai-compact');
-    }
-
-    const header = document.createElement('div');
-    header.className = 'ai-structured-header';
-    const verdict = document.createElement('span');
-    verdict.className = 'ai-verdict';
-    verdict.textContent = structured.verdict || (structured.raw && structured.raw.verdict) || 'Unknown';
-    header.appendChild(verdict);
-    if (structured.summary) {
-        const sum = document.createElement('span');
-        sum.className = 'ai-summary';
-        sum.textContent = ` ${structured.summary}`;
-        header.appendChild(sum);
-    }
-    container.appendChild(header);
-
-    if (!compactReply && structured.reasons && structured.reasons.length) {
-        const rTitle = document.createElement('div');
-        rTitle.className = 'ai-section-title';
-        rTitle.textContent = 'Reasons';
-        container.appendChild(rTitle);
-        const ul = document.createElement('ul');
-        ul.className = 'ai-reasons';
-        structured.reasons.forEach(r => {
-            const li = document.createElement('li');
-            li.textContent = r;
-            ul.appendChild(li);
-        });
-        container.appendChild(ul);
-    }
-
-    if (!compactReply && structured.advice && structured.advice.length) {
-        const aTitle = document.createElement('div');
-        aTitle.className = 'ai-section-title';
-        aTitle.textContent = 'Advice';
-        container.appendChild(aTitle);
-        const ul2 = document.createElement('ul');
-        ul2.className = 'ai-advice';
-        structured.advice.forEach(a => {
-            const li = document.createElement('li');
-            li.textContent = a;
-            ul2.appendChild(li);
-        });
-        container.appendChild(ul2);
-    }
-
-    const fallbackText = humanText && structured.summary && humanText.trim() === structured.summary.trim()
-        ? ''
-        : humanText;
-
-    if (fallbackText) {
-        const hr = document.createElement('div');
-        hr.className = 'ai-human-text';
-        hr.textContent = fallbackText;
-        container.appendChild(hr);
-    }
-
-    aiMessages.appendChild(container);
-    aiMessages.scrollTop = aiMessages.scrollHeight;
-
-    saveMessage(fallbackText || structured.summary || JSON.stringify(structured), 'bot');
-}
-
 function addAiToggleListener() {
     if (!aiToggle || !aiWidget) return;
 
@@ -190,13 +93,13 @@ function addAiToggleListener() {
             aiWidget.setAttribute('aria-hidden', 'false');
             aiToggle.setAttribute('aria-expanded', 'true');
             loadHistoryToWidget();
-            if (aiFab) aiFab.style.display = 'none';
            
             setTimeout(()=> aiInput && aiInput.focus(), 50);
             enableFocusTrap();
             if (mobile) {
                 aiWidget.classList.add('fullscreen');
                 document.body.classList.add('noscroll');
+                if (aiFab) aiFab.style.display = 'none';
             }
         } else {
             disableFocusTrap();
@@ -214,12 +117,12 @@ function addAiToggleListener() {
             if (mobile) {
                 aiWidget.classList.remove('fullscreen');
                 document.body.classList.remove('noscroll');
+                if (aiFab) aiFab.style.display = 'inline-flex';
             }
 
             aiWidget.setAttribute('aria-hidden', 'true');
             aiToggle.setAttribute('aria-expanded', 'false');
             if (aiToggle) aiToggle.style.display = '';
-            if (aiFab) aiFab.style.display = '';
         }
     };
     aiToggle._handlerRef = handler;
@@ -238,78 +141,25 @@ if (aiClose) {
         if (window.matchMedia('(max-width:520px)').matches) {
             aiWidget.classList.remove('fullscreen');
             document.body.classList.remove('noscroll');
+            if (aiFab) aiFab.style.display = 'inline-flex';
         }
 
         aiWidget.setAttribute('aria-hidden', 'true');
         aiToggle && aiToggle.setAttribute('aria-expanded', 'false');
         if (aiToggle) aiToggle.style.display = '';
-        if (aiFab) aiFab.style.display = '';
     });
 }
 
 if (aiForm) {
-    aiForm.addEventListener('submit', async (e) => {
+    aiForm.addEventListener('submit', (e) => {
         e.preventDefault();
         const v = aiInput.value.trim();
         if (!v) return;
-
         appendMessage(v, 'user');
         aiInput.value = '';
-
-        const submitBtn = aiForm.querySelector('button[type="submit"]');
-        if (submitBtn) submitBtn.disabled = true;
-        aiInput.disabled = true;
-
-        const pendingEl = document.createElement('div');
-        pendingEl.className = 'ai-msg bot pending';
-        pendingEl.textContent = 'Thinking';
-        aiMessages.appendChild(pendingEl);
-        aiMessages.scrollTop = aiMessages.scrollHeight;
-
-        const controller = new AbortController();
-        const timeoutMs = 12000;
-        const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
-
-        try {
-            const resp = await fetch(`${getApiBase()}/api/ai-chat`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-                body: JSON.stringify({ message: v }),
-                signal: controller.signal
-            });
-            clearTimeout(timeoutId);
-
-            if (!resp.ok) {
-                const txt = await resp.text();
-                throw new Error(`Server error: ${resp.status} ${txt}`);
-            }
-
-            const data = await resp.json();
-
-            try { pendingEl.parentNode && pendingEl.parentNode.removeChild(pendingEl); } catch(e){}
-
-            if (data && data.ok) {
-                if (data.structured && data.structured.verdict) {
-                    renderStructuredMessage(data.structured, data.reply);
-                } else if (data.reply) {
-                    appendMessage(data.reply, 'bot');
-                } else {
-                    throw new Error(data && data.error ? data.error : 'No reply from AI');
-                }
-            } else {
-                throw new Error(data && data.error ? data.error : 'No reply from AI');
-            }
-        } catch (err) {
-            clearTimeout(timeoutId);
-            console.error('AI request failed', err);
-            try { pendingEl.parentNode && pendingEl.parentNode.removeChild(pendingEl); } catch(e){}
-
-            appendMessage('Sorry — the AI request failed. Please try again.', 'bot');
-        } finally {
-            if (submitBtn) submitBtn.disabled = false;
-            aiInput.disabled = false;
-            try { aiInput.focus(); } catch(e){}
-        }
+        setTimeout(() => {
+            appendMessage('AI assistant response is not available in this mock script.', 'bot');
+        }, 700);
     });
 }
 
@@ -324,12 +174,12 @@ function onDocumentKey(e){
             if (window.matchMedia('(max-width:520px)').matches) {
                 aiWidget.classList.remove('fullscreen');
                 document.body.classList.remove('noscroll');
+                if (aiFab) aiFab.style.display = 'inline-flex';
             }
 
             aiWidget.setAttribute('aria-hidden','true');
             aiToggle && aiToggle.setAttribute('aria-expanded','false');
             if (aiToggle) aiToggle.style.display = '';
-            if (aiFab) aiFab.style.display = '';
         }
     }
 }
