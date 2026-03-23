@@ -29,7 +29,7 @@
                 <a href="#home">Home</a>
                 <a href="#tutorial">Tutorial</a>
                 <a href="#scanner">Scanner</a>
-                <a href="#ai-assistant">AI Assistant</a>
+                <button id="aiToggle" class="nav-assistant" aria-controls="aiWidget" aria-expanded="false" title="Open AI Assistant">AI Assistant</button>
                 <a href="#guide">Guide</a>
             </div>
         </nav>
@@ -294,10 +294,13 @@
                 <div class="footer-divider"></div>
 
                 <div class="footer-bottom">
-                    <div class="footer-meta">
-                        <span class="footer-chip">Student Safety</span>
-                        <span class="footer-chip">Phishing Awareness</span>
-                        <span class="footer-chip">Static Prototype</span>
+                    <div class="footer-contact">
+                        <p class="footer-about">PhishNet AI helps students identify suspicious links and understand common phishing patterns. If you have questions or want to contribute, reach out.</p>
+
+                        <form id="newsletterForm" class="newsletter-form" action="#" onsubmit="event.preventDefault();">
+                            <input id="newsletterEmail" type="email" placeholder="Your email (optional)" aria-label="Your email for updates">
+                            <button type="submit">Subscribe</button>
+                        </form>
                     </div>
 
                     <div class="footer-links">
@@ -315,7 +318,25 @@
         </footer>
     </div>
 
-    <!-- Optional JavaScript file for future dynamic behavior -->
+    <!-- AI Assistant widget -->
+    <div id="aiWidget" class="ai-widget" aria-hidden="true" role="dialog" aria-label="AI Assistant">
+        <div class="ai-header">
+            <strong>Phinny (AI Assistant)</strong>
+            <button id="aiClose" class="ai-close" aria-label="Close assistant">×</button>
+        </div>
+        <div id="aiMessages" class="ai-messages" role="log" aria-live="polite"></div>
+        <form id="aiForm" class="ai-form" autocomplete="off">
+            <input id="aiInput" type="text" placeholder="Ask about phishing" aria-label="Ask the assistant">
+            <button type="submit" id="aiSend">Send</button>
+        </form>
+        <div class="ai-footer">
+            <a href="assistant.html" class="open-full" id="openFull" role="button">Open full assistant</a>
+            <span class="ai-footer-note">Continue here to save conversations, access advanced tools, and view your history.</span>
+        </div>
+    </div>
+    
+    <button id="aiFab" class="ai-fab" aria-label="Open AI Assistant">💬</button>
+
     <script src="script.js"></script>
 </body>
 </html>

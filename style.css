@@ -158,6 +158,214 @@ body {
     color: #ffffff;
 }
 
+/* AI Assistant nav button */
+.nav-assistant {
+    padding: 9px 14px;
+    border-radius: 999px;
+    background: linear-gradient(90deg, rgba(30,90,150,0.06), transparent);
+    border: 1px solid rgba(30,90,150,0.08);
+    color: var(--lcc-blue);
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    position: relative; /* keep above floating widget if overlapped */
+    z-index: 2200;
+}
+
+.nav-assistant[aria-expanded="true"] {
+    background: var(--lcc-blue);
+    color: #fff;
+}
+
+/* AI widget panel */
+.ai-widget {
+    position: fixed;
+    bottom: 22px;
+    right: 22px;
+    width: 340px;
+    max-width: calc(100% - 44px);
+    background: #ffffff;
+    border-radius: 14px;
+    box-shadow: 0 12px 40px rgba(2,6,23,0.35);
+    border: 1px solid rgba(10, 25, 48, 0.06);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transform: translateY(10px) scale(0.98);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 180ms ease, transform 180ms ease;
+    z-index: 2000;
+}
+
+.ai-widget[aria-hidden="false"] {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.ai-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 10px 12px;
+    background: linear-gradient(90deg, var(--lcc-blue), var(--lcc-blue-soft));
+    color: #fff;
+    font-weight: 700;
+}
+
+.ai-close {
+    background: transparent;
+    border: none;
+    color: #fff;
+    font-size: 20px;
+    line-height: 1;
+    cursor: pointer;
+}
+
+.ai-messages {
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 260px;
+    overflow: auto;
+    background: #f7fbff;
+}
+
+.ai-msg {
+    padding: 8px 10px;
+    border-radius: 10px;
+    max-width: 85%;
+}
+.ai-msg.user { background: #e6f0ff; align-self: flex-end; color: var(--text-main); }
+.ai-msg.bot  { background: #ffffff; border: 1px solid rgba(0,0,0,0.04); align-self: flex-start; color: var(--text-main); }
+
+.ai-form {
+    display: flex;
+    gap: 8px;
+    padding: 10px;
+    border-top: 1px solid rgba(10,25,48,0.04);
+    background: #fff;
+}
+
+.ai-form input[type="text"] {
+    flex: 1;
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid rgba(10,25,48,0.06);
+}
+
+.ai-form button {
+    padding: 8px 12px;
+    border-radius: 8px;
+    background: var(--lcc-blue);
+    color: #fff;
+    border: none;
+    cursor: pointer;
+}
+
+.ai-footer {
+    font-size: 0.75rem;
+    color: var(--text-soft);
+    padding: 8px 12px;
+    border-top: 1px dashed rgba(10,25,48,0.04);
+}
+
+/* make the full-assistant CTA stand out */
+.open-full {
+    display: inline-block;
+    padding: 6px 10px;
+    margin-right: 10px;
+    background: linear-gradient(90deg, var(--lcc-blue), var(--lcc-blue-soft));
+    color: #fff;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 700;
+    box-shadow: 0 6px 18px rgba(2,6,23,0.18);
+}
+
+.open-full:hover {
+    transform: translateY(-1px);
+}
+
+.ai-footer-note{
+    color: var(--text-soft);
+    font-size: 0.8rem;
+}
+
+/* Responsive: make widget fullscreen-ish on very small screens */
+@media (max-width: 520px) {
+    .ai-widget {
+        left: 12px;
+        right: 12px;
+        bottom: 12px;
+        width: auto;
+        max-height: calc(100vh - 32px);
+        border-radius: 12px;
+    }
+    .ai-messages { max-height: calc(100vh - 220px); }
+}
+
+/* Floating action button for mobile */
+.ai-fab {
+    display: none; /* shown only on small screens */
+    position: fixed;
+    bottom: 18px;
+    right: 18px;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--lcc-blue);
+    color: #fff;
+    border: none;
+    box-shadow: 0 8px 24px rgba(2,6,23,0.35);
+    font-size: 22px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2100;
+    cursor: pointer;
+}
+
+@media (max-width: 520px) {
+    .ai-fab { display: inline-flex; }
+
+    /* full screen mode when opened from FAB */
+    .ai-widget.fullscreen {
+        left: 0 !important;
+        right: 0 !important;
+        top: 0 !important;
+        bottom: 0 !important;
+        width: 100% !important;
+        height: 100vh !important;
+        max-width: none !important;
+        max-height: none !important;
+        border-radius: 0 !important;
+        transform: none !important;
+        opacity: 1 !important;
+        pointer-events: auto !important;
+    }
+
+    .ai-widget.fullscreen .ai-messages {
+        max-height: calc(100vh - 140px);
+    }
+
+    /* keep input stuck to bottom in fullscreen */
+    .ai-widget .ai-form {
+        position: sticky;
+        bottom: 0;
+        background: #fff;
+        z-index: 2;
+    }
+
+    /* disable page scroll when assistant is fullscreen */
+    body.noscroll { overflow: hidden; height: 100vh; }
+}
+
 /* Shared panel styling */
 .panel,
 .site-footer {
@@ -912,6 +1120,59 @@ body {
     color: var(--lcc-blue);
 }
 
+/* Footer - new contact & newsletter styles */
+.footer-contact {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 520px;
+}
+
+.footer-about {
+    color: rgba(255,255,255,0.86);
+    line-height: 1.6;
+    font-size: 0.95rem;
+}
+
+.newsletter-form {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.newsletter-form input[type="email"] {
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 1px solid rgba(255,255,255,0.12);
+    background: rgba(255,255,255,0.06);
+    color: #fff;
+    outline: none;
+}
+
+.newsletter-form button {
+    padding: 8px 12px;
+    border-radius: 8px;
+    background: #ffffff;
+    color: var(--lcc-blue);
+    border: none;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+/* On small screens stack newsletter input and button */
+@media (max-width: 900px) {
+    .newsletter-form { flex-direction: column; align-items: stretch; }
+    .newsletter-form button, .newsletter-form input[type="email"] { width: 100%; }
+}
+
+.newsletter-feedback {
+    font-size: 0.9rem;
+    color: rgba(255,255,255,0.9);
+    margin-top: 6px;
+}
+.newsletter-feedback.success { color: #b6f2c7; }
+.newsletter-feedback.error { color: #ffd1d1; }
+
 .footer-icon {
     position: relative;
     width: 18px;
@@ -1105,6 +1366,22 @@ body {
         justify-content: flex-start;
         padding: 12px 14px;
         border-radius: 12px;
+        display: inline-flex; /* ensure anchors are full-width for easy tapping */
+        align-items: center;
+        gap: 8px;
+    }
+
+    /* Keep AI Assistant button compact inside the mobile menu so it doesn't become a full-width box */
+    .nav-links .nav-assistant {
+        width: auto;
+        padding: 10px 12px;
+        border-radius: 12px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: transparent; /* remove gradient background in menu */
+        border: none; /* remove border so it visually matches list */
+        color: var(--lcc-blue);
     }
 
     .footer-inner {

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Phinny - AI Assistant</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="assistant.css">
+</head>
+<body>
+    <div class="page-shell assistant-page">
+        <div class="assistant-shell">
+            <div class="assistant-top">
+                <div>
+                    <h1>AI Assistant - SOON</h1>
+                    <p class="section-text">Full assistant — sign in to save history and settings.</p>
+                </div>
+                <div class="auth-area">
+                    <div id="userDisplay">Not signed in</div>
+                    <button id="showLogin">Sign in</button>
+                </div>
+            </div>
+
+            <div class="assistant-main">
+                <section class="assistant-chat panel">
+                    <div class="ai-header">Conversation</div>
+                    <div id="aiMessagesFull" class="ai-messages" role="log" aria-live="polite"></div>
+                    <form id="aiFormFull" class="ai-form">
+                        <input id="aiInputFull" type="text" placeholder="Ask about phishing, URLs, or how this works...">
+                        <button type="submit">Send</button>
+                    </form>
+                </section>
+
+                <aside class="assistant-side panel">
+                    <div class="login-panel" id="loginPanel">
+                        <h3>Sign in (mock)</h3>
+                        <label for="username">Username</label>
+                        <input id="username" type="text" placeholder="your name">
+                        <div class="login-actions"><button id="doLogin">Sign in</button></div>
+                    </div>
+
+                    <div class="panel panel-tips">
+                        <h4>Tips</h4>
+                        <p>Use the assistant to get URL checks and learn common phishing signs.</p>
+                    </div>
+                </aside>
+            </div>
+        </div>
+    </div>
+
+    <script src="assistant.js"></script>
+</body>
+</html>
