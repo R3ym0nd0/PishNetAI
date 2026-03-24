@@ -169,7 +169,7 @@ async function sendAssistantMessage(message) {
     aiMessagesFull.scrollTop = aiMessagesFull.scrollHeight;
 
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 12000);
+    const timeoutId = setTimeout(() => controller.abort(), 30000);
 
     try {
         const resp = await fetch(`${getApiBase()}/api/ai-chat`, {

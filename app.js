@@ -1,14 +1,17 @@
 const express = require('express');
-const fetch = require('node-fetch');
 const cors = require('cors');
 const helmet = require('helmet');
-const fs = require('fs');
+const Groq = require("groq-sdk");
 
 let pRetry = require('p-retry');
 if (pRetry && typeof pRetry !== 'function' && pRetry.default) pRetry = pRetry.default;
 const path = require('path');
 
 const app = express();
+
+const groq = new Groq({
+    apiKey: process.env.GROQ_API_KEY
+});
 
 const staticDir = path.join(__dirname);
 const allowedOrigins = new Set(
@@ -77,9 +80,8 @@ app.get('/health', (req, res) => {
 app.post('/api/ai-chat', async (req, res) => {
   try {
     const { message } = req.body || {};
-
     if (!message || typeof message !== 'string') {
-      return res.status(400).json({ ok: false, error: 'missing message' });
+      return res.status(400).json({ ok: false, error: 'Missing message in request' });
     }
 
     const systemPrompt = [
@@ -130,67 +132,36 @@ app.post('/api/ai-chat', async (req, res) => {
       'Never assist in creating phishing attacks.'
     ].join('\n');
 
-    const APIFREE_ENDPOINT = 'https://apifreellm.com/api/v1/chat';
-    const apiKey = process.env.APIFREE_API_KEY;
-
-    if (!apiKey) {
-      return res.status(500).json({ ok: false, error: 'Missing APIFREE_API_KEY' });
+    if (!process.env.GROQ_API_KEY) {
+      return res.status(500).json({ ok: false, error: 'Missing GROQ_API_KEY' });
     }
 
-  const doFetch = async () => {
-      const resp = await fetch(APIFREE_ENDPOINT, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${apiKey}`
-        },
-        body: JSON.stringify({
-          message: `${systemPrompt}\nUser: ${message}`
-        })
+    const doFetch = async () => {
+      return groq.chat.completions.create({
+        model: "llama-3.1-8b-instant",
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: message }
+        ],
+        temperature: 0.7
       });
-
-      const txt = await resp.text();
-      let parsed = null;
-      try { parsed = JSON.parse(txt); } catch (e) { parsed = txt; }
-
-      if (!resp.ok) {
-        if (resp.status === 429 && pRetry && pRetry.AbortError) {
-          const ae = new pRetry.AbortError(`Upstream 429: ${txt}`);
-          ae.upstream = parsed;
-          throw ae;
-        }
-        throw new Error(`Upstream error: ${resp.status} ${txt}`);
-      }
-
-      return parsed;
-  };
+    };
 
     const result = await pRetry(() => doFetch(), { retries: 2 });
 
     let replyText = 'No response from AI';
+    if (result && result.choices?.[0]) replyText = result.choices[0].message.content;
+    else if (result?.reply) replyText = result.reply;
+    else if (typeof result === 'string') replyText = result;
+    else replyText = JSON.stringify(result);
 
-    if (result && result.response) {
-      replyText = result.response;
-    } else if (result && result.reply) {
-      replyText = result.reply;
-    } else if (typeof result === 'string') {
-      replyText = result;
-    } else {
-      replyText = JSON.stringify(result);
-}
-
+    // Parse JSON from AI reply
     let structured = null;
     try {
-      const cleaned = replyText
-      .replace(/```json/g, '')
-      .replace(/```/g, '')
-      .trim();
-
+      const cleaned = replyText.replace(/```json/g, '').replace(/```/g, '').trim();
       const jsonMatch = cleaned.match(/\{[\s\S]*?\}/);
-
       if (jsonMatch) {
-        const obj = JSON.parse(jsonMatch[0]); 
-        
+        const obj = JSON.parse(jsonMatch[0]);
         replyText = obj.human_readable || obj.summary || replyText;
 
         structured = {
@@ -202,10 +173,7 @@ app.post('/api/ai-chat', async (req, res) => {
         };
 
         const normalizedVerdict = String(structured.verdict || '').trim().toUpperCase();
-        const isInputNeeded = normalizedVerdict === 'INPUT NEEDED' || normalizedVerdict === 'ANALYSIS NOT APPLICABLE';
-        const isGuidance = normalizedVerdict === 'GUIDANCE';
-
-        if (isInputNeeded || isGuidance) {
+        if (normalizedVerdict === 'INPUT NEEDED' || normalizedVerdict === 'GUIDANCE') {
           structured.reasons = [];
           structured.advice = [];
         }
@@ -214,34 +182,35 @@ app.post('/api/ai-chat', async (req, res) => {
         if (after) replyText += `\n\n${after}`;
       }
     } catch (e) {
-      console.warn('Failed to parse AI JSON response:', e && e.message ? e.message : e);
+      console.warn('Failed to parse AI JSON response:', e.message || e);
     }
 
     res.json({ ok: true, reply: replyText, structured });
 
   } catch (err) {
-    try {
+    console.error('AI ERROR:', err.message || err);
 
-      if (err && err.upstream && err.upstream.error && err.upstream.error.code === 429) {
-          console.error('AI ERROR (upstream 429):', err.upstream.error.message || err.message);
-            
-          const retryAfter = Number(err.upstream.error.retryAfter) || 10;
-          return res.status(429).json({ 
-              ok: false, 
-              error: err.upstream.error.message || 'Quota exceeded',
-              retryAfter
-          });
+    // Handle specific Groq error codes
+    if (err?.upstream?.error?.code) {
+      const code = err.upstream.error.code;
+      switch (code) {
+        case 'invalid_request_error':
+          return res.status(400).json({ ok: false, error: err.upstream.error.message || 'Invalid request to AI' });
+        case 'authentication_error':
+          return res.status(401).json({ ok: false, error: 'Invalid or missing API key' });
+        case 'permission_error':
+          return res.status(403).json({ ok: false, error: 'You do not have permission to use this model' });
+        case 'rate_limit_error':
+          return res.status(429).json({ ok: false, error: 'Rate limit exceeded', retryAfter: 10 });
+        case 'server_error':
+          return res.status(502).json({ ok: false, error: 'AI server error, please try again later' });
+        default:
+          return res.status(500).json({ ok: false, error: err.upstream.error.message || 'Unknown AI error' });
       }
+    }
 
-    } catch (e) {
-      }
-
-    console.error('AI ERROR:', err && err.message ? err.message : err);
-
-    res.status(500).json({
-      ok: false,
-      error: err && err.message ? err.message : 'Something went wrong'
-    });
+    // Fallback generic error
+    res.status(500).json({ ok: false, error: err.message || 'Something went wrong' });
   }
 });
 

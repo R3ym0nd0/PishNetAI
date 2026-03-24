@@ -218,7 +218,7 @@ if (aiForm) {
 
         const pendingEl = document.createElement('div');
         pendingEl.className = 'ai-msg bot pending';
-        pendingEl.textContent = 'Thinking...';
+        pendingEl.textContent = 'Thinking';
         aiMessages.appendChild(pendingEl);
         aiMessages.scrollTop = aiMessages.scrollHeight;
 
