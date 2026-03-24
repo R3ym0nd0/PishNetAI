@@ -1,3 +1,6 @@
+import { marked } from "https://cdn.jsdelivr.net/npm/marked/lib/marked.esm.js";
+marked.setOptions({ breaks: true });
+
 const storageKey = 'phish_ai_chat';
 const userKey = 'phish_ai_user';
 
@@ -37,7 +40,9 @@ function getApiBase() {
 function appendMessageFull(text, who = 'bot') {
     const el = document.createElement('div');
     el.className = `ai-msg ${who}`;
-    el.textContent = text;
+
+    el.innerHTML = marked.parse(text);
+
     aiMessagesFull.appendChild(el);
     aiMessagesFull.scrollTop = aiMessagesFull.scrollHeight;
 }

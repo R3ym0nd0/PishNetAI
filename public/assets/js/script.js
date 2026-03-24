@@ -1,4 +1,6 @@
-// === DOM Elements ===
+import { marked } from "https://cdn.jsdelivr.net/npm/marked/lib/marked.esm.js";
+marked.setOptions({ breaks: true });
+
 const urlForm = document.getElementById("urlForm");
 const urlInput = document.getElementById("urlInput");
 const resultSection = document.getElementById("resultSection");
@@ -71,7 +73,7 @@ function loadHistoryToWidget(){
 function appendMessage(text, who = 'bot') {
     const el = document.createElement('div');
     el.className = `ai-msg ${who}`;
-    el.textContent = text;
+    el.innerHTML = marked.parse(text);
     aiMessages.appendChild(el);
     aiMessages.scrollTop = aiMessages.scrollHeight;
     saveMessage(text, who);

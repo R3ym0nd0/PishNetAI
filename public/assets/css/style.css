@@ -715,6 +715,7 @@ html {
     background: rgba(255, 255, 255, 0.10);
     border: 1px solid rgba(255, 255, 255, 0.16);
     box-shadow: 0 14px 28px rgba(0, 27, 54, 0.12);
+    text-align: center;
 }
 
 .hero-stat-value {
