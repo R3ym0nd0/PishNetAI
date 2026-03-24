@@ -1,3 +1,4 @@
+// === DOM Elements ===
 const urlForm = document.getElementById("urlForm");
 const urlInput = document.getElementById("urlInput");
 const resultSection = document.getElementById("resultSection");
@@ -5,6 +6,22 @@ const mainNav = document.querySelector(".main-nav");
 const navToggle = document.querySelector(".nav-toggle");
 const navLinks = document.querySelectorAll(".nav-links a, .nav-links .nav-assistant");
 
+let aiToggle = document.getElementById('aiToggle');
+const aiWidget = document.getElementById('aiWidget');
+const aiClose = document.getElementById('aiClose');
+const aiForm = document.getElementById('aiForm');
+const aiInput = document.getElementById('aiInput');
+const aiMessages = document.getElementById('aiMessages');
+const STORAGE_KEY = 'phish_ai_chat';
+const aiFab = document.getElementById('aiFab');
+
+const NETLIFY_FRONTEND_ORIGIN = 'https://phishnetai.netlify.app';
+const RENDER_API_BASE = 'https://phishnetai-fb30.onrender.com';
+
+let previousFocus = null;
+let focusTrapHandler = null;
+
+// === Navigation toggle ===
 if (mainNav && navToggle) {
     navToggle.addEventListener("click", () => {
         const isOpen = mainNav.classList.toggle("nav-open");
@@ -19,33 +36,18 @@ if (mainNav && navToggle) {
     });
 }
 
+// === URL Form Scroll ===
 if (urlForm) {
     urlForm.addEventListener("submit", (event) => {
         event.preventDefault();
-
         const submittedUrl = urlInput.value.trim();
-
         console.log("URL submitted for future analysis:", submittedUrl);
-
-        if (!submittedUrl) {
-            return;
-        }
-
+        if (!submittedUrl) return;
         resultSection.scrollIntoView({ behavior: "smooth", block: "start" });
     });
 }
 
-let aiToggle = document.getElementById('aiToggle');
-const aiWidget = document.getElementById('aiWidget');
-const aiClose = document.getElementById('aiClose');
-const aiForm = document.getElementById('aiForm');
-const aiInput = document.getElementById('aiInput');
-const aiMessages = document.getElementById('aiMessages');
-const STORAGE_KEY = 'phish_ai_chat';
-const aiFab = document.getElementById('aiFab');
-
-let previousFocus = null;
-
+// === Local Storage Chat ===
 function saveMessage(text, who='bot'){
     try {
         const raw = localStorage.getItem(STORAGE_KEY);
@@ -62,9 +64,7 @@ function loadHistoryToWidget(){
         const raw = localStorage.getItem(STORAGE_KEY);
         if (!raw) return;
         const arr = JSON.parse(raw);
-        arr.forEach(m => {
-            appendMessage(m.text, m.who);
-        });
+        arr.forEach(m => appendMessage(m.text, m.who));
     } catch(e){ console.warn('load failed', e); }
 }
 
@@ -77,49 +77,42 @@ function appendMessage(text, who = 'bot') {
     saveMessage(text, who);
 }
 
+function getApiBase() {
+    const { origin, hostname } = window.location;
+    if (hostname === 'localhost' || hostname === '127.0.0.1') return origin;
+    if (origin === NETLIFY_FRONTEND_ORIGIN) return RENDER_API_BASE;
+    return origin;
+}
+
+// === AI Toggle ===
 function addAiToggleListener() {
     if (!aiToggle || !aiWidget) return;
-
     try { aiToggle.removeEventListener && aiToggle.removeEventListener('click', aiToggle._handlerRef); } catch(e){}
     const handler = () => {
-
         const isVisible = aiWidget.getAttribute('aria-hidden') === 'false';
         const mobile = window.matchMedia('(max-width:520px)').matches;
 
         if (!isVisible) {
-           
             previousFocus = document.activeElement;
-           
             aiWidget.setAttribute('aria-hidden', 'false');
             aiToggle.setAttribute('aria-expanded', 'true');
             loadHistoryToWidget();
-           
+            if (aiFab) aiFab.style.display = 'none';
             setTimeout(()=> aiInput && aiInput.focus(), 50);
             enableFocusTrap();
             if (mobile) {
                 aiWidget.classList.add('fullscreen');
                 document.body.classList.add('noscroll');
-                if (aiFab) aiFab.style.display = 'none';
             }
         } else {
             disableFocusTrap();
-            try {
-                if (aiWidget.contains(document.activeElement)) document.activeElement.blur();
-            } catch(e){}
-            if (previousFocus && typeof previousFocus.focus === 'function') {
-                previousFocus.focus();
-            } else if (aiToggle && typeof aiToggle.focus === 'function') {
-                aiToggle.focus();
-            } else {
-                try { document.body.focus(); } catch(e){}
-            }
-
+            try { if (aiWidget.contains(document.activeElement)) document.activeElement.blur(); } catch(e){}
+            previousFocus?.focus?.() || aiToggle?.focus?.() || document.body.focus();
             if (mobile) {
                 aiWidget.classList.remove('fullscreen');
                 document.body.classList.remove('noscroll');
                 if (aiFab) aiFab.style.display = 'inline-flex';
             }
-
             aiWidget.setAttribute('aria-hidden', 'true');
             aiToggle.setAttribute('aria-expanded', 'false');
             if (aiToggle) aiToggle.style.display = '';
@@ -128,124 +121,180 @@ function addAiToggleListener() {
     aiToggle._handlerRef = handler;
     aiToggle.addEventListener('click', handler);
 }
-
 addAiToggleListener();
 
+// === Close AI Widget ===
 if (aiClose) {
     aiClose.addEventListener('click', () => {
         disableFocusTrap();
         try { if (aiWidget.contains(document.activeElement)) document.activeElement.blur(); } catch(e){}
-        if (previousFocus && typeof previousFocus.focus === 'function') previousFocus.focus();
-        else if (aiToggle && typeof aiToggle.focus === 'function') aiToggle.focus();
-
+        previousFocus?.focus?.() || aiToggle?.focus?.();
         if (window.matchMedia('(max-width:520px)').matches) {
             aiWidget.classList.remove('fullscreen');
             document.body.classList.remove('noscroll');
             if (aiFab) aiFab.style.display = 'inline-flex';
         }
-
         aiWidget.setAttribute('aria-hidden', 'true');
-        aiToggle && aiToggle.setAttribute('aria-expanded', 'false');
+        aiToggle?.setAttribute('aria-expanded', 'false');
         if (aiToggle) aiToggle.style.display = '';
     });
 }
 
+let aiCooldown = 0;
+let aiCooldownInterval = null;
+
+function startAiCooldown(seconds) {
+    aiCooldown = seconds;
+    aiInput.disabled = true;
+    const pendingEl = document.createElement('div');
+    pendingEl.className = 'ai-msg bot pending';
+    pendingEl.id = 'aiCooldownMsg';
+    pendingEl.textContent = `Rate limit hit! Please wait ${aiCooldown} seconds...`;
+    aiMessages.appendChild(pendingEl);
+    aiMessages.scrollTop = aiMessages.scrollHeight;
+
+    aiCooldownInterval = setInterval(() => {
+        aiCooldown--;
+        pendingEl.textContent = `Rate limit hit! Please wait ${aiCooldown} seconds...`;
+        if (aiCooldown <= 0) {
+            clearInterval(aiCooldownInterval);
+            aiCooldownInterval = null;
+            pendingEl.remove();
+            aiInput.disabled = false;
+            aiInput.focus();
+        }
+    }, 1000);
+}
+
+// === AI Form Submission ===
 if (aiForm) {
-    aiForm.addEventListener('submit', (e) => {
+    aiForm.addEventListener('submit', async (e) => {
         e.preventDefault();
+        if (aiCooldown > 0) return; // prevent sending if cooldown active
+
         const v = aiInput.value.trim();
         if (!v) return;
+
         appendMessage(v, 'user');
         aiInput.value = '';
-        setTimeout(() => {
-            appendMessage('AI assistant response is not available in this mock script.', 'bot');
-        }, 700);
+
+        const submitBtn = aiForm.querySelector('button[type="submit"]');
+        if (submitBtn) submitBtn.disabled = true;
+        aiInput.disabled = true;
+
+        const pendingEl = document.createElement('div');
+        pendingEl.className = 'ai-msg bot pending';
+        pendingEl.textContent = 'Thinking...';
+        aiMessages.appendChild(pendingEl);
+        aiMessages.scrollTop = aiMessages.scrollHeight;
+
+        const controller = new AbortController();
+        const timeoutMs = 12000;
+        const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
+        try {
+            const resp = await fetch(`${getApiBase()}/api/ai-chat`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                body: JSON.stringify({ message: v }),
+                signal: controller.signal
+            });
+            clearTimeout(timeoutId);
+            pendingEl.remove();
+
+            if (resp.status === 429) {
+                const data = await resp.json(); 
+                const cooldown = Number(data.retryAfter) || 10;
+                startAiCooldown(cooldown);
+                return;
+            }
+
+            const data = await resp.json();
+            if (data && data.ok) {
+                appendMessage(data.reply || 'AI replied, but no text.', 'bot');
+            } else {
+                throw new Error(data?.error || 'No reply from AI');
+            }
+        } catch (err) {
+            clearTimeout(timeoutId);
+            console.error('AI request failed', err);
+            pendingEl.remove();
+            appendMessage('Sorry — the AI request failed. Please try again.', 'bot');
+        } finally {
+            if (!aiCooldown) { // don't re-enable during cooldown
+                if (submitBtn) submitBtn.disabled = false;
+                aiInput.disabled = false;
+                aiInput.focus();
+            }
+        }
     });
 }
 
-function onDocumentKey(e){
-    if (e.key === 'Escape'){
-        if (aiWidget && aiWidget.getAttribute('aria-hidden') === 'false'){
-            disableFocusTrap();
-            try { if (aiWidget.contains(document.activeElement)) document.activeElement.blur(); } catch(e){}
-            if (previousFocus && typeof previousFocus.focus === 'function') previousFocus.focus();
-            else if (aiToggle && typeof aiToggle.focus === 'function') aiToggle.focus();
-
-            if (window.matchMedia('(max-width:520px)').matches) {
-                aiWidget.classList.remove('fullscreen');
-                document.body.classList.remove('noscroll');
-                if (aiFab) aiFab.style.display = 'inline-flex';
-            }
-
-            aiWidget.setAttribute('aria-hidden','true');
-            aiToggle && aiToggle.setAttribute('aria-expanded','false');
-            if (aiToggle) aiToggle.style.display = '';
+// === Escape key to close AI ===
+document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    if (aiWidget?.getAttribute('aria-hidden') === 'false') {
+        disableFocusTrap();
+        try { if (aiWidget.contains(document.activeElement)) document.activeElement.blur(); } catch(e){}
+        previousFocus?.focus?.() || aiToggle?.focus?.();
+        if (window.matchMedia('(max-width:520px)').matches) {
+            aiWidget.classList.remove('fullscreen');
+            document.body.classList.remove('noscroll');
+            if (aiFab) aiFab.style.display = 'inline-flex';
         }
+        aiWidget.setAttribute('aria-hidden','true');
+        aiToggle?.setAttribute('aria-expanded','false');
+        if (aiToggle) aiToggle.style.display = '';
     }
-}
+});
 
-document.addEventListener('keydown', onDocumentKey);
-
-let focusTrapHandler = null;
+// === Focus Trap ===
 function enableFocusTrap(){
+    if (!aiWidget) return;
     const focusable = 'button, [href], input, textarea, [tabindex]:not([tabindex="-1"])';
-    const container = aiWidget;
-    const nodes = container.querySelectorAll(focusable);
-    const nodeArr = Array.prototype.slice.call(nodes).filter(n=>!n.hasAttribute('disabled'));
-    if (!nodeArr.length) return;
-    let first = nodeArr[0];
-    let last = nodeArr[nodeArr.length-1];
-    focusTrapHandler = function(e){
+    const nodes = Array.from(aiWidget.querySelectorAll(focusable)).filter(n=>!n.hasAttribute('disabled'));
+    if (!nodes.length) return;
+    const first = nodes[0], last = nodes[nodes.length-1];
+    focusTrapHandler = (e) => {
         if (e.key !== 'Tab') return;
-        if (e.shiftKey){
-            if (document.activeElement === first){
-                e.preventDefault(); last.focus();
-            }
-        } else {
-            if (document.activeElement === last){
-                e.preventDefault(); first.focus();
-            }
-        }
+        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
     };
-    container.addEventListener('keydown', focusTrapHandler);
+    aiWidget.addEventListener('keydown', focusTrapHandler);
 }
-
 function disableFocusTrap(){
     if (!aiWidget || !focusTrapHandler) return;
     aiWidget.removeEventListener('keydown', focusTrapHandler);
     focusTrapHandler = null;
 }
 
-if (aiWidget && aiWidget.getAttribute('aria-hidden') === 'false') loadHistoryToWidget();
-
+// === AI Fab Click ===
 if (aiFab) {
     aiFab.addEventListener('click', () => {
         aiWidget.setAttribute('aria-hidden', 'false');
         aiWidget.classList.add('fullscreen');
-        aiToggle && aiToggle.setAttribute('aria-expanded', 'true');
+        aiToggle?.setAttribute('aria-expanded', 'true');
         document.body.classList.add('noscroll');
-        if (aiFab) aiFab.style.display = 'none';
+        aiFab.style.display = 'none';
         loadHistoryToWidget();
         setTimeout(()=> aiInput.focus(), 60);
         enableFocusTrap();
     });
 }
+
+// === Restore AI Toggle if hidden ===
 function restoreAiToggleIfNeeded(){
-    const navLinks = document.querySelector('.nav-links');
-    if (!navLinks) return;
+    const navLinksEl = document.querySelector('.nav-links');
+    if (!navLinksEl) return;
     const existing = document.getElementById('aiToggle');
     if (existing) {
-        try {
-            existing.style.display = '';
-            existing.style.visibility = '';
-            existing.removeAttribute('hidden');
-        } catch(e){}
-
+        existing.style.display = '';
+        existing.style.visibility = '';
+        existing.removeAttribute('hidden');
         aiToggle = existing;
         addAiToggleListener();
         return;
     }
-
     const btn = document.createElement('button');
     btn.id = 'aiToggle';
     btn.className = 'nav-assistant';
@@ -254,32 +303,21 @@ function restoreAiToggleIfNeeded(){
     btn.setAttribute('aria-controls','aiWidget');
     btn.setAttribute('aria-expanded','false');
     btn.textContent = 'AI Assistant';
-  
-    const navLinksStyle = window.getComputedStyle(navLinks);
-    if (navLinksStyle && navLinksStyle.display === 'none') {
+
+    const navLinksStyle = window.getComputedStyle(navLinksEl);
+    if (navLinksStyle?.display === 'none') {
         const brand = document.querySelector('.nav-brand') || document.querySelector('.main-nav');
-        if (brand) {
-            brand.appendChild(btn);
-        } else {
-            navLinks.appendChild(btn);
-        }
-    } else {
-        navLinks.appendChild(btn);
-    }
+        (brand || navLinksEl).appendChild(btn);
+    } else navLinksEl.appendChild(btn);
+
     aiToggle = btn;
     addAiToggleListener();
 }
-
-const observer = new MutationObserver((mutations) => {
-    const t = document.getElementById('aiToggle');
-    if (!t || (t && (t.offsetParent === null && getComputedStyle(t).display === 'none'))) {
-        setTimeout(restoreAiToggleIfNeeded, 40);
-    }
-});
-observer.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['style', 'class', 'hidden'] });
-
+const observer = new MutationObserver(()=> restoreAiToggleIfNeeded());
+observer.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['style','class','hidden'] });
 restoreAiToggleIfNeeded();
 
+// === Newsletter Form ===
 (function(){
     const form = document.getElementById('newsletterForm');
     const input = document.getElementById('newsletterEmail');
@@ -292,11 +330,7 @@ restoreAiToggleIfNeeded();
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
         const email = input.value.trim();
-        if (!email) {
-            feedback.textContent = 'Please provide an email address.';
-            feedback.classList.remove('success'); feedback.classList.add('error');
-            return;
-        }
+        if (!email) { feedback.textContent = 'Please provide an email address.'; feedback.classList.remove('success'); feedback.classList.add('error'); return; }
 
         const btn = form.querySelector('button[type="submit"]');
         if (btn) btn.disabled = true;
@@ -316,13 +350,10 @@ restoreAiToggleIfNeeded();
                 feedback.textContent = 'Thanks — you are subscribed (or will be shortly).';
                 feedback.classList.remove('error'); feedback.classList.add('success');
                 input.value = '';
-
                 const saved = JSON.parse(localStorage.getItem('newsletter_emails') || '[]');
                 saved.push({ email, at: Date.now(), sent: true });
                 localStorage.setItem('newsletter_emails', JSON.stringify(saved));
-            } else {
-                throw new Error('Network response not OK');
-            }
+            } else throw new Error('Network response not OK');
         } catch (err) {
             const saved = JSON.parse(localStorage.getItem('newsletter_emails') || '[]');
             saved.push({ email, at: Date.now(), sent: false });
