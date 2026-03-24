@@ -107,15 +107,12 @@ function addAiToggleListener() {
         } else {
             disableFocusTrap();
             try { if (aiWidget.contains(document.activeElement)) document.activeElement.blur(); } catch(e){}
-            previousFocus?.focus?.() || aiToggle?.focus?.() || document.body.focus();
-            if (mobile) {
-                aiWidget.classList.remove('fullscreen');
-                document.body.classList.remove('noscroll');
-                if (aiFab) aiFab.style.display = 'inline-flex';
-            }
+            previousFocus?.focus?.() || aiToggle?.focus?.();
+            if (aiFab) aiFab.style.display = 'inline-flex';
+            aiWidget.classList.remove('fullscreen');
+            document.body.classList.remove('noscroll');
             aiWidget.setAttribute('aria-hidden', 'true');
             aiToggle.setAttribute('aria-expanded', 'false');
-            if (aiToggle) aiToggle.style.display = '';
         }
     };
     aiToggle._handlerRef = handler;
@@ -129,14 +126,51 @@ if (aiClose) {
         disableFocusTrap();
         try { if (aiWidget.contains(document.activeElement)) document.activeElement.blur(); } catch(e){}
         previousFocus?.focus?.() || aiToggle?.focus?.();
-        if (window.matchMedia('(max-width:520px)').matches) {
-            aiWidget.classList.remove('fullscreen');
-            document.body.classList.remove('noscroll');
-            if (aiFab) aiFab.style.display = 'inline-flex';
-        }
         aiWidget.setAttribute('aria-hidden', 'true');
         aiToggle?.setAttribute('aria-expanded', 'false');
-        if (aiToggle) aiToggle.style.display = '';
+        if (aiFab) aiFab.style.display = 'inline-flex';
+        aiWidget.classList.remove('fullscreen');
+        document.body.classList.remove('noscroll');
+    });
+}
+
+// === Restore AI Toggle if hidden ===
+function restoreAiToggleIfNeeded(){
+    const navLinksEl = document.querySelector('.nav-links');
+    if (!navLinksEl) return;
+
+    if (!aiToggle) {
+        const btn = document.createElement('button');
+        btn.id = 'aiToggle';
+        btn.className = 'nav-assistant';
+        btn.type = 'button';
+        btn.title = 'Open AI Assistant';
+        btn.setAttribute('aria-controls','aiWidget');
+        btn.setAttribute('aria-expanded','false');
+        btn.textContent = 'AI Assistant';
+        navLinksEl.appendChild(btn);
+        aiToggle = btn;
+        addAiToggleListener();
+    } else {
+        aiToggle.style.display = '';
+        aiToggle.setAttribute('aria-expanded','false');
+    }
+}
+const observer = new MutationObserver(()=> restoreAiToggleIfNeeded());
+observer.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['style','class','hidden'] });
+restoreAiToggleIfNeeded();
+
+// === AI Fab Click ===
+if (aiFab) {
+    aiFab.addEventListener('click', () => {
+        aiWidget.setAttribute('aria-hidden', 'false');
+        aiWidget.classList.add('fullscreen');
+        aiToggle?.setAttribute('aria-expanded', 'true');
+        document.body.classList.add('noscroll');
+        aiFab.style.display = 'none';
+        loadHistoryToWidget();
+        setTimeout(()=> aiInput.focus(), 60);
+        enableFocusTrap();
     });
 }
 
@@ -267,55 +301,6 @@ function disableFocusTrap(){
     aiWidget.removeEventListener('keydown', focusTrapHandler);
     focusTrapHandler = null;
 }
-
-// === AI Fab Click ===
-if (aiFab) {
-    aiFab.addEventListener('click', () => {
-        aiWidget.setAttribute('aria-hidden', 'false');
-        aiWidget.classList.add('fullscreen');
-        aiToggle?.setAttribute('aria-expanded', 'true');
-        document.body.classList.add('noscroll');
-        aiFab.style.display = 'none';
-        loadHistoryToWidget();
-        setTimeout(()=> aiInput.focus(), 60);
-        enableFocusTrap();
-    });
-}
-
-// === Restore AI Toggle if hidden ===
-function restoreAiToggleIfNeeded(){
-    const navLinksEl = document.querySelector('.nav-links');
-    if (!navLinksEl) return;
-    const existing = document.getElementById('aiToggle');
-    if (existing) {
-        existing.style.display = '';
-        existing.style.visibility = '';
-        existing.removeAttribute('hidden');
-        aiToggle = existing;
-        addAiToggleListener();
-        return;
-    }
-    const btn = document.createElement('button');
-    btn.id = 'aiToggle';
-    btn.className = 'nav-assistant';
-    btn.type = 'button';
-    btn.title = 'Open AI Assistant';
-    btn.setAttribute('aria-controls','aiWidget');
-    btn.setAttribute('aria-expanded','false');
-    btn.textContent = 'AI Assistant';
-
-    const navLinksStyle = window.getComputedStyle(navLinksEl);
-    if (navLinksStyle?.display === 'none') {
-        const brand = document.querySelector('.nav-brand') || document.querySelector('.main-nav');
-        (brand || navLinksEl).appendChild(btn);
-    } else navLinksEl.appendChild(btn);
-
-    aiToggle = btn;
-    addAiToggleListener();
-}
-const observer = new MutationObserver(()=> restoreAiToggleIfNeeded());
-observer.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['style','class','hidden'] });
-restoreAiToggleIfNeeded();
 
 // === Newsletter Form ===
 (function(){
