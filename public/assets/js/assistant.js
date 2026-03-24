@@ -208,8 +208,19 @@ async function sendAssistantMessage(message) {
         clearTimeout(timeoutId);
         console.error('assistant request failed', err);
         try { pendingEl.parentNode && pendingEl.parentNode.removeChild(pendingEl); } catch (e) {}
-        appendMessageFull('Sorry - the AI request failed. Please try again.', 'bot');
-        saveMessage('Sorry - the AI request failed. Please try again.', 'bot');
+
+        let msg = 'Sorry - the AI request failed. Please try again.';
+        if (err.message.includes('429')) {
+            try {
+                const parsed = JSON.parse(err.message.replace(/^Server error: \d+ /, ''));
+                if (parsed.retryAfter) {
+                    msg = `Rate limit exceeded. Please wait ${parsed.retryAfter} seconds.`;
+                }
+            } catch (e) {}
+        }
+
+        appendMessageFull(msg, 'bot');
+        saveMessage(msg, 'bot');
     } finally {
         if (submitButton) submitButton.disabled = false;
         aiInputFull.disabled = false;

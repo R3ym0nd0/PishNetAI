@@ -121,36 +121,23 @@ app.post('/api/ai-chat', async (req, res) => {
       'Always include a clear verdict. Never assist in creating phishing attacks.'
     ].join('\n');
 
-    const GOOGLE_API_ENDPOINT = 'https://generativelanguage.googleapis.com/v1/models/gemini-2.0-flash-lite:generateContent';
-
-    const apiKey = process.env.GOOGLE_API_KEY;
+    const APIFREE_ENDPOINT = 'https://apifreellm.com/api/v1/chat';
+    const apiKey = process.env.APIFREE_API_KEY;
 
     if (!apiKey) {
-      return res.status(500).json({
-        ok: false,
-        error: 'Missing GOOGLE_API_KEY'
-      });
+      return res.status(500).json({ ok: false, error: 'Missing APIFREE_API_KEY' });
     }
 
-    const body = {
-      contents: [
-        {
-          parts: [
-            {
-              text: `${systemPrompt}\nUser: ${message}`
-            }
-          ]
-        }
-      ]
-    };
-
-    const doFetch = async () => {
-      const resp = await fetch(`${GOOGLE_API_ENDPOINT}?key=${apiKey}`, {
+  const doFetch = async () => {
+      const resp = await fetch(APIFREE_ENDPOINT, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKey}`
         },
-        body: JSON.stringify(body)
+        body: JSON.stringify({
+          message: `${systemPrompt}\nUser: ${message}`
+        })
       });
 
       const txt = await resp.text();
@@ -163,31 +150,39 @@ app.post('/api/ai-chat', async (req, res) => {
           ae.upstream = parsed;
           throw ae;
         }
-
         throw new Error(`Upstream error: ${resp.status} ${txt}`);
       }
 
       return parsed;
-    };
+  };
 
     const result = await pRetry(() => doFetch(), { retries: 2 });
 
     let replyText = 'No response from AI';
-    if (
-      result &&
-      result.candidates &&
-      result.candidates[0] &&
-      result.candidates[0].content &&
-      result.candidates[0].content.parts
-    ) {
-      replyText = result.candidates[0].content.parts.map(p => p.text).join('\n');
-    }
+
+    if (result && result.response) {
+      replyText = result.response;
+    } else if (result && result.reply) {
+      replyText = result.reply;
+    } else if (typeof result === 'string') {
+      replyText = result;
+    } else {
+      replyText = JSON.stringify(result);
+}
 
     let structured = null;
     try {
-      const jsonMatch = replyText.match(/\{[\s\S]*\}/);
+      const cleaned = replyText
+      .replace(/```json/g, '')
+      .replace(/```/g, '')
+      .trim();
+
+      const jsonMatch = cleaned.match(/\{[\s\S]*?\}/);
+
       if (jsonMatch) {
-        const obj = JSON.parse(jsonMatch[0]);
+        const obj = JSON.parse(jsonMatch[0]); 
+        
+        replyText = obj.human_readable || obj.summary || replyText;
 
         structured = {
           verdict: obj.verdict || null,
@@ -200,26 +195,14 @@ app.post('/api/ai-chat', async (req, res) => {
         const normalizedVerdict = String(structured.verdict || '').trim().toUpperCase();
         const isInputNeeded = normalizedVerdict === 'INPUT NEEDED' || normalizedVerdict === 'ANALYSIS NOT APPLICABLE';
         const isGuidance = normalizedVerdict === 'GUIDANCE';
-        if (isInputNeeded) {
-          structured.verdict = 'INPUT NEEDED';
-          structured.reasons = [];
-          structured.advice = [];
-        }
-        if (isGuidance) {
-          structured.verdict = 'GUIDANCE';
+
+        if (isInputNeeded || isGuidance) {
           structured.reasons = [];
           structured.advice = [];
         }
 
-        if (obj.human_readable) {
-          replyText = obj.human_readable;
-        } else if ((isInputNeeded || isGuidance) && structured.summary) {
-          replyText = structured.summary;
-        } else {
-          const after = replyText.slice(jsonMatch.index + jsonMatch[0].length).trim();
-          if (after) replyText = `${replyText}\n\n${after}`;
-          else replyText = replyText;
-        }
+        const after = cleaned.slice(jsonMatch.index + jsonMatch[0].length).trim();
+        if (after) replyText += `\n\n${after}`;
       }
     } catch (e) {
       console.warn('Failed to parse AI JSON response:', e && e.message ? e.message : e);
@@ -229,13 +212,19 @@ app.post('/api/ai-chat', async (req, res) => {
 
   } catch (err) {
     try {
+
       if (err && err.upstream && err.upstream.error && err.upstream.error.code === 429) {
         console.error('AI ERROR (upstream 429):', err.upstream.error.message || err.message);
       
-        return res.status(429).json({ ok: false, error: err.upstream.error.message || 'Quota exceeded', upstream: err.upstream });
+        return res.status(429).json({ 
+          ok: false, 
+          error: err.upstream.error.message || 'Quota exceeded',
+          retryAfter: err.upstream.error.retryAfter || 10
+        });
       }
+
     } catch (e) {
-    }
+      }
 
     console.error('AI ERROR:', err && err.message ? err.message : err);
 
