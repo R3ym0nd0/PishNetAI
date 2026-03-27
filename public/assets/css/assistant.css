@@ -314,19 +314,27 @@
 }
 
 .assistant-action,
-.login-actions button {
+.login-actions button,
+.assistant-action a {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     min-height: 44px;
     padding: 0 16px;
     border: none;
+    text-decoration: none;
     border-radius: 14px;
     background: linear-gradient(135deg, var(--lcc-blue), var(--lcc-blue-soft));
     color: #ffffff;
     font-weight: 800;
     cursor: pointer;
 }
+
+.assistant-action a:hover {
+    color: #ffffff;
+    background: linear-gradient(135deg, #1d66a8, #0d4d86);
+}
+
 
 .assistant-secondary-action {
     display: inline-flex;

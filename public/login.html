@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Sign In - PhishNet AI</title>
+    <link rel="icon" href="assets/images/logo.png" type="image/png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="assets/css/login.css">
+</head>
+
+<body>
+
+    <div class="auth-wrap">
+        <div class="auth-card">
+
+            <div class="auth-body">
+
+                <header class="auth-brand">
+                    <img src="assets/images/logo.png" alt="PhishNet AI Logo">
+                    <h1>PhishNet AI</h1>
+                    <p>Kaypian Campus</p>
+                </header>
+
+                <div class="auth-alert" id="authAlert" role="alert">
+
+                    <i class="fa-solid fa-circle-exclamation"></i>
+                    <span id="authAlertMsg">Invalid username or password.</span>
+                </div>
+
+                <form id="loginForm" novalidate>
+                    <div class="field">
+                        <label for="loginEmail">Email address</label>
+                        <div class="field-wrap">
+                            <i class="fa-regular fa-envelope"></i>
+                            <input id="loginEmail" type="email" placeholder="you@example.com" required>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label for="loginPassword">Password</label>
+                        <div class="field-wrap">
+                            <i class="fa-solid fa-lock"></i>
+                            <input id="loginPassword" type="password" placeholder="Enter your password" required>
+                            <button type="button" class="toggle-pw" id="togglePw">
+                                <i class="fa-regular fa-eye" id="togglePwIcon"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="field-row">
+                        <label class="checkbox-label">
+                            <input type="checkbox">
+                            Remember me
+                        </label>
+                        <a href="#" class="forgot-link">Forgot password?</a>
+                    </div>
+
+                    <button type="submit" class="btn-primary">Sign in</button>
+                </form>
+
+                <div class="auth-divider">or continue with</div>
+
+                <div class="social-btns">
+                    <button class="btn-social">
+                        <i class="fa-brands fa-google"></i> Google
+                    </button>
+                </div>
+
+                <div class="auth-footer">
+                    Don't have an account? <a href="#">Sign up</a>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>

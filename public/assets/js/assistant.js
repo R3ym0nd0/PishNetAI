@@ -12,7 +12,7 @@ const aiMessagesFull = document.getElementById('aiMessagesFull');
 const aiFormFull = document.getElementById('aiFormFull');
 const aiInputFull = document.getElementById('aiInputFull');
 const loginPanel = document.getElementById('loginPanel');
-const showLogin = document.getElementById('showLogin');
+
 const showSignup = document.getElementById('showSignup');
 const doLogin = document.getElementById('doLogin');
 const usernameField = document.getElementById('username');
@@ -314,11 +314,6 @@ quickPrompts.forEach((button) => {
         aiInputFull.value = prompt;
         aiInputFull.focus();
     });
-});
-
-showLogin.addEventListener('click', () => {
-    if (authModeLabel) authModeLabel.textContent = 'Sign in (mock)';
-    loginPanel.classList.toggle('show');
 });
 
 if (showSignup) {

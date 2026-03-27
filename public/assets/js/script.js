@@ -225,7 +225,7 @@ if (aiForm) {
         aiMessages.scrollTop = aiMessages.scrollHeight;
 
         const controller = new AbortController();
-        const timeoutMs = 12000;
+        const timeoutMs = 30000;
         const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
 
         try {
@@ -255,9 +255,9 @@ if (aiForm) {
             clearTimeout(timeoutId);
             console.error('AI request failed', err);
             pendingEl.remove();
-            appendMessage('Sorry — the AI request failed. Please try again.', 'bot');
+            appendMessage('The AI request failed. Please try again.', 'bot');
         } finally {
-            if (!aiCooldown) { // don't re-enable during cooldown
+            if (!aiCooldown) {
                 if (submitBtn) submitBtn.disabled = false;
                 aiInput.disabled = false;
                 aiInput.focus();

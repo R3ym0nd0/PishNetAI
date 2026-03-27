@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const Groq = require("groq-sdk");
+require('dotenv').config();
 
 let pRetry = require('p-retry');
 if (pRetry && typeof pRetry !== 'function' && pRetry.default) pRetry = pRetry.default;

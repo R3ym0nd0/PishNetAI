@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <title>Phinny - AI Assistant</title>
+    <title>PhishNet - AI Assistant</title>
     <link rel="icon" href="assets/images/logo.png" type="image/png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <link rel="stylesheet" href="assets/css/style.css">
@@ -39,7 +39,7 @@
             <section class="assistant-chat panel">
                 <div class="assistant-chat-top">
                     <div class="assistant-chat-heading">
-                        <p class="section-label">Phinny AI Assistant</p>
+                        <p class="section-label">AI Assistant</p>
                     </div>
                 </div>
 
@@ -71,18 +71,21 @@
                     </p>
 
                     <div class="assistant-auth-actions">
-                        <button id="showLogin" class="assistant-action" type="button">Sign in</button>
+                        <a href="login.html" class="assistant-action">Sign in</a>
                         <button id="showSignup" class="assistant-secondary-action" type="button">Sign up</button>
                     </div>
 
-                    <div class="login-panel" id="loginPanel">
-                        <p class="assistant-form-mode" id="authModeLabel">Sign in (mock)</p>
+<div class="login-panel" id="loginPanel">
+                        <p class="assistant-form-mode" id="authModeLabel">Sign in</p>
                         <label for="username">Username</label>
-                        <input id="username" type="text" placeholder="Enter your name">
+                        <input id="username" type="text" placeholder="Enter your username">
+                        <label for="loginPassword">Password</label>
+                        <input id="loginPassword" type="password" placeholder="Enter your password">
                         <div class="login-actions">
-                            <button id="doLogin" type="button">Continue</button>
+                            <button id="doLogin" type="button" class="btn-primary">Continue</button>
                         </div>
                     </div>
+                    
                 </section>
 
                 <section class="assistant-card assistant-collapsible" id="promptCard">
