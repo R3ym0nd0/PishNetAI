@@ -13,12 +13,18 @@ const aiFormFull = document.getElementById('aiFormFull');
 const aiInputFull = document.getElementById('aiInputFull');
 const userDisplay = document.getElementById('userDisplay');
 const quickPrompts = document.querySelectorAll('.assistant-prompt');
-const collapsibleCards = document.querySelectorAll('.assistant-collapsible');
 const assistantChat = document.querySelector('.assistant-chat');
-const chatFullscreenToggle = document.getElementById('chatFullscreenToggle');
-const chatFullscreenIcon = chatFullscreenToggle ? chatFullscreenToggle.querySelector('.assistant-fullscreen-icon') : null;
 const NETLIFY_FRONTEND_ORIGIN = 'https://phishnetai.netlify.app';
 const RENDER_API_BASE = 'https://phishnetai-fb30.onrender.com';
+
+// Sidebar elements
+const sidebar = document.getElementById('sidebar');
+const menuToggleBtn = document.getElementById('menuToggleBtn');
+const sidebarCloseBtn = document.getElementById('sidebarCloseBtn');
+const mobileOverlay = document.getElementById('mobileOverlay');
+
+// Sidebar state
+let isSidebarOpen = false;
 
 function getApiBase() {
     const { origin, hostname } = window.location;
@@ -135,20 +141,17 @@ function loadHistory() {
     try {
         const raw = localStorage.getItem(storageKey);
         if (!raw) {
-            appendMessageFull('Hello. I am Phinny, your phishing-focused assistant. Paste a suspicious URL, message, or ask what to do next.');
             return;
         }
 
         const messages = JSON.parse(raw);
         if (!messages.length) {
-            appendMessageFull('Hello. I am Phinny, your phishing-focused assistant. Paste a suspicious URL, message, or ask what to do next.');
             return;
         }
 
         messages.forEach((message) => appendMessageFull(message.text, message.who));
     } catch (e) {
         console.warn('failed to parse history', e);
-        appendMessageFull('Hello. I am Phinny, your phishing-focused assistant. Paste a suspicious URL, message, or ask what to do next.');
     }
 }
 
@@ -230,54 +233,11 @@ async function sendAssistantMessage(message) {
 function updateUserUI() {
     const name = localStorage.getItem(userKey);
     const signedIn = Boolean(name);
-    userDisplay.textContent = signedIn ? `Signed in as ${name}` : 'Not signed in';
+    if (userDisplay) {
+        userDisplay.textContent = signedIn ? `Signed in as ${name}` : 'Not signed in';
+    }
     document.body.classList.toggle('signed-in', signedIn);
     document.body.classList.toggle('not-signed-in', !signedIn);
-}
-
-function applyMobileCardState() {
-    const mobile = window.matchMedia('(max-width: 768px)').matches;
-    collapsibleCards.forEach((card) => {
-        const toggle = card.querySelector('.assistant-collapse-toggle');
-        if (!toggle) return;
-
-        if (mobile) {
-            card.classList.add('is-collapsed');
-            toggle.setAttribute('aria-expanded', 'false');
-            toggle.textContent = 'Show';
-        } else {
-            card.classList.remove('is-collapsed');
-            toggle.setAttribute('aria-expanded', 'true');
-            toggle.textContent = 'Hide';
-        }
-    });
-}
-
-function syncFullscreenButton() {
-    if (!chatFullscreenToggle || !assistantChat) return;
-    const expanded = assistantChat.classList.contains('is-fullscreen');
-    chatFullscreenToggle.setAttribute('aria-expanded', String(expanded));
-    chatFullscreenToggle.setAttribute('aria-label', expanded ? 'Close full screen conversation' : 'Open full screen conversation');
-    chatFullscreenToggle.setAttribute('title', expanded ? 'Close full screen conversation' : 'Open full screen conversation');
-    if (chatFullscreenIcon) {
-        chatFullscreenIcon.classList.toggle('fa-expand', !expanded);
-        chatFullscreenIcon.classList.toggle('fa-compress', expanded);
-    }
-}
-
-function exitFullscreenChat() {
-    if (!assistantChat) return;
-    assistantChat.classList.remove('is-fullscreen');
-    document.body.classList.remove('assistant-chat-open');
-    syncFullscreenButton();
-}
-
-function toggleFullscreenChat() {
-    if (!assistantChat || !chatFullscreenToggle) return;
-    const willOpen = !assistantChat.classList.contains('is-fullscreen');
-    assistantChat.classList.toggle('is-fullscreen', willOpen);
-    document.body.classList.toggle('assistant-chat-open', willOpen);
-    syncFullscreenButton();
 }
 
 if (mainNav && navToggle) {
@@ -301,6 +261,14 @@ aiFormFull.addEventListener('submit', async (e) => {
     await sendAssistantMessage(value);
 });
 
+// Enter key to send message
+aiInputFull.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        aiFormFull.dispatchEvent(new Event('submit'));
+    }
+});
+
 quickPrompts.forEach((button) => {
     button.addEventListener('click', async () => {
         const prompt = button.dataset.prompt;
@@ -310,33 +278,68 @@ quickPrompts.forEach((button) => {
     });
 });
 
-collapsibleCards.forEach((card) => {
-    const toggle = card.querySelector('.assistant-collapse-toggle');
-    if (!toggle) return;
-
-    toggle.addEventListener('click', () => {
-        const collapsed = card.classList.toggle('is-collapsed');
-        toggle.setAttribute('aria-expanded', String(!collapsed));
-        toggle.textContent = collapsed ? 'Show' : 'Hide';
-    });
-});
-
-if (chatFullscreenToggle) {
-    chatFullscreenToggle.addEventListener('click', toggleFullscreenChat);
-}
-
 window.addEventListener('resize', () => {
-    applyMobileCardState();
-    syncFullscreenButton();
+    // Handle resize if needed
 });
 
 document.addEventListener('keydown', (event) => {
     if (event.key === 'Escape') {
-        exitFullscreenChat();
+        closeSidebar();
     }
 });
 
 updateUserUI();
 loadHistory();
-applyMobileCardState();
-syncFullscreenButton();
+
+// ===== Sidebar Toggle Functions =====
+function toggleSidebar() {
+    if (!sidebar) return;
+    isSidebarOpen = !isSidebarOpen;
+    sidebar.classList.toggle('open', isSidebarOpen);
+    if (mobileOverlay) {
+        mobileOverlay.classList.toggle('active', isSidebarOpen);
+    }
+    document.body.style.overflow = isSidebarOpen ? 'hidden' : '';
+}
+
+function closeSidebar() {
+    if (!sidebar) return;
+    isSidebarOpen = false;
+    sidebar.classList.remove('open');
+    if (mobileOverlay) {
+        mobileOverlay.classList.remove('active');
+    }
+    document.body.style.overflow = '';
+}
+
+// Event Listeners for Sidebar Toggle
+if (menuToggleBtn) {
+    menuToggleBtn.addEventListener('click', toggleSidebar);
+    menuToggleBtn.addEventListener('touchend', (e) => {
+        e.preventDefault();
+        toggleSidebar();
+    });
+}
+
+if (mobileOverlay) {
+    mobileOverlay.addEventListener('click', closeSidebar);
+    mobileOverlay.addEventListener('touchend', (e) => {
+        e.preventDefault();
+        closeSidebar();
+    });
+}
+
+if (sidebarCloseBtn) {
+    sidebarCloseBtn.addEventListener('click', closeSidebar);
+    sidebarCloseBtn.addEventListener('touchend', (e) => {
+        e.preventDefault();
+        closeSidebar();
+    });
+}
+
+// Escape key to close sidebar
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && isSidebarOpen) {
+        closeSidebar();
+    }
+});
