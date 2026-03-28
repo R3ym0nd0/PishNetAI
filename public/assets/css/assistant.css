@@ -1,5 +1,6 @@
 /* ===== CSS Variables ===== */
 :root {
+    --lcc-blue: #003366;
     --bg-primary: #dbe6f0;
     --bg-secondary: #eef4fa;
     --bg-tertiary: #f7fbff;
@@ -410,13 +411,14 @@ button {
 
 .menu-toggle-btn {
     display: none;
-    width: 40px;
-    height: 40px;
+    width: 48px;
+    height: 48px;
     background: none;
     border: none;
-    color: var(--text-secondary);
+    color: white;
     cursor: pointer;
-    border-radius: var(--border-radius-sm);
+    border-radius: 14px;
+    background: var(--lcc-blue);
     transition: all var(--transition-speed) ease;
     align-items: center;
     justify-content: center;
@@ -490,9 +492,19 @@ button {
     scroll-behavior: smooth;
     justify-content: center;
     background:
-        radial-gradient(circle at 15% 10%, rgba(0, 51, 102, 0.04), transparent 30%),
-        radial-gradient(circle at 85% 90%, rgba(30, 90, 150, 0.05), transparent 25%),
-        linear-gradient(180deg, #f8fbff 0%, #f0f5fa 100%);
+        radial-gradient(circle at top left, rgba(0, 51, 102, 0.12), transparent 18%),
+        radial-gradient(circle at bottom right, rgba(30, 90, 150, 0.14), transparent 22%),
+        linear-gradient(rgba(0, 51, 102, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 51, 102, 0.05) 1px, transparent 1px),
+        linear-gradient(180deg, #dbe6f0 0%, #e5eef6 48%, #edf3f8 100%);
+    background-size:
+        auto,
+        auto,
+        42px 42px,
+        42px 42px,
+        auto;
+    color: #1f2937;
+    background-attachment: fixed;
 }
 
 .chat-messages::-webkit-scrollbar,
