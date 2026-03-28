@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <title>Sign In - PhishNet AI</title>
+    <title>Sign Up - PhishNet AI</title>
 
     <link rel="icon" href="assets/images/logo.png" type="image/png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
@@ -54,39 +54,57 @@
 
                     <div class="auth-alert" id="authAlert">
                         <i class="fa-solid fa-circle-exclamation"></i>
-                        <span id="authAlertMsg">Invalid username or password.</span>
+                        <span id="authAlertMsg">Please fill all fields correctly.</span>
                     </div>
 
-                    <form id="loginForm" novalidate>
+                    <form id="signupForm" novalidate>
 
                         <div class="field">
-                            <label for="loginEmail">Email address</label>
+                            <label for="signupName">Full Name</label>
                             <div class="field-wrap">
-                                <i class="fa-regular fa-envelope"></i>
-                                <input id="loginEmail" type="email" placeholder="you@example.com" required>
+                                <i class="fa-solid fa-user"></i>
+                                <input id="signupName" type="text" placeholder="Enter your full name" required>
                             </div>
                         </div>
 
                         <div class="field">
-                            <label for="loginPassword">Password</label>
+                            <label for="signupEmail">Email address</label>
+                            <div class="field-wrap">
+                                <i class="fa-regular fa-envelope"></i>
+                                <input id="signupEmail" type="email" placeholder="you@example.com" required>
+                            </div>
+                        </div>
+
+                        <div class="field">
+                            <label for="signupPassword">Password</label>
                             <div class="field-wrap">
                                 <i class="fa-solid fa-lock"></i>
-                                <input id="loginPassword" type="password" placeholder="Enter your password" required>
-                                <button type="button" class="toggle-pw" id="togglePw">
-                                    <i class="fa-regular fa-eye" id="togglePwIcon"></i>
+                                <input id="signupPassword" type="password" placeholder="Create a password" required>
+                                <button type="button" class="toggle-pw" id="toggleSignupPw">
+                                    <i class="fa-regular fa-eye" id="toggleSignupPwIcon"></i>
                                 </button>
                             </div>
                         </div>
 
-                        <div class="field-row">
-                            <label class="checkbox-label">
-                                <input type="checkbox">
-                                Remember me
-                            </label>
-                            <a href="#" class="forgot-link">Forgot password?</a>
+                        <div class="field">
+                            <label for="signupConfirmPassword">Confirm Password</label>
+                            <div class="field-wrap">
+                                <i class="fa-solid fa-lock"></i>
+                                <input id="signupConfirmPassword" type="password" placeholder="Confirm your password" required>
+                                <button type="button" class="toggle-pw" id="toggleConfirmPw">
+                                    <i class="fa-regular fa-eye" id="toggleConfirmPwIcon"></i>
+                                </button>
+                            </div>
                         </div>
 
-                        <button type="submit" class="btn-primary">Sign in</button>
+                        <div class="field-checkbox">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="signupTerms">
+                                I agree to Terms &amp; Conditions
+                            </label>
+                        </div>
+
+                        <button type="submit" class="btn-primary">Create Account</button>
 
                     </form>
 
@@ -99,7 +117,7 @@
                     </div>
 
                     <div class="auth-footer">
-                        Don't have an account? <a href="signup.html">Sign up</a>
+                        Already have an account? <a href="login.html">Sign in</a>
                     </div>
 
                 </div>
@@ -136,7 +154,7 @@
             <div class="footer-bottom">
                 <div class="footer-contact">
                     <p class="footer-about">
-                       PhishNet AI helps students identify suspicious links and understand common phishing patterns. If you have questions or want to contribute, reach out.
+                        PhishNet AI helps students identify suspicious links and understand common phishing patterns. If you have questions or want to contribute, reach out.
                     </p>
 
                     <form id="newsletterForm" class="newsletter-form" onsubmit="event.preventDefault();">
@@ -184,3 +202,4 @@
 
 </body>
 </html>
+

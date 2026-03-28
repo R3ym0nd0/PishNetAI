@@ -11,14 +11,8 @@ const navLinks = document.querySelectorAll('.nav-links a');
 const aiMessagesFull = document.getElementById('aiMessagesFull');
 const aiFormFull = document.getElementById('aiFormFull');
 const aiInputFull = document.getElementById('aiInputFull');
-const loginPanel = document.getElementById('loginPanel');
-
-const showSignup = document.getElementById('showSignup');
-const doLogin = document.getElementById('doLogin');
-const usernameField = document.getElementById('username');
 const userDisplay = document.getElementById('userDisplay');
 const quickPrompts = document.querySelectorAll('.assistant-prompt');
-const authModeLabel = document.getElementById('authModeLabel');
 const collapsibleCards = document.querySelectorAll('.assistant-collapsible');
 const assistantChat = document.querySelector('.assistant-chat');
 const chatFullscreenToggle = document.getElementById('chatFullscreenToggle');
@@ -314,26 +308,6 @@ quickPrompts.forEach((button) => {
         aiInputFull.value = prompt;
         aiInputFull.focus();
     });
-});
-
-if (showSignup) {
-    showSignup.addEventListener('click', () => {
-        if (authModeLabel) authModeLabel.textContent = 'Sign up (mock)';
-        loginPanel.classList.add('show');
-        usernameField.focus();
-    });
-}
-
-doLogin.addEventListener('click', () => {
-    const value = usernameField.value.trim();
-    if (!value) {
-        alert('Enter a name');
-        return;
-    }
-
-    localStorage.setItem(userKey, value);
-    loginPanel.classList.remove('show');
-    updateUserUI();
 });
 
 collapsibleCards.forEach((card) => {

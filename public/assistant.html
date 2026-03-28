@@ -4,12 +4,15 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
     <title>PhishNet - AI Assistant</title>
+
     <link rel="icon" href="assets/images/logo.png" type="image/png">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="assets/css/assistant.css">
 </head>
+
 <body class="assistant-body">
+
     <nav class="main-nav">
         <div class="nav-brand">
             <div class="nav-brand-mark">LCC</div>
@@ -19,7 +22,13 @@
             </div>
         </div>
 
-        <button type="button" class="nav-toggle" aria-label="Open navigation menu" aria-expanded="false" aria-controls="assistantNavLinks">
+        <button 
+            type="button" 
+            class="nav-toggle" 
+            aria-label="Open navigation menu" 
+            aria-expanded="false" 
+            aria-controls="assistantNavLinks"
+        >
             <span></span>
             <span></span>
             <span></span>
@@ -36,27 +45,57 @@
 
     <div class="page-shell assistant-page">
         <div class="assistant-shell">
+
+            <!-- Chat Section -->
             <section class="assistant-chat panel">
+                
                 <div class="assistant-chat-top">
                     <div class="assistant-chat-heading">
                         <p class="section-label">AI Assistant</p>
                     </div>
                 </div>
 
-                <div id="aiMessagesFull" class="ai-messages assistant-messages" role="log" aria-live="polite"></div>
+                <div 
+                    id="aiMessagesFull" 
+                    class="ai-messages assistant-messages" 
+                    role="log" 
+                    aria-live="polite"
+                ></div>
 
-                <form id="aiFormFull" class="ai-form assistant-form" autocomplete="off">
+                <form 
+                    id="aiFormFull" 
+                    class="ai-form assistant-form" 
+                    autocomplete="off"
+                >
                     <div class="assistant-form-top">
-                        <input id="aiInputFull" type="text" placeholder="Ask about phishing, suspicious URLs, messages, or what to do next..." aria-label="Ask the full assistant">
-                        <button type="button" id="chatFullscreenToggle" class="assistant-fullscreen-toggle" aria-expanded="false" aria-controls="aiMessagesFull" aria-label="Open full screen conversation" title="Open full screen conversation">
+                        <input 
+                            id="aiInputFull" 
+                            type="text" 
+                            placeholder="Ask about phishing, suspicious URLs, messages, or what to do next..." 
+                            aria-label="Ask the full assistant"
+                        >
+
+                        <button 
+                            type="button" 
+                            id="chatFullscreenToggle" 
+                            class="assistant-fullscreen-toggle" 
+                            aria-expanded="false" 
+                            aria-controls="aiMessagesFull" 
+                            aria-label="Open full screen conversation" 
+                            title="Open full screen conversation"
+                        >
                             <i class="fa-solid fa-expand assistant-fullscreen-icon" aria-hidden="true"></i>
                         </button>
                     </div>
+
                     <button type="submit" class="assistant-send-button">Send</button>
                 </form>
             </section>
 
+            <!-- Sidebar -->
             <aside class="assistant-side">
+
+                <!-- Session Card -->
                 <section class="assistant-card session-card">
                     <div class="assistant-card-head">
                         <div>
@@ -72,47 +111,59 @@
 
                     <div class="assistant-auth-actions">
                         <a href="login.html" class="assistant-action">Sign in</a>
-                        <button id="showSignup" class="assistant-secondary-action" type="button">Sign up</button>
+                        <a href="signup.html" class="assistant-secondary-action">Sign up</a>
                     </div>
-
-<div class="login-panel" id="loginPanel">
-                        <p class="assistant-form-mode" id="authModeLabel">Sign in</p>
-                        <label for="username">Username</label>
-                        <input id="username" type="text" placeholder="Enter your username">
-                        <label for="loginPassword">Password</label>
-                        <input id="loginPassword" type="password" placeholder="Enter your password">
-                        <div class="login-actions">
-                            <button id="doLogin" type="button" class="btn-primary">Continue</button>
-                        </div>
-                    </div>
-                    
                 </section>
 
+                <!-- Quick Prompts -->
                 <section class="assistant-card assistant-collapsible" id="promptCard">
                     <div class="assistant-card-head">
                         <div>
                             <p class="section-label">Quick Prompts</p>
                             <h3>Try these questions</h3>
                         </div>
-                        <button type="button" class="assistant-collapse-toggle" aria-expanded="true" aria-controls="promptCardBody">Hide</button>
+                        <button 
+                            type="button" 
+                            class="assistant-collapse-toggle" 
+                            aria-expanded="true" 
+                            aria-controls="promptCardBody"
+                        >
+                            Hide
+                        </button>
                     </div>
 
                     <div class="assistant-card-body" id="promptCardBody">
                         <div class="assistant-prompt-list">
-                        <button type="button" class="assistant-prompt" data-prompt="Can you analyze this suspicious URL for phishing?">Analyze a suspicious URL</button>
-                        <button type="button" class="assistant-prompt" data-prompt="What signs should I check before logging into a website?">What signs should I check first?</button>
-                        <button type="button" class="assistant-prompt" data-prompt="I clicked a suspicious link. What should I do next?">What should I do after clicking?</button>
+                            <button type="button" class="assistant-prompt" data-prompt="Can you analyze this suspicious URL for phishing?">
+                                Analyze a suspicious URL
+                            </button>
+
+                            <button type="button" class="assistant-prompt" data-prompt="What signs should I check before logging into a website?">
+                                What signs should I check first?
+                            </button>
+
+                            <button type="button" class="assistant-prompt" data-prompt="I clicked a suspicious link. What should I do next?">
+                                What should I do after clicking?
+                            </button>
                         </div>
                     </div>
                 </section>
 
+                <!-- Tips -->
                 <section class="assistant-card assistant-collapsible" id="tipsCard">
                     <div class="assistant-card-head">
                         <div>
                             <p class="section-label">Tips</p>
                             <h3>Best use of the assistant</h3>
                         </div>
-                        <button type="button" class="assistant-collapse-toggle" aria-expanded="true" aria-controls="tipsCardBody">Hide</button>
+                        <button 
+                            type="button" 
+                            class="assistant-collapse-toggle" 
+                            aria-expanded="true" 
+                            aria-controls="tipsCardBody"
+                        >
+                            Hide
+                        </button>
                     </div>
 
                     <div class="assistant-card-body" id="tipsCardBody">
@@ -123,6 +174,7 @@
                         </ul>
                     </div>
                 </section>
+
             </aside>
         </div>
     </div>

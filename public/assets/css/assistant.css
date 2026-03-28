@@ -328,6 +328,7 @@
     color: #ffffff;
     font-weight: 800;
     cursor: pointer;
+
 }
 
 .assistant-action a:hover {
@@ -348,6 +349,8 @@
     color: var(--lcc-blue);
     font-weight: 800;
     cursor: pointer;
+    text-decoration: none;
+
 }
 
 .login-panel {

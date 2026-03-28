@@ -1779,12 +1779,12 @@ html {
         align-items: flex-start;
     }
 
-.footer-brand,
-.footer-team,
-.footer-nav {
-    width: 100%;
-    max-width: none;
-}
+    .footer-brand,
+    .footer-team,
+    .footer-nav {
+        width: 100%;
+        max-width: none;
+    }
 
     .footer-team-row .footer-team {
         width: 100%;
