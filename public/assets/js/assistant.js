@@ -37,7 +37,28 @@ function getApiBase() {
     return origin;
 }
 
+function showWelcomeMessage() {
+    const existing = document.querySelector('.welcome-message');
+    if (existing) existing.remove();
+    const welcome = document.createElement('div');
+    welcome.className = 'welcome-message';
+    welcome.innerHTML = `
+        <div class="welcome-icon">
+            <img src="assets/images/logo.png" alt="PhishNet Logo" class="welcome-logo">
+        </div>
+        <h2>How can I help you today?</h2>
+        <p>I'm Phinny, your phishing detection assistant. I can help you identify suspicious URLs, analyze messages, and stay safe online.</p>
+    `;
+    aiMessagesFull.appendChild(welcome);
+}
+
+function hideWelcomeMessage() {
+    const welcome = document.querySelector('.welcome-message');
+    if (welcome) welcome.remove();
+}
+
 function appendMessageFull(text, who = 'bot') {
+    hideWelcomeMessage();
     const el = document.createElement('div');
     el.className = `ai-msg ${who}`;
 
@@ -64,6 +85,7 @@ function isCompactAssistantReply(structured) {
 }
 
 function renderStructuredMessageFull(structured, humanText) {
+    hideWelcomeMessage();
     const container = document.createElement('div');
     container.className = 'ai-msg bot ai-structured';
 
@@ -141,21 +163,25 @@ function loadHistory() {
     try {
         const raw = localStorage.getItem(storageKey);
         if (!raw) {
+            showWelcomeMessage();
             return;
         }
 
         const messages = JSON.parse(raw);
         if (!messages.length) {
+            showWelcomeMessage();
             return;
         }
 
         messages.forEach((message) => appendMessageFull(message.text, message.who));
     } catch (e) {
         console.warn('failed to parse history', e);
+        showWelcomeMessage();
     }
 }
 
 async function sendAssistantMessage(message) {
+    hideWelcomeMessage();
     appendMessageFull(message, 'user');
     saveMessage(message, 'user');
 

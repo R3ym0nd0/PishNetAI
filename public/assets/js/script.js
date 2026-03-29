@@ -18,6 +18,22 @@ const aiMessages = document.getElementById('aiMessages');
 const STORAGE_KEY = 'phish_ai_chat';
 const aiFab = document.getElementById('aiFab');
 
+// Auto-resize textarea
+if (aiInput) {
+    aiInput.addEventListener('input', function() {
+        this.style.height = 'auto';
+        this.style.height = Math.min(this.scrollHeight, 150) + 'px';
+    });
+
+    // Enter key to send message (Shift+Enter for new line)
+    aiInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            aiForm.dispatchEvent(new Event('submit', { cancelable: true }));
+        }
+    });
+}
+
 const NETLIFY_FRONTEND_ORIGIN = 'https://phishnetai.netlify.app';
 const RENDER_API_BASE = 'https://phishnetai-fb30.onrender.com';
 
@@ -65,13 +81,40 @@ function loadHistoryToWidget(){
     aiMessages.innerHTML = '';
     try {
         const raw = localStorage.getItem(STORAGE_KEY);
-        if (!raw) return;
+        if (!raw) {
+            showAiWelcome();
+            return;
+        }
         const arr = JSON.parse(raw);
+        if (!arr.length) {
+            showAiWelcome();
+            return;
+        }
         arr.forEach(m => appendMessage(m.text, m.who));
-    } catch(e){ console.warn('load failed', e); }
+    } catch(e){ console.warn('load failed', e); showAiWelcome(); }
+}
+
+function showAiWelcome() {
+    const existing = document.getElementById('aiWelcome');
+    if (existing) existing.remove();
+    const welcome = document.createElement('div');
+    welcome.className = 'ai-welcome';
+    welcome.id = 'aiWelcome';
+    welcome.innerHTML = `
+        <img src="public/assets/images/logo.png" alt="PhishNet AI logo" class="ai-welcome-logo">
+        <h3>How can I help you today?</h3>
+        <p>I'm Phinny, your phishing-focused assistant. Paste a suspicious URL, message, or ask what to do next.</p>
+    `;
+    aiMessages.appendChild(welcome);
+}
+
+function hideAiWelcome() {
+    const welcome = document.getElementById('aiWelcome');
+    if (welcome) welcome.remove();
 }
 
 function appendMessage(text, who = 'bot') {
+    hideAiWelcome();
     const el = document.createElement('div');
     el.className = `ai-msg ${who}`;
     el.innerHTML = marked.parse(text);
