@@ -281,38 +281,6 @@ function getApiBase() {
     return origin;
 }
 
-function setupScrollReveal() {
-    const revealTargets = [
-        ...document.querySelectorAll('.form-panel, .tutorial-panel, .tips-panel, .score-guide, .footer-top, .footer-bottom, .footer-team-row'),
-        ...document.querySelectorAll('.hero-stat-card, .scanner-feature, .info-item, .score-group')
-    ];
-
-    if (!revealTargets.length) return;
-
-    revealTargets.forEach((element, index) => {
-        element.classList.add('reveal-on-scroll');
-        element.dataset.revealDelay = String(index % 4);
-    });
-
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-        revealTargets.forEach((element) => element.classList.add('is-visible'));
-        return;
-    }
-
-    const observer = new IntersectionObserver((entries, obs) => {
-        entries.forEach((entry) => {
-            if (!entry.isIntersecting) return;
-            entry.target.classList.add('is-visible');
-            obs.unobserve(entry.target);
-        });
-    }, {
-        threshold: 0.14,
-        rootMargin: '0px 0px -40px 0px'
-    });
-
-    revealTargets.forEach((element) => observer.observe(element));
-}
-
 function getGradeFromRiskScore(riskScore) {
     if (riskScore <= 5) return 'A+';
     if (riskScore <= 10) return 'A';
@@ -330,8 +298,6 @@ function getStatusClass(prediction, riskScore) {
     if (riskScore > 25) return 'medium';
     return 'low';
 }
-
-setupScrollReveal();
 
 function formatTimestamp(date = new Date()) {
     return new Intl.DateTimeFormat('en-US', {
