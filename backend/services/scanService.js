@@ -105,6 +105,48 @@ function buildRecommendation(prediction, riskScore) {
   return 'The site appears safer than typical phishing pages, but it is still best to verify the URL before sharing sensitive data.';
 }
 
+function cleanExcerpt(value, maxLength = 120) {
+  const cleaned = String(value || '')
+    .replace(/([a-z])([A-Z])/g, '$1 $2')
+    .replace(/\s+/g, ' ')
+    .replace(/[^\S\r\n]+/g, ' ')
+    .trim();
+
+  if (!cleaned) return '';
+  if (cleaned.length <= maxLength) return cleaned;
+  return `${cleaned.slice(0, maxLength - 1).trim()}...`;
+}
+
+function buildPageOverview(features) {
+  const pageContext = features.pageContext || {};
+  const title = cleanExcerpt(pageContext.title, 70);
+  const heading = cleanExcerpt(pageContext.mainHeading, 70);
+  const description = cleanExcerpt(pageContext.metaDescription, 120);
+  const snippet = cleanExcerpt(pageContext.snippet, 110);
+
+  const parts = [];
+
+  if (title && heading && title.toLowerCase() !== heading.toLowerCase()) {
+    parts.push(`This page appears to be "${title}" and prominently shows "${heading}".`);
+  } else if (title) {
+    parts.push(`This page appears to be "${title}".`);
+  } else if (heading) {
+    parts.push(`The page is presenting itself as "${heading}".`);
+  }
+
+  if (description) {
+    parts.push(`The page description suggests: "${description}".`);
+  } else if (snippet) {
+    parts.push(`The visible page content mentions: "${snippet}".`);
+  }
+
+  if (parts.length === 0) {
+    return 'A short page overview could not be extracted from the website content.';
+  }
+
+  return parts.join(' ');
+}
+
 async function scanUrl(url) {
   const response = await fetchWebsite(url);
   const { features, modelFeatures } = await extractFeatures({ inputUrl: url, response });
@@ -127,6 +169,7 @@ async function scanUrl(url) {
     riskClass: getRiskClass(riskScore),
     indicators: buildIndicators(features, riskScore, heuristicAssessment.reasons),
     summary: buildSummary(prediction, features, riskScore, heuristicAssessment),
+    pageOverview: buildPageOverview(features),
     recommendation: buildRecommendation(prediction, riskScore),
     heuristicReasons: heuristicAssessment.reasons,
     features,

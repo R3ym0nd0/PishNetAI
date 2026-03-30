@@ -16,7 +16,6 @@ const aiClose = document.getElementById('aiClose');
 const aiForm = document.getElementById('aiForm');
 const aiInput = document.getElementById('aiInput');
 const aiMessages = document.getElementById('aiMessages');
-const STORAGE_KEY = 'phish_ai_chat';
 const aiFab = document.getElementById('aiFab');
 let resultStatusBadge = resultSection?.querySelector('.status-badge');
 let resultGrade = resultSection?.querySelector('.result-grade');
@@ -25,6 +24,7 @@ let resultInfoValues = resultSection?.querySelectorAll('.result-info-value') || 
 let resultRiskValue = resultSection?.querySelector('.result-risk-value');
 let resultProgressFill = resultSection?.querySelector('.result-progress-fill');
 let resultIndicatorsList = resultSection?.querySelector('.result-indicators-list');
+let resultPageOverviewText = resultSection?.querySelector('.result-page-overview p');
 let resultSummaryText = resultSection?.querySelector('.result-summary p');
 let resultRecommendationText = resultSection?.querySelector('.result-recommendation p');
 
@@ -57,6 +57,7 @@ function cacheResultElements() {
     resultRiskValue = resultSection?.querySelector('.result-risk-value');
     resultProgressFill = resultSection?.querySelector('.result-progress-fill');
     resultIndicatorsList = resultSection?.querySelector('.result-indicators-list');
+    resultPageOverviewText = resultSection?.querySelector('.result-page-overview p');
     resultSummaryText = resultSection?.querySelector('.result-summary p');
     resultRecommendationText = resultSection?.querySelector('.result-recommendation p');
 }
@@ -125,6 +126,16 @@ function ensureResultTemplate() {
                     <span class="result-indicators-label">Indicators</span>
                 </div>
                 <ul class="result-indicators-list"></ul>
+            </div>
+
+            <div class="result-page-overview">
+                <div class="result-page-overview-header">
+                    <svg class="result-page-overview-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M4 5c0-1.1.9-2 2-2h12c1.1 0 2 .9 2 2v11c0 1.1-.9 2-2 2H6c-1.1 0-2-.9-2-2V5zm2 0v11h12V5H6zm1 14h10v2H7z"/>
+                    </svg>
+                    <span class="result-page-overview-label">Website Snapshot</span>
+                </div>
+                <p></p>
             </div>
 
             <div class="result-summary">
@@ -229,31 +240,10 @@ if (urlForm) {
 }
 
 // === Local Storage Chat ===
-function saveMessage(text, who='bot'){
-    try {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        const arr = raw ? JSON.parse(raw) : [];
-        arr.push({ text, who, at: Date.now() });
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(arr.slice(-200)));
-    } catch(e) { console.warn('store failed', e); }
-}
-
 function loadHistoryToWidget(){
     if (!aiMessages) return;
     aiMessages.innerHTML = '';
-    try {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if (!raw) {
-            showAiWelcome();
-            return;
-        }
-        const arr = JSON.parse(raw);
-        if (!arr.length) {
-            showAiWelcome();
-            return;
-        }
-        arr.forEach(m => appendMessage(m.text, m.who));
-    } catch(e){ console.warn('load failed', e); showAiWelcome(); }
+    showAiWelcome();
 }
 
 function showAiWelcome() {
@@ -282,7 +272,6 @@ function appendMessage(text, who = 'bot') {
     el.innerHTML = marked.parse(text);
     aiMessages.appendChild(el);
     aiMessages.scrollTop = aiMessages.scrollHeight;
-    saveMessage(text, who);
 }
 
 function getApiBase() {
@@ -329,8 +318,11 @@ function setStatusBadge(text, statusClass) {
 
 function updateIndicators(indicators = []) {
     if (!resultIndicatorsList) return;
+    const indicatorsCard = resultIndicatorsList.closest('.result-indicators');
     resultIndicatorsList.innerHTML = '';
     resultIndicatorsList.classList.remove('collapsed');
+    indicatorsCard?.classList.remove('expanded');
+    indicatorsCard?.classList.remove('desktop-scroll');
 
     const existingToggle = resultSection?.querySelector('.result-indicators-toggle');
     if (existingToggle) existingToggle.remove();
@@ -355,6 +347,7 @@ function updateIndicators(indicators = []) {
     toggleButton.addEventListener('click', () => {
         const expanded = toggleButton.getAttribute('aria-expanded') === 'true';
         resultIndicatorsList.classList.toggle('collapsed', expanded);
+        indicatorsCard?.classList.toggle('expanded', !expanded);
         toggleButton.setAttribute('aria-expanded', String(!expanded));
         toggleButton.textContent = expanded
             ? `Read more (${indicators.length - collapseThreshold} more)`
@@ -400,6 +393,10 @@ function renderScanResult(data) {
 
     updateIndicators(data.indicators || []);
 
+    if (resultPageOverviewText) {
+        resultPageOverviewText.textContent = data.pageOverview || 'A short website overview was not available for this scan.';
+    }
+
     if (resultSummaryText) {
         resultSummaryText.textContent = data.summary || 'The scan completed, but no summary was returned.';
     }
@@ -407,36 +404,31 @@ function renderScanResult(data) {
     if (resultRecommendationText) {
         resultRecommendationText.textContent = data.recommendation || 'Review the URL carefully before continuing.';
     }
+
 }
 
 function renderLoadingState(submittedUrl) {
-    ensureResultTemplate();
     showResultsPanel();
     animateResultsReveal();
-    setStatusBadge('Scanning', 'medium');
-    if (resultGrade) resultGrade.textContent = 'Grade: --';
+    if (!resultSection) return;
 
-    resultInfoValues.forEach((node, index) => {
-        const defaults = ['Resolving...', formatTimestamp(), 'Checking...', 'Checking...'];
-        if (node) node.textContent = defaults[index] || 'Checking...';
-    });
+    resultSection.innerHTML = `
+        <div class="result-loading" aria-live="polite">
+            <span class="result-loading-badge">Scanning in progress</span>
+            <h3 class="result-loading-title">Analyzing your link now</h3>
+            <p class="result-loading-text">PhishNet AI is checking phishing signals, page structure, trust indicators, and AI risk prediction.</p>
+            <div class="result-loading-bar" aria-hidden="true">
+                <span class="result-loading-bar-fill"></span>
+            </div>
+            <div class="result-loading-steps">
+                <div class="result-loading-step">Fetching website data</div>
+                <div class="result-loading-step">Extracting phishing features</div>
+                <div class="result-loading-step">Preparing the final scan result</div>
+            </div>
+        </div>
+    `;
 
-    if (resultRiskValue) resultRiskValue.textContent = '--';
-    if (resultProgressFill) resultProgressFill.style.width = '12%';
-
-    updateIndicators([
-        'Fetching the website HTML.',
-        'Extracting phishing-related features.',
-        'Sending the feature set to the AI model.'
-    ]);
-
-    if (resultSummaryText) {
-        resultSummaryText.textContent = 'PhishNet AI is analyzing the submitted URL now.';
-    }
-
-    if (resultRecommendationText) {
-        resultRecommendationText.textContent = 'Please wait while the system checks the website for phishing signals.';
-    }
+    cacheResultElements();
 }
 
 function renderScanError(submittedUrl, errorMessage) {
@@ -459,6 +451,10 @@ function renderScanError(submittedUrl, errorMessage) {
         'This may be caused by an invalid URL, website timeout, or backend service issue.'
     ]);
 
+    if (resultPageOverviewText) {
+        resultPageOverviewText.textContent = 'A website snapshot could not be generated because the scan did not complete.';
+    }
+
     if (resultSummaryText) {
         resultSummaryText.textContent = errorMessage || 'The URL could not be analyzed.';
     }
@@ -466,6 +462,7 @@ function renderScanError(submittedUrl, errorMessage) {
     if (resultRecommendationText) {
         resultRecommendationText.textContent = 'Check the URL format, then try again. If the problem continues, verify that the backend and Python AI service are both running.';
     }
+
 }
 
 // === AI Toggle ===

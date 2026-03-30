@@ -118,6 +118,7 @@ app.post('/api/scan', async (req, res) => {
       riskLevel: result.riskLevel,
       riskClass: result.riskClass,
       summary: result.summary,
+      pageOverview: result.pageOverview,
       recommendation: result.recommendation,
       indicators: result.indicators,
       features: result.features,

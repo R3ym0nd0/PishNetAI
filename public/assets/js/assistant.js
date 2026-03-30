@@ -1,7 +1,6 @@
 import { marked } from "https://cdn.jsdelivr.net/npm/marked/lib/marked.esm.js";
 marked.setOptions({ breaks: true });
 
-const storageKey = 'phish_ai_chat';
 const userKey = 'phish_ai_user';
 
 const mainNav = document.querySelector('.main-nav');
@@ -66,17 +65,6 @@ function appendMessageFull(text, who = 'bot') {
 
     aiMessagesFull.appendChild(el);
     aiMessagesFull.scrollTop = aiMessagesFull.scrollHeight;
-}
-
-function saveMessage(text, who) {
-    try {
-        const raw = localStorage.getItem(storageKey);
-        const arr = raw ? JSON.parse(raw) : [];
-        arr.push({ text, who, at: Date.now() });
-        localStorage.setItem(storageKey, JSON.stringify(arr.slice(-200)));
-    } catch (e) {
-        console.warn('failed to store message', e);
-    }
 }
 
 function isCompactAssistantReply(structured) {
@@ -156,34 +144,18 @@ function renderStructuredMessageFull(structured, humanText) {
 
     aiMessagesFull.appendChild(container);
     aiMessagesFull.scrollTop = aiMessagesFull.scrollHeight;
-    saveMessage(fallbackText || structured.summary || JSON.stringify(structured), 'bot');
 }
 
 function loadHistory() {
-    try {
-        const raw = localStorage.getItem(storageKey);
-        if (!raw) {
-            showWelcomeMessage();
-            return;
-        }
-
-        const messages = JSON.parse(raw);
-        if (!messages.length) {
-            showWelcomeMessage();
-            return;
-        }
-
-        messages.forEach((message) => appendMessageFull(message.text, message.who));
-    } catch (e) {
-        console.warn('failed to parse history', e);
-        showWelcomeMessage();
+    if (aiMessagesFull) {
+        aiMessagesFull.innerHTML = '';
     }
+    showWelcomeMessage();
 }
 
 async function sendAssistantMessage(message) {
     hideWelcomeMessage();
     appendMessageFull(message, 'user');
-    saveMessage(message, 'user');
 
     aiInputFull.value = '';
     aiInputFull.disabled = true;
@@ -225,7 +197,6 @@ async function sendAssistantMessage(message) {
                 renderStructuredMessageFull(data.structured, data.reply);
             } else if (data.reply) {
                 appendMessageFull(data.reply, 'bot');
-                saveMessage(data.reply, 'bot');
             } else {
                 throw new Error('No reply from AI');
             }
@@ -248,7 +219,6 @@ async function sendAssistantMessage(message) {
         }
 
         appendMessageFull(msg, 'bot');
-        saveMessage(msg, 'bot');
     } finally {
         if (submitButton) submitButton.disabled = false;
         aiInputFull.disabled = false;

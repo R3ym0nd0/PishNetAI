@@ -165,6 +165,38 @@ function countSensitiveQueryParams(searchParams) {
   return count;
 }
 
+function normalizeWhitespace(value) {
+  return String(value || '').replace(/\s+/g, ' ').trim();
+}
+
+function truncateText(value, maxLength = 180) {
+  const normalized = normalizeWhitespace(value);
+  if (!normalized) return '';
+  if (normalized.length <= maxLength) return normalized;
+  return `${normalized.slice(0, maxLength - 1).trim()}...`;
+}
+
+function extractPageContext($, pageHtml, finalUrl) {
+  $('script, style, noscript').remove();
+
+  const title = truncateText($('title').first().text(), 90);
+  const metaDescription = truncateText(
+    $('meta[name="description"]').attr('content') ||
+    $('meta[property="og:description"]').attr('content') ||
+    '',
+    180
+  );
+  const mainHeading = truncateText($('h1').first().text(), 90);
+  const bodyText = truncateText($('body').text(), 220);
+
+  return {
+    title: title || finalUrl.hostname,
+    metaDescription,
+    mainHeading,
+    snippet: bodyText
+  };
+}
+
 async function resolveIpAddress(hostname) {
   if (!hostname) return null;
 
@@ -276,6 +308,7 @@ async function extractFeatures({ inputUrl, response }) {
   const hasDoubleSlashInPath = finalUrl.pathname.includes('//');
   const punycodeInHost = finalUrl.hostname.includes('xn--');
   const domainIntel = await lookupDomainIntel(finalUrl.hostname);
+  const pageContext = extractPageContext($, pageHtml, finalUrl);
 
   const features = {
     url: finalUrl.toString(),
@@ -331,7 +364,8 @@ async function extractFeatures({ inputUrl, response }) {
     domainAge: domainIntel.domainAge,
     domainAgeDays: domainIntel.domainAgeDays,
     createdAt: domainIntel.createdAt,
-    registrar: domainIntel.registrar
+    registrar: domainIntel.registrar,
+    pageContext
   };
 
   const modelFeatures = {

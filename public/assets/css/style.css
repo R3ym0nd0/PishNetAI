@@ -1685,8 +1685,91 @@ html {
     animation-delay: 0.3s;
 }
 
+.result-content.result-reveal-content .result-body > *:nth-child(6) {
+    animation-delay: 0.36s;
+}
+
 .result-content::before {
     content: none;
+}
+
+.result-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    padding: 26px 24px 10px;
+    text-align: center;
+}
+
+.result-loading-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 16px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, rgba(0, 102, 204, 0.12), rgba(255, 215, 0, 0.12));
+    border: 1px solid rgba(180, 203, 227, 0.95);
+    color: var(--lcc-blue);
+    font-size: 0.84rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.result-loading-title {
+    margin: 0;
+    color: var(--text-primary, #1a202c);
+    font-size: clamp(1.6rem, 3vw, 2.35rem);
+    font-weight: 900;
+    letter-spacing: -0.03em;
+    text-wrap: balance;
+}
+
+.result-loading-text {
+    max-width: 620px;
+    margin: 0;
+    color: var(--text-secondary, #4a5568);
+    font-size: 1rem;
+    line-height: 1.75;
+    text-wrap: balance;
+}
+
+.result-loading-bar {
+    width: min(100%, 520px);
+    height: 14px;
+    padding: 2px;
+    border-radius: 999px;
+    background: rgba(212, 225, 238, 0.88);
+    overflow: hidden;
+}
+
+.result-loading-bar-fill {
+    display: block;
+    width: 38%;
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, var(--lcc-blue), var(--lcc-blue-soft), var(--lcc-gold));
+    background-size: 200% 100%;
+    animation: resultLoadingShift 1.2s ease-in-out infinite;
+}
+
+.result-loading-steps {
+    width: min(100%, 620px);
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.result-loading-step {
+    padding: 14px 16px;
+    border-radius: 16px;
+    background: linear-gradient(145deg, rgba(246, 250, 255, 0.96), rgba(233, 242, 250, 0.94));
+    border: 1px solid rgba(194, 214, 232, 0.92);
+    color: var(--text-primary, #1a202c);
+    font-size: 0.9rem;
+    font-weight: 700;
+    line-height: 1.45;
 }
 
 @keyframes resultPanelFadeIn {
@@ -1697,6 +1780,21 @@ html {
     to {
         opacity: 1;
         transform: translateY(0);
+    }
+}
+
+@keyframes resultLoadingShift {
+    0% {
+        transform: translateX(-28%);
+        background-position: 0% 50%;
+    }
+    50% {
+        transform: translateX(128%);
+        background-position: 100% 50%;
+    }
+    100% {
+        transform: translateX(-28%);
+        background-position: 0% 50%;
     }
 }
 
@@ -1804,10 +1902,11 @@ html {
         grid-template-areas:
             "info info"
             "risk risk"
+            "indicators overview"
             "indicators summary"
             "indicators recommendation";
         gap: 20px;
-        align-items: stretch;
+        align-items: start;
     }
 
     .result-info-grid {
@@ -1818,10 +1917,17 @@ html {
         max-width: none;
     }
 
-    .result-indicators,
+    .result-indicators {
+        height: 100%;
+        align-self: stretch;
+        min-height: 0;
+    }
+
+    .result-page-overview,
     .result-summary,
     .result-recommendation {
-        height: 100%;
+        height: auto;
+        align-self: start;
     }
 }
 
@@ -1848,6 +1954,13 @@ html {
 }
 
 .result-recommendation-icon {
+    width: 20px;
+    height: 20px;
+    color: var(--lcc-blue);
+    flex-shrink: 0;
+}
+
+.result-page-overview-icon {
     width: 20px;
     height: 20px;
     color: var(--lcc-blue);
@@ -1969,6 +2082,14 @@ html {
     margin: 0;
     display: grid;
     gap: 10px;
+    min-height: 0;
+}
+
+.result-indicators.expanded .result-indicators-list {
+    max-height: 420px;
+    overflow-y: auto;
+    padding-right: 8px;
+    scrollbar-gutter: stable;
 }
 
 .result-indicators-list.collapsed li:nth-child(n+5) {
@@ -2012,7 +2133,12 @@ html {
     .result-indicators-list li {
         font-size: 1rem;
     }
+
+    .result-indicators.expanded .result-indicators-list {
+        max-height: 460px;
+    }
     
+    .result-page-overview p,
     .result-summary p,
     .result-recommendation p {
         font-size: 1.05rem;
@@ -2029,6 +2155,17 @@ html {
     border-radius: 50%;
     background: linear-gradient(135deg, var(--lcc-blue-soft), var(--lcc-gold));
     box-shadow: 0 0 0 4px rgba(30, 90, 150, 0.12);
+}
+
+.result-page-overview {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 18px 20px;
+    grid-area: overview;
+    background: linear-gradient(145deg, rgba(244, 249, 255, 0.98), rgba(235, 243, 251, 0.96));
+    border-radius: 18px;
+    border: 1px solid rgba(196, 216, 233, 0.9);
 }
 
 .result-summary {
@@ -2055,6 +2192,7 @@ html {
     border: 1px solid rgba(197, 216, 234, 0.92);
 }
 
+.result-page-overview-label,
 .result-summary-label,
 .result-recommendation-label {
     color: var(--text-secondary, #4a5568);
@@ -2064,6 +2202,7 @@ html {
     letter-spacing: 0.08em;
 }
 
+.result-page-overview p,
 .result-summary p,
 .result-recommendation p {
     color: var(--text-primary, #1a202c);
@@ -2073,6 +2212,7 @@ html {
 }
 
 .result-indicators-header,
+.result-page-overview-header,
 .result-summary-header,
 .result-recommendation-header {
     display: flex;
@@ -2115,6 +2255,7 @@ html {
         grid-template-areas:
             "risk risk"
             "info info"
+            "overview overview"
             "indicators indicators"
             "summary recommendation";
         gap: 18px;
@@ -2138,6 +2279,11 @@ html {
         grid-template-columns: 1fr;
     }
 
+    .result-indicators.expanded .result-indicators-list {
+        max-height: 360px;
+    }
+
+    .result-page-overview,
     .result-summary,
     .result-recommendation,
     .result-indicators {
@@ -2146,6 +2292,30 @@ html {
 }
 
 @media (max-width: 768px) {
+    .result-loading {
+        padding: 22px 12px 8px;
+        gap: 14px;
+    }
+
+    .result-loading-title {
+        font-size: 1.9rem;
+    }
+
+    .result-loading-text {
+        font-size: 0.95rem;
+        line-height: 1.65;
+    }
+
+    .result-loading-steps {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .result-loading-step {
+        padding: 13px 14px;
+        font-size: 0.88rem;
+    }
+
     .result-content {
         padding: 6px 0 0;
         border-radius: 0;
@@ -2157,6 +2327,7 @@ html {
         grid-template-areas:
             "info"
             "risk"
+            "overview"
             "indicators"
             "summary"
             "recommendation";
@@ -2365,7 +2536,13 @@ html {
         gap: 12px;
     }
 
+    .result-indicators.expanded .result-indicators-list {
+        max-height: 300px;
+        padding-right: 6px;
+    }
+
     .result-info-item,
+    .result-page-overview,
     .result-indicators,
     .result-summary,
     .result-recommendation {
@@ -2435,6 +2612,23 @@ html {
 }
 
 @media (max-width: 420px) {
+    .result-loading-badge {
+        font-size: 0.76rem;
+        padding: 9px 13px;
+    }
+
+    .result-loading-title {
+        font-size: 1.65rem;
+    }
+
+    .result-loading-text {
+        font-size: 0.9rem;
+    }
+
+    .result-loading-bar {
+        height: 12px;
+    }
+
     .result-content {
         padding: 4px 0 0;
         border-radius: 0;
