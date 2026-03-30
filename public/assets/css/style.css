@@ -740,7 +740,7 @@ html {
         background: #fff;
         z-index: 2;
         margin-top: auto;
-        padding-bottom: calc(22px + env(safe-area-inset-bottom, 0px));
+        padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px));
     }
 
     body.noscroll { overflow: hidden; height: 100dvh; }
