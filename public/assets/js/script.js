@@ -263,7 +263,7 @@ function showAiWelcome() {
     welcome.className = 'ai-welcome';
     welcome.id = 'aiWelcome';
     welcome.innerHTML = `
-        <img src="public/assets/images/logo.png" alt="PhishNet AI logo" class="ai-welcome-logo">
+        <img src="assets/images/logo.png" alt="PhishNet AI logo" class="ai-welcome-logo">
         <h3>How can I help you today?</h3>
         <p>I'm Phinny, your phishing-focused assistant. Paste a suspicious URL, message, or ask what to do next.</p>
     `;
