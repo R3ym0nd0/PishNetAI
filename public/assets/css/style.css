@@ -332,6 +332,7 @@ html {
     justify-content: center;
     min-height: 100%;
     margin: auto;
+    animation: aiWelcomeFadeIn 0.45s ease both;
 }
 
 .ai-welcome-logo {
@@ -339,6 +340,7 @@ html {
     height: 48px;
     object-fit: contain;
     margin-bottom: 12px;
+    animation: aiWelcomeRise 0.5s ease 0.06s both;
 }
 
 .ai-welcome h3 {
@@ -346,6 +348,7 @@ html {
     font-weight: 700;
     color: var(--lcc-blue);
     margin-bottom: 8px;
+    animation: aiWelcomeRise 0.5s ease 0.12s both;
 }
 
 .ai-welcome p {
@@ -353,6 +356,23 @@ html {
     color: var(--text-soft);
     line-height: 1.6;
     max-width: 280px;
+    animation: aiWelcomeRise 0.5s ease 0.18s both;
+}
+
+@keyframes aiWelcomeFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes aiWelcomeRise {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .ai-msg {
@@ -719,6 +739,7 @@ html {
         background: #fff;
         z-index: 2;
         margin-top: auto;
+        padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px));
     }
 
     body.noscroll { overflow: hidden; height: 100vh; }
@@ -732,6 +753,32 @@ html {
     box-shadow: var(--shadow);
 }
 
+.reveal-on-scroll {
+    opacity: 0;
+    transform: translateY(22px);
+    transition:
+        opacity 0.55s ease,
+        transform 0.55s ease;
+    will-change: opacity, transform;
+}
+
+.reveal-on-scroll.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.reveal-on-scroll[data-reveal-delay="1"] {
+    transition-delay: 0.08s;
+}
+
+.reveal-on-scroll[data-reveal-delay="2"] {
+    transition-delay: 0.14s;
+}
+
+.reveal-on-scroll[data-reveal-delay="3"] {
+    transition-delay: 0.2s;
+}
+
 @keyframes fadeInUp {
     from {
         opacity: 0;
@@ -740,6 +787,15 @@ html {
     to {
         opacity: 1;
         transform: translateY(0);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .reveal-on-scroll,
+    .reveal-on-scroll.is-visible {
+        opacity: 1;
+        transform: none;
+        transition: none;
     }
 }
 
@@ -1182,6 +1238,14 @@ html {
 
 .tutorial-panel {
     overflow: hidden;
+    background:
+        radial-gradient(circle at top right, rgba(0, 102, 204, 0.08), transparent 28%),
+        radial-gradient(circle at bottom left, rgba(255, 215, 0, 0.08), transparent 24%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(246, 250, 255, 0.97));
+    border: 1px solid rgba(185, 207, 228, 0.92);
+    box-shadow:
+        0 18px 38px rgba(0, 51, 102, 0.08),
+        inset 0 1px 0 rgba(255, 255, 255, 0.8);
 }
 
 .tutorial-panel .section-heading,
@@ -1194,15 +1258,36 @@ html {
     width: 100%;
     margin: 0 auto;
     aspect-ratio: 16 / 9;
-    border-radius: 20px;
+    padding: 14px;
+    border-radius: 28px;
     overflow: hidden;
-    box-shadow: 0 16px 36px rgba(0, 51, 102, 0.12);
+    background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.96), rgba(233, 242, 250, 0.94)),
+        radial-gradient(circle at top right, rgba(0, 102, 204, 0.14), transparent 38%);
+    border: 1px solid rgba(189, 209, 228, 0.95);
+    box-shadow:
+        0 22px 44px rgba(0, 51, 102, 0.12),
+        inset 0 1px 0 rgba(255, 255, 255, 0.85);
+}
+
+.video-wrapper::before {
+    content: "";
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    right: 14px;
+    height: 18px;
+    border-radius: 16px 16px 0 0;
+    background: linear-gradient(90deg, rgba(0, 51, 102, 0.08), rgba(30, 90, 150, 0.05));
+    pointer-events: none;
 }
 
 .video-wrapper iframe {
     width: 100%;
     height: 100%;
     border: 0;
+    border-radius: 18px;
+    box-shadow: 0 10px 26px rgba(0, 51, 102, 0.16);
 }
 
 @media (min-width: 1024px) {
@@ -1226,6 +1311,7 @@ html {
     max-width: 70ch;
     font-size: 1.02rem;
     line-height: 1.8;
+    margin-inline: auto;
 }
 
 .url-form {
@@ -2724,25 +2810,46 @@ html {
     gap: 14px;
 }
 
+.tips-panel,
+.score-guide {
+    background:
+        radial-gradient(circle at top right, rgba(0, 102, 204, 0.07), transparent 26%),
+        radial-gradient(circle at bottom left, rgba(255, 215, 0, 0.08), transparent 22%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(246, 250, 255, 0.97));
+    border: 1px solid rgba(187, 208, 228, 0.94);
+    box-shadow:
+        0 18px 38px rgba(0, 51, 102, 0.08),
+        inset 0 1px 0 rgba(255, 255, 255, 0.82);
+}
+
 .info-item,
 .score-list li {
-    padding: 16px;
-    border-radius: 14px;
-    background: #f3f8fd;
-    border: 1px solid var(--panel-border);
+    padding: 18px;
+    border-radius: 18px;
+    background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.94), rgba(236, 244, 251, 0.92));
+    border: 1px solid rgba(194, 214, 232, 0.92);
+    box-shadow:
+        0 10px 24px rgba(0, 51, 102, 0.05),
+        inset 0 1px 0 rgba(255, 255, 255, 0.86);
 }
 
 .info-item h3 {
     margin-bottom: 8px;
     color: var(--lcc-blue);
-    font-size: 1rem;
+    font-size: 1.08rem;
+    line-height: 1.35;
 }
 
 .info-kicker {
     display: inline-block;
-    margin-bottom: 10px;
-    color: var(--lcc-blue-soft);
-    font-size: 0.76rem;
+    margin-bottom: 12px;
+    padding: 7px 11px;
+    border-radius: 999px;
+    color: var(--lcc-blue);
+    background: rgba(0, 102, 204, 0.08);
+    border: 1px solid rgba(180, 204, 228, 0.88);
+    font-size: 0.74rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.08em;
@@ -2760,22 +2867,32 @@ html {
 
 .score-groups {
     display: grid;
-    gap: 14px;
+    gap: 16px;
 }
 
 .score-group {
-    padding: 16px;
-    border-radius: 16px;
-    border: 1px solid var(--panel-border);
+    padding: 20px 20px 18px;
+    border-radius: 18px;
+    border: 1px solid rgba(191, 212, 231, 0.88);
+    box-shadow:
+        0 14px 30px rgba(0, 51, 102, 0.06),
+        inset 0 1px 0 rgba(255, 255, 255, 0.7);
+    position: relative;
+    overflow: hidden;
 }
 
 .score-group-label {
-    display: inline-block;
-    margin-bottom: 12px;
-    font-size: 0.78rem;
-    font-weight: 700;
+    display: block;
+    margin-bottom: 16px;
+    padding: 0 0 12px;
+    border-radius: 0;
+    font-size: 0.92rem;
+    font-weight: 800;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.14em;
+    background: transparent;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.48);
+    box-shadow: none;
 }
 
 .score-group .score-list {
@@ -2784,33 +2901,65 @@ html {
 }
 
 .score-group .score-list li {
-    padding: 12px 14px;
+    padding: 14px 14px 14px 18px;
     border-radius: 12px;
-    background: rgba(255, 255, 255, 0.55);
+    background: rgba(255, 255, 255, 0.56);
+    border: 1px solid rgba(255, 255, 255, 0.42);
+    box-shadow: none;
 }
 
 .safe-group {
-    background: rgba(31, 157, 85, 0.07);
+    background:
+        linear-gradient(145deg, rgba(31, 157, 85, 0.12), rgba(31, 157, 85, 0.04)),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(247, 252, 248, 0.96));
+    border-color: rgba(31, 157, 85, 0.18);
 }
 
 .safe-group .score-group-label {
     color: var(--safe);
 }
 
+.safe-group .score-list li {
+    border-left: 3px solid rgba(31, 157, 85, 0.72);
+}
+
 .caution-group {
-    background: rgba(183, 121, 31, 0.08);
+    background:
+        linear-gradient(145deg, rgba(183, 121, 31, 0.14), rgba(183, 121, 31, 0.05)),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(255, 250, 244, 0.96));
+    border-color: rgba(183, 121, 31, 0.2);
 }
 
 .caution-group .score-group-label {
     color: var(--caution);
 }
 
+.caution-group .score-list li {
+    border-left: 3px solid rgba(183, 121, 31, 0.78);
+}
+
 .danger-group {
-    background: rgba(197, 48, 48, 0.07);
+    background:
+        linear-gradient(145deg, rgba(197, 48, 48, 0.14), rgba(197, 48, 48, 0.05)),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(255, 246, 246, 0.96));
+    border-color: rgba(197, 48, 48, 0.2);
 }
 
 .danger-group .score-group-label {
     color: var(--danger);
+}
+
+.danger-group .score-list li {
+    border-left: 3px solid rgba(197, 48, 48, 0.8);
+}
+
+.score-list strong {
+    display: inline-block;
+    min-width: 2.2ch;
+    margin-right: 8px;
+    color: var(--text-primary);
+    font-size: 1.02rem;
+    font-weight: 800;
 }
 
 .site-footer {
