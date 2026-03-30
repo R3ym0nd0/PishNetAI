@@ -5,6 +5,7 @@ marked.setOptions({ breaks: true });
 const urlForm = document.getElementById("urlForm");
 const urlInput = document.getElementById("urlInput");
 const resultSection = document.getElementById("resultSection");
+const resultsPanel = document.getElementById("results");
 const mainNav = document.querySelector(".main-nav");
 const navToggle = document.querySelector(".nav-toggle");
 const navLinks = document.querySelectorAll(".nav-links a, .nav-links .nav-assistant");
@@ -17,6 +18,15 @@ const aiInput = document.getElementById('aiInput');
 const aiMessages = document.getElementById('aiMessages');
 const STORAGE_KEY = 'phish_ai_chat';
 const aiFab = document.getElementById('aiFab');
+let resultStatusBadge = resultSection?.querySelector('.status-badge');
+let resultGrade = resultSection?.querySelector('.result-grade');
+let resultSite = resultSection?.querySelector('.result-site');
+let resultInfoValues = resultSection?.querySelectorAll('.result-info-value') || [];
+let resultRiskValue = resultSection?.querySelector('.result-risk-value');
+let resultProgressFill = resultSection?.querySelector('.result-progress-fill');
+let resultIndicatorsList = resultSection?.querySelector('.result-indicators-list');
+let resultSummaryText = resultSection?.querySelector('.result-summary p');
+let resultRecommendationText = resultSection?.querySelector('.result-recommendation p');
 
 // Auto-resize textarea
 if (aiInput) {
@@ -40,6 +50,125 @@ const RENDER_API_BASE = 'https://phishnetai-fb30.onrender.com';
 let previousFocus = null;
 let focusTrapHandler = null;
 
+function cacheResultElements() {
+    resultStatusBadge = resultSection?.querySelector('.status-badge');
+    resultGrade = resultSection?.querySelector('.result-grade');
+    resultInfoValues = resultSection?.querySelectorAll('.result-info-value') || [];
+    resultRiskValue = resultSection?.querySelector('.result-risk-value');
+    resultProgressFill = resultSection?.querySelector('.result-progress-fill');
+    resultIndicatorsList = resultSection?.querySelector('.result-indicators-list');
+    resultSummaryText = resultSection?.querySelector('.result-summary p');
+    resultRecommendationText = resultSection?.querySelector('.result-recommendation p');
+}
+
+function ensureResultTemplate() {
+    if (!resultSection || resultSection.querySelector('.result-header')) {
+        cacheResultElements();
+        return;
+    }
+
+    resultSection.innerHTML = `
+        <div class="result-header">
+            <div class="result-title-group">
+                <span class="status-badge low">Low Risk</span>
+                <h3 class="result-grade">Grade: A+</h3>
+            </div>
+        </div>
+
+        <div class="result-body">
+            <div class="result-info-grid">
+                <div class="result-info-item">
+                    <svg class="result-info-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
+                    </svg>
+                    <span class="result-info-label">IP Address</span>
+                    <span class="result-info-value">Unavailable</span>
+                </div>
+                <div class="result-info-item">
+                    <svg class="result-info-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+                    </svg>
+                    <span class="result-info-label">Report Time</span>
+                    <span class="result-info-value">Unavailable</span>
+                </div>
+                <div class="result-info-item">
+                    <svg class="result-info-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
+                    </svg>
+                    <span class="result-info-label">SSL Status</span>
+                    <span class="result-info-value">Unavailable</span>
+                </div>
+                <div class="result-info-item">
+                    <svg class="result-info-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+                    </svg>
+                    <span class="result-info-label">Domain Age</span>
+                    <span class="result-info-value">Unavailable</span>
+                </div>
+            </div>
+
+            <div class="result-risk-section">
+                <div class="result-risk-header">
+                    <span class="result-risk-label">Risk Score</span>
+                    <span class="result-risk-value">--</span>
+                </div>
+                <div class="result-progress-bar">
+                    <div class="result-progress-fill" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <div class="result-indicators">
+                <div class="result-indicators-header">
+                    <svg class="result-indicators-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                    </svg>
+                    <span class="result-indicators-label">Indicators</span>
+                </div>
+                <ul class="result-indicators-list"></ul>
+            </div>
+
+            <div class="result-summary">
+                <div class="result-summary-header">
+                    <svg class="result-summary-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+                    </svg>
+                    <span class="result-summary-label">Summary</span>
+                </div>
+                <p></p>
+            </div>
+
+            <div class="result-recommendation">
+                <div class="result-recommendation-header">
+                    <svg class="result-recommendation-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7zm2.85 11.1l-.85.6V16h-4v-2.3l-.85-.6C7.8 12.16 7 10.63 7 9c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.63-.8 3.16-2.15 4.1z"/>
+                    </svg>
+                    <span class="result-recommendation-label">Recommendation</span>
+                </div>
+                <p></p>
+            </div>
+        </div>
+    `;
+
+    cacheResultElements();
+}
+
+function showResultsPanel() {
+    resultsPanel?.classList.remove('is-hidden');
+}
+
+function animateResultsReveal() {
+    if (!resultsPanel || !resultSection) return;
+
+    resultsPanel.classList.remove('result-reveal');
+    resultSection.classList.remove('result-reveal-content');
+
+    // Force reflow so the animation can restart on repeated scans.
+    void resultsPanel.offsetWidth;
+
+    resultsPanel.classList.add('result-reveal');
+    resultSection.classList.add('result-reveal-content');
+}
+
 // === Navigation toggle ===
 if (mainNav && navToggle) {
     navToggle.addEventListener("click", () => {
@@ -55,14 +184,47 @@ if (mainNav && navToggle) {
     });
 }
 
-// === URL Form Scroll ===
+// === URL Scan Submission ===
 if (urlForm) {
-    urlForm.addEventListener("submit", (event) => {
+    urlForm.addEventListener("submit", async (event) => {
         event.preventDefault();
         const submittedUrl = urlInput.value.trim();
-        console.log("URL submitted for future analysis:", submittedUrl);
-        if (!submittedUrl) return;
+        if (!submittedUrl) {
+            renderScanError('', 'Please enter a website URL before scanning.');
+            resultSection?.scrollIntoView({ behavior: "smooth", block: "start" });
+            return;
+        }
+
+        renderLoadingState(submittedUrl);
         resultSection.scrollIntoView({ behavior: "smooth", block: "start" });
+
+        const submitButton = urlForm.querySelector('button[type="submit"]');
+        if (submitButton) submitButton.disabled = true;
+        urlInput.disabled = true;
+
+        try {
+            const response = await fetch(`${getApiBase()}/api/scan`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({ url: submittedUrl })
+            });
+
+            const data = await readJsonResponse(response);
+            if (!response.ok || !data.ok) {
+                throw new Error(data.error || 'The URL could not be analyzed.');
+            }
+
+            renderScanResult(data);
+        } catch (error) {
+            console.error('Scan request failed', error);
+            renderScanError(submittedUrl, error.message || 'The URL could not be analyzed.');
+        } finally {
+            if (submitButton) submitButton.disabled = false;
+            urlInput.disabled = false;
+        }
     });
 }
 
@@ -128,6 +290,182 @@ function getApiBase() {
     if (hostname === 'localhost' || hostname === '127.0.0.1') return origin;
     if (origin === NETLIFY_FRONTEND_ORIGIN) return RENDER_API_BASE;
     return origin;
+}
+
+function getGradeFromRiskScore(riskScore) {
+    if (riskScore <= 5) return 'A+';
+    if (riskScore <= 10) return 'A';
+    if (riskScore <= 20) return 'B+';
+    if (riskScore <= 30) return 'B';
+    if (riskScore <= 40) return 'C+';
+    if (riskScore <= 55) return 'C';
+    if (riskScore <= 70) return 'D+';
+    if (riskScore <= 85) return 'D';
+    return 'F';
+}
+
+function getStatusClass(prediction, riskScore) {
+    if (prediction === 'Phishing' || riskScore > 60) return 'high';
+    if (riskScore > 25) return 'medium';
+    return 'low';
+}
+
+function formatTimestamp(date = new Date()) {
+    return new Intl.DateTimeFormat('en-US', {
+        month: 'long',
+        day: 'numeric',
+        year: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit'
+    }).format(date);
+}
+
+function setStatusBadge(text, statusClass) {
+    if (!resultStatusBadge) return;
+    resultStatusBadge.textContent = text;
+    resultStatusBadge.classList.remove('low', 'medium', 'high');
+    if (statusClass) resultStatusBadge.classList.add(statusClass);
+}
+
+function updateIndicators(indicators = []) {
+    if (!resultIndicatorsList) return;
+    resultIndicatorsList.innerHTML = '';
+    resultIndicatorsList.classList.remove('collapsed');
+
+    const existingToggle = resultSection?.querySelector('.result-indicators-toggle');
+    if (existingToggle) existingToggle.remove();
+
+    indicators.forEach((indicator) => {
+        const item = document.createElement('li');
+        item.textContent = indicator;
+        resultIndicatorsList.appendChild(item);
+    });
+
+    const collapseThreshold = 4;
+    if (indicators.length <= collapseThreshold) return;
+
+    resultIndicatorsList.classList.add('collapsed');
+
+    const toggleButton = document.createElement('button');
+    toggleButton.type = 'button';
+    toggleButton.className = 'result-indicators-toggle';
+    toggleButton.textContent = `Read more (${indicators.length - collapseThreshold} more)`;
+    toggleButton.setAttribute('aria-expanded', 'false');
+
+    toggleButton.addEventListener('click', () => {
+        const expanded = toggleButton.getAttribute('aria-expanded') === 'true';
+        resultIndicatorsList.classList.toggle('collapsed', expanded);
+        toggleButton.setAttribute('aria-expanded', String(!expanded));
+        toggleButton.textContent = expanded
+            ? `Read more (${indicators.length - collapseThreshold} more)`
+            : 'Show less';
+    });
+
+    resultIndicatorsList.insertAdjacentElement('afterend', toggleButton);
+}
+
+async function readJsonResponse(response) {
+    const text = await response.text();
+
+    try {
+        return text ? JSON.parse(text) : {};
+    } catch (error) {
+        return {
+            ok: false,
+            error: text || 'The server returned an unexpected response.'
+        };
+    }
+}
+
+// This updates the existing result card while keeping the current UI structure intact.
+function renderScanResult(data) {
+    ensureResultTemplate();
+    showResultsPanel();
+    animateResultsReveal();
+    const riskScore = Number(data.riskScore) || 0;
+    const grade = data.grade || getGradeFromRiskScore(riskScore);
+    const statusClass = data.riskClass || getStatusClass(data.prediction, riskScore);
+    const statusLabel = data.prediction === 'Phishing' ? 'High Risk' : (data.riskLevel || 'Low Risk');
+    const featureData = data.features || {};
+
+    setStatusBadge(statusLabel, statusClass);
+
+    if (resultGrade) resultGrade.textContent = `Grade: ${grade}`;
+    if (resultInfoValues[0]) resultInfoValues[0].textContent = featureData.ipAddress || 'Unavailable';
+    if (resultInfoValues[1]) resultInfoValues[1].textContent = formatTimestamp();
+    if (resultInfoValues[2]) resultInfoValues[2].textContent = featureData.sslStatus || 'Unavailable';
+    if (resultInfoValues[3]) resultInfoValues[3].textContent = featureData.domainAge || 'Not available';
+    if (resultRiskValue) resultRiskValue.textContent = `${riskScore}%`;
+    if (resultProgressFill) resultProgressFill.style.width = `${riskScore}%`;
+
+    updateIndicators(data.indicators || []);
+
+    if (resultSummaryText) {
+        resultSummaryText.textContent = data.summary || 'The scan completed, but no summary was returned.';
+    }
+
+    if (resultRecommendationText) {
+        resultRecommendationText.textContent = data.recommendation || 'Review the URL carefully before continuing.';
+    }
+}
+
+function renderLoadingState(submittedUrl) {
+    ensureResultTemplate();
+    showResultsPanel();
+    animateResultsReveal();
+    setStatusBadge('Scanning', 'medium');
+    if (resultGrade) resultGrade.textContent = 'Grade: --';
+
+    resultInfoValues.forEach((node, index) => {
+        const defaults = ['Resolving...', formatTimestamp(), 'Checking...', 'Checking...'];
+        if (node) node.textContent = defaults[index] || 'Checking...';
+    });
+
+    if (resultRiskValue) resultRiskValue.textContent = '--';
+    if (resultProgressFill) resultProgressFill.style.width = '12%';
+
+    updateIndicators([
+        'Fetching the website HTML.',
+        'Extracting phishing-related features.',
+        'Sending the feature set to the AI model.'
+    ]);
+
+    if (resultSummaryText) {
+        resultSummaryText.textContent = 'PhishNet AI is analyzing the submitted URL now.';
+    }
+
+    if (resultRecommendationText) {
+        resultRecommendationText.textContent = 'Please wait while the system checks the website for phishing signals.';
+    }
+}
+
+function renderScanError(submittedUrl, errorMessage) {
+    ensureResultTemplate();
+    showResultsPanel();
+    animateResultsReveal();
+    setStatusBadge('Scan Error', 'high');
+    if (resultGrade) resultGrade.textContent = 'Grade: --';
+
+    resultInfoValues.forEach((node, index) => {
+        const defaults = ['Unavailable', formatTimestamp(), 'Unavailable', 'Unavailable'];
+        if (node) node.textContent = defaults[index] || 'Unavailable';
+    });
+
+    if (resultRiskValue) resultRiskValue.textContent = 'N/A';
+    if (resultProgressFill) resultProgressFill.style.width = '100%';
+
+    updateIndicators([
+        'The scanner could not complete the analysis.',
+        'This may be caused by an invalid URL, website timeout, or backend service issue.'
+    ]);
+
+    if (resultSummaryText) {
+        resultSummaryText.textContent = errorMessage || 'The URL could not be analyzed.';
+    }
+
+    if (resultRecommendationText) {
+        resultRecommendationText.textContent = 'Check the URL format, then try again. If the problem continues, verify that the backend and Python AI service are both running.';
+    }
 }
 
 // === AI Toggle ===

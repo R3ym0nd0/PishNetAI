@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node app.js",
     "dev": "node app.js",
+    "train:model": "python ai-service/train_model.py",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -19,7 +20,12 @@
     "url": "https://github.com/R3ym0nd0/PishNetAI/issues"
   },
   "homepage": "https://github.com/R3ym0nd0/PishNetAI#readme",
+  "overrides": {
+    "path-to-regexp": "^8.4.0"
+  },
   "dependencies": {
+    "axios": "^1.8.4",
+    "cheerio": "^1.0.0",
     "cors": "^2.8.6",
     "dotenv": "^17.3.1",
     "express": "^5.2.1",
