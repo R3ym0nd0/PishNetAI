@@ -1,6 +1,7 @@
 const axios = require('axios');
 
 const DEFAULT_AI_SERVICE_URL = process.env.AI_SERVICE_URL || 'http://127.0.0.1:5001/api/predict';
+const AI_SERVICE_TIMEOUT_MS = Number(process.env.AI_SERVICE_TIMEOUT_MS || 20000);
 
 async function predictPhishingRisk(modelFeatures) {
   try {
@@ -8,7 +9,7 @@ async function predictPhishingRisk(modelFeatures) {
       DEFAULT_AI_SERVICE_URL,
       modelFeatures,
       {
-        timeout: 8000,
+        timeout: AI_SERVICE_TIMEOUT_MS,
         headers: {
           'Content-Type': 'application/json'
         }
