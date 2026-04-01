@@ -1,7 +1,10 @@
 import { marked } from "https://cdn.jsdelivr.net/npm/marked/lib/marked.esm.js";
 marked.setOptions({ breaks: true });
 
-const userKey = 'phish_ai_user';
+const authTokenKey = 'phish_ai_token';
+const authUserKey = 'phish_ai_user';
+const activeChatKey = 'phish_ai_active_chat';
+const AI_HISTORY_LIMIT = 16;
 
 const mainNav = document.querySelector('.main-nav');
 const navToggle = document.querySelector('.nav-toggle');
@@ -11,34 +14,116 @@ const aiMessagesFull = document.getElementById('aiMessagesFull');
 const aiFormFull = document.getElementById('aiFormFull');
 const aiInputFull = document.getElementById('aiInputFull');
 const userDisplay = document.getElementById('userDisplay');
-const quickPrompts = document.querySelectorAll('.assistant-prompt');
-const assistantChat = document.querySelector('.assistant-chat');
-const NETLIFY_FRONTEND_ORIGIN = 'https://phishnetai.netlify.app';
-const RENDER_API_BASE = 'https://phishnetai-fb30.onrender.com';
+const profileCard = document.getElementById('profileCard');
+const profileName = document.getElementById('profileName');
+const chatTitle = document.querySelector('.chat-title');
+const chatList = document.getElementById('chatList');
+const newChatBtn = document.getElementById('newChatBtn');
+const logoutBtn = document.getElementById('logoutBtn');
+const authActions = document.getElementById('authActions');
+const signupBtn = document.getElementById('signupBtn');
+const signinBtn = document.getElementById('signinBtn');
+const confirmOverlay = document.getElementById('confirmOverlay');
+const confirmTitle = document.getElementById('confirmTitle');
+const confirmText = document.getElementById('confirmText');
+const confirmCancelBtn = document.getElementById('confirmCancelBtn');
+const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
 
-// Sidebar elements
 const sidebar = document.getElementById('sidebar');
 const menuToggleBtn = document.getElementById('menuToggleBtn');
 const sidebarCloseBtn = document.getElementById('sidebarCloseBtn');
 const mobileOverlay = document.getElementById('mobileOverlay');
 
-// Sidebar state
+const NETLIFY_FRONTEND_ORIGIN = 'https://phishnetai.netlify.app';
+const RENDER_API_BASE = 'https://phishnetai-fb30.onrender.com';
+
 let isSidebarOpen = false;
+let currentUser = null;
+let currentChatId = null;
+let assistantConversationHistory = [];
+let chatSummaries = [];
+let openChatMenuId = null;
+let pendingDeleteChat = null;
+let pendingConfirmAction = null;
 
 function getApiBase() {
     const { origin, hostname } = window.location;
-    if (hostname === 'localhost' || hostname === '127.0.0.1') {
-        return origin;
-    }
-    if (origin === NETLIFY_FRONTEND_ORIGIN) {
-        return RENDER_API_BASE;
-    }
+    if (hostname === 'localhost' || hostname === '127.0.0.1') return origin;
+    if (origin === NETLIFY_FRONTEND_ORIGIN) return RENDER_API_BASE;
     return origin;
+}
+
+function getStoredToken() {
+    return localStorage.getItem(authTokenKey) || '';
+}
+
+function getActiveChatId() {
+    return localStorage.getItem(activeChatKey) || '';
+}
+
+function setActiveChatId(chatId) {
+    if (chatId) {
+        localStorage.setItem(activeChatKey, chatId);
+    } else {
+        localStorage.removeItem(activeChatKey);
+    }
+}
+
+function getAuthHeaders() {
+    const token = getStoredToken();
+    return token ? { Authorization: `Bearer ${token}` } : {};
+}
+
+async function apiFetch(path, options = {}) {
+    const headers = {
+        Accept: 'application/json',
+        ...(options.body ? { 'Content-Type': 'application/json' } : {}),
+        ...getAuthHeaders(),
+        ...(options.headers || {})
+    };
+
+    const response = await fetch(`${getApiBase()}${path}`, {
+        ...options,
+        headers
+    });
+
+    const text = await response.text();
+    let data = {};
+
+    try {
+        data = text ? JSON.parse(text) : {};
+    } catch (error) {
+        data = { ok: false, error: text || 'Unexpected response from server.' };
+    }
+
+    if (!response.ok) {
+        const err = new Error(data.error || `Request failed with status ${response.status}`);
+        err.status = response.status;
+        err.data = data;
+        throw err;
+    }
+
+    return data;
+}
+
+function setStoredAuth(token, user) {
+    if (token) {
+        localStorage.setItem(authTokenKey, token);
+    } else {
+        localStorage.removeItem(authTokenKey);
+    }
+
+    if (user?.name) {
+        localStorage.setItem(authUserKey, user.name);
+    } else {
+        localStorage.removeItem(authUserKey);
+    }
 }
 
 function showWelcomeMessage() {
     const existing = document.querySelector('.welcome-message');
     if (existing) existing.remove();
+
     const welcome = document.createElement('div');
     welcome.className = 'welcome-message';
     welcome.innerHTML = `
@@ -60,102 +145,301 @@ function appendMessageFull(text, who = 'bot') {
     hideWelcomeMessage();
     const el = document.createElement('div');
     el.className = `ai-msg ${who}`;
-
-    el.innerHTML = marked.parse(text);
-
+    el.innerHTML = marked.parse(String(text || ''));
     aiMessagesFull.appendChild(el);
     aiMessagesFull.scrollTop = aiMessagesFull.scrollHeight;
 }
 
-function isCompactAssistantReply(structured) {
-    const verdict = String(structured?.verdict || structured?.raw?.verdict || '').trim().toUpperCase();
-    return verdict === 'INPUT NEEDED' || verdict === 'ANALYSIS NOT APPLICABLE' || verdict === 'GUIDANCE';
+function renderConversation() {
+    aiMessagesFull.innerHTML = '';
+
+    if (!assistantConversationHistory.length) {
+        showWelcomeMessage();
+        return;
+    }
+
+    assistantConversationHistory.forEach((entry) => {
+        appendMessageFull(entry.content, entry.role === 'assistant' ? 'bot' : 'user');
+    });
 }
 
-function renderStructuredMessageFull(structured, humanText) {
-    hideWelcomeMessage();
-    const container = document.createElement('div');
-    container.className = 'ai-msg bot ai-structured';
-
-    const compactReply = isCompactAssistantReply(structured);
-    if (compactReply) {
-        container.classList.add('ai-compact');
-    }
-
-    const header = document.createElement('div');
-    header.className = 'ai-structured-header';
-
-    const verdict = document.createElement('span');
-    verdict.className = 'ai-verdict';
-    verdict.textContent = structured.verdict || (structured.raw && structured.raw.verdict) || 'Unknown';
-    header.appendChild(verdict);
-
-    if (structured.summary) {
-        const sum = document.createElement('span');
-        sum.className = 'ai-summary';
-        sum.textContent = structured.summary;
-        header.appendChild(sum);
-    }
-
-    container.appendChild(header);
-
-    if (!compactReply && structured.reasons && structured.reasons.length) {
-        const rTitle = document.createElement('div');
-        rTitle.className = 'ai-section-title';
-        rTitle.textContent = 'Reasons';
-        container.appendChild(rTitle);
-
-        const ul = document.createElement('ul');
-        ul.className = 'ai-reasons';
-        structured.reasons.forEach((reason) => {
-            const li = document.createElement('li');
-            li.textContent = reason;
-            ul.appendChild(li);
-        });
-        container.appendChild(ul);
-    }
-
-    if (!compactReply && structured.advice && structured.advice.length) {
-        const aTitle = document.createElement('div');
-        aTitle.className = 'ai-section-title';
-        aTitle.textContent = 'Advice';
-        container.appendChild(aTitle);
-
-        const ul = document.createElement('ul');
-        ul.className = 'ai-advice';
-        structured.advice.forEach((advice) => {
-            const li = document.createElement('li');
-            li.textContent = advice;
-            ul.appendChild(li);
-        });
-        container.appendChild(ul);
-    }
-
-    const fallbackText = humanText && structured.summary && humanText.trim() === structured.summary.trim()
-        ? ''
-        : humanText;
-
-    if (fallbackText) {
-        const hr = document.createElement('div');
-        hr.className = 'ai-human-text';
-        hr.textContent = fallbackText;
-        container.appendChild(hr);
-    }
-
-    aiMessagesFull.appendChild(container);
-    aiMessagesFull.scrollTop = aiMessagesFull.scrollHeight;
+function resetConversation(title = 'New Chat') {
+    currentChatId = null;
+    setActiveChatId('');
+    assistantConversationHistory = [];
+    if (chatTitle) chatTitle.textContent = title;
+    renderConversation();
+    renderChatList();
 }
 
-function loadHistory() {
-    if (aiMessagesFull) {
-        aiMessagesFull.innerHTML = '';
+function getRecentAssistantHistory() {
+    return assistantConversationHistory.slice(-AI_HISTORY_LIMIT);
+}
+
+function formatChatTime(value) {
+    if (!value) return '';
+    return new Intl.DateTimeFormat('en-US', {
+        month: 'short',
+        day: 'numeric'
+    }).format(new Date(value));
+}
+
+function getShortDisplayTitle(title, maxLength = 44) {
+    const cleaned = String(title || '').replace(/\s+/g, ' ').trim();
+    if (!cleaned) return 'New Chat';
+    return cleaned.length > maxLength
+        ? `${cleaned.slice(0, maxLength).trim()}...`
+        : cleaned;
+}
+
+function renderGuestHistoryState() {
+    if (!chatList) return;
+    chatList.innerHTML = `
+        <li class="chat-item">
+            <span>Sign in to save your chats and revisit them later.</span>
+        </li>
+    `;
+}
+
+function openDeleteConfirm(chat) {
+    pendingDeleteChat = chat;
+    pendingConfirmAction = 'delete';
+    if (confirmTitle) {
+        confirmTitle.textContent = 'Delete chat?';
     }
-    showWelcomeMessage();
+    if (confirmText) {
+        const shortTitle = getShortDisplayTitle(chat.title, 36);
+        confirmText.textContent = `Delete "${shortTitle}" from your saved history? This cannot be undone.`;
+    }
+    if (confirmDeleteBtn) {
+        confirmDeleteBtn.textContent = 'Delete';
+    }
+    if (confirmOverlay) {
+        confirmOverlay.hidden = false;
+    }
+    confirmDeleteBtn?.focus();
+}
+
+function closeDeleteConfirm() {
+    pendingDeleteChat = null;
+    pendingConfirmAction = null;
+    if (confirmOverlay) {
+        confirmOverlay.hidden = true;
+    }
+}
+
+function openLogoutConfirm() {
+    pendingDeleteChat = null;
+    pendingConfirmAction = 'logout';
+    if (confirmTitle) {
+        confirmTitle.textContent = 'Logout?';
+    }
+    if (confirmText) {
+        confirmText.textContent = 'You will be signed out of your current session. You can sign back in anytime.';
+    }
+    if (confirmDeleteBtn) {
+        confirmDeleteBtn.textContent = 'Logout';
+    }
+    if (confirmOverlay) {
+        confirmOverlay.hidden = false;
+    }
+    confirmDeleteBtn?.focus();
+}
+
+function renderChatList() {
+    if (!chatList) return;
+
+    if (!currentUser) {
+        renderGuestHistoryState();
+        return;
+    }
+
+    if (!chatSummaries.length) {
+        chatList.innerHTML = `
+            <li class="chat-item">
+                <span>No saved chats yet. Start a new conversation.</span>
+            </li>
+        `;
+        return;
+    }
+
+    chatList.innerHTML = '';
+    chatSummaries.forEach((chat) => {
+        const item = document.createElement('li');
+        item.className = `chat-item${chat.id === currentChatId ? ' active' : ''}`;
+        item.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M21 6h-2v9H6v2c0 .55.45 1 1 1h11l4 4V7c0-.55-.45-1-1-1zM17 11V3c0-.55-.45-1-1-1H3c-.55 0-1 .45-1 1v14l4-4h10c.55 0 1-.45 1-1z"/>
+            </svg>
+            <span>${chat.title}</span>
+            <div class="chat-item-actions">
+                <button type="button" class="chat-item-menu-btn" aria-label="Chat options" aria-expanded="${openChatMenuId === chat.id ? 'true' : 'false'}">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                        <circle cx="12" cy="5" r="2"></circle>
+                        <circle cx="12" cy="12" r="2"></circle>
+                        <circle cx="12" cy="19" r="2"></circle>
+                    </svg>
+                </button>
+                <div class="chat-item-menu" ${openChatMenuId === chat.id ? '' : 'hidden'}>
+                    <button type="button" class="chat-delete-btn">Delete chat</button>
+                </div>
+            </div>
+        `;
+        item.title = `${chat.title} • ${formatChatTime(chat.updatedAt)}`;
+        item.addEventListener('click', async () => {
+            await loadChat(chat.id);
+            closeSidebar();
+        });
+
+        const menuBtn = item.querySelector('.chat-item-menu-btn');
+        const menu = item.querySelector('.chat-item-menu');
+        const deleteBtn = item.querySelector('.chat-delete-btn');
+
+        menuBtn?.addEventListener('click', (event) => {
+            event.stopPropagation();
+            openChatMenuId = openChatMenuId === chat.id ? null : chat.id;
+            renderChatList();
+        });
+
+        menu?.addEventListener('click', (event) => {
+            event.stopPropagation();
+        });
+
+        deleteBtn?.addEventListener('click', (event) => {
+            event.stopPropagation();
+            openDeleteConfirm(chat);
+        });
+
+        chatList.appendChild(item);
+    });
+}
+
+async function deleteChatById(chatId) {
+    if (!currentUser || !chatId) return;
+
+    try {
+        await apiFetch(`/api/chats/${chatId}`, { method: 'DELETE' });
+        openChatMenuId = null;
+
+        if (currentChatId === chatId) {
+            resetConversation('New Chat');
+        }
+
+        await loadChatSummaries();
+    } catch (error) {
+        console.error('Failed to delete chat', error);
+        if (confirmText) {
+            confirmText.textContent = error.message || 'Could not delete chat right now.';
+        }
+        if (confirmOverlay) {
+            confirmOverlay.hidden = false;
+        }
+    }
+}
+
+async function loadChatSummaries() {
+    if (!currentUser) {
+        chatSummaries = [];
+        renderChatList();
+        return;
+    }
+
+    try {
+        const data = await apiFetch('/api/chats');
+        chatSummaries = Array.isArray(data.chats) ? data.chats : [];
+    } catch (error) {
+        console.error('Failed to load chat summaries', error);
+        chatSummaries = [];
+    }
+
+    renderChatList();
+}
+
+async function loadChat(chatId) {
+    if (!currentUser) return;
+
+    try {
+        const data = await apiFetch(`/api/chats/${chatId}/messages`);
+        const chat = data.chat;
+        currentChatId = chat.id;
+        setActiveChatId(chat.id);
+        assistantConversationHistory = Array.isArray(chat.messages)
+            ? chat.messages.map((entry) => ({
+                role: entry.role === 'assistant' ? 'assistant' : 'user',
+                content: entry.content
+            }))
+            : [];
+        if (chatTitle) chatTitle.textContent = chat.title || 'Saved Chat';
+        renderConversation();
+        renderChatList();
+    } catch (error) {
+        console.error('Failed to load chat', error);
+    }
+}
+
+function updateAuthUI() {
+    const signedIn = Boolean(currentUser);
+    document.body.classList.toggle('signed-in', signedIn);
+    document.body.classList.toggle('not-signed-in', !signedIn);
+
+    if (userDisplay) {
+        userDisplay.textContent = signedIn
+            ? `Signed in as ${currentUser.name}. Your chats are saved automatically.`
+            : 'Guest mode: chats are not saved';
+    }
+
+    if (profileCard) profileCard.hidden = !signedIn;
+    if (profileName) profileName.textContent = signedIn ? currentUser.name : 'Signed in';
+    if (authActions) authActions.hidden = signedIn;
+    if (signinBtn) signinBtn.hidden = signedIn;
+    if (signupBtn) signupBtn.hidden = signedIn;
+    if (logoutBtn) logoutBtn.hidden = !signedIn;
+}
+
+async function bootstrapAuthState() {
+    const token = getStoredToken();
+    if (!token) {
+        currentUser = null;
+        setActiveChatId('');
+        updateAuthUI();
+        renderChatList();
+        return;
+    }
+
+    try {
+        const data = await apiFetch('/api/auth/me');
+        currentUser = data.user || null;
+        setStoredAuth(token, currentUser);
+    } catch (error) {
+        currentUser = null;
+        setStoredAuth('', null);
+        setActiveChatId('');
+    }
+
+    updateAuthUI();
+    await loadChatSummaries();
+
+    const activeChatId = getActiveChatId();
+    if (currentUser && activeChatId && chatSummaries.some((chat) => chat.id === activeChatId)) {
+        await loadChat(activeChatId);
+    }
+}
+
+async function refreshHistoryAfterReply(chatIdFromServer) {
+    if (!currentUser || !chatIdFromServer) return;
+    currentChatId = chatIdFromServer;
+    setActiveChatId(chatIdFromServer);
+    await loadChatSummaries();
+    if (chatTitle) {
+        const currentSummary = chatSummaries.find((chat) => chat.id === currentChatId);
+        chatTitle.textContent = currentSummary?.title || 'Saved Chat';
+    }
 }
 
 async function sendAssistantMessage(message) {
     hideWelcomeMessage();
     appendMessageFull(message, 'user');
+    assistantConversationHistory.push({ role: 'user', content: message });
 
     aiInputFull.value = '';
     aiInputFull.disabled = true;
@@ -172,50 +456,39 @@ async function sendAssistantMessage(message) {
     const timeoutId = setTimeout(() => controller.abort(), 30000);
 
     try {
-        const resp = await fetch(`${getApiBase()}/api/ai-chat`, {
+        const historyForRequest = getRecentAssistantHistory().slice(0, -1);
+        const data = await apiFetch('/api/ai-chat', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            },
-            body: JSON.stringify({ message }),
+            body: JSON.stringify({
+                message,
+                history: historyForRequest,
+                chatId: currentUser ? currentChatId : null
+            }),
             signal: controller.signal
         });
 
         clearTimeout(timeoutId);
+        pendingEl.remove();
 
-        if (!resp.ok) {
-            const txt = await resp.text();
-            throw new Error(`Server error: ${resp.status} ${txt}`);
-        }
-
-        const data = await resp.json();
-        try { pendingEl.parentNode && pendingEl.parentNode.removeChild(pendingEl); } catch (e) {}
-
-        if (data && data.ok) {
-            if (data.structured && data.structured.verdict) {
-                renderStructuredMessageFull(data.structured, data.reply);
-            } else if (data.reply) {
-                appendMessageFull(data.reply, 'bot');
-            } else {
-                throw new Error('No reply from AI');
-            }
+        if (data?.reply) {
+            assistantConversationHistory.push({ role: 'assistant', content: data.reply });
+            appendMessageFull(data.reply, 'bot');
+            await refreshHistoryAfterReply(data.chatId);
         } else {
-            throw new Error(data && data.error ? data.error : 'No reply from AI');
+            throw new Error('No reply from AI');
         }
     } catch (err) {
         clearTimeout(timeoutId);
         console.error('assistant request failed', err);
-        try { pendingEl.parentNode && pendingEl.parentNode.removeChild(pendingEl); } catch (e) {}
+        try { pendingEl.remove(); } catch (e) {}
 
         let msg = 'Sorry - the AI request failed. Please try again.';
-        if (err.message.includes('429')) {
-            try {
-                const parsed = JSON.parse(err.message.replace(/^Server error: \d+ /, ''));
-                if (parsed.retryAfter) {
-                    msg = `Rate limit exceeded. Please wait ${parsed.retryAfter} seconds.`;
-                }
-            } catch (e) {}
+        if (err.name === 'AbortError') {
+            msg = 'The assistant took too long to respond. Please try again.';
+        } else if (err.status === 429 && err.data?.retryAfter) {
+            msg = `Rate limit exceeded. Please wait ${err.data.retryAfter} seconds.`;
+        } else if (err.data?.error) {
+            msg = err.data.error;
         }
 
         appendMessageFull(msg, 'bot');
@@ -226,68 +499,24 @@ async function sendAssistantMessage(message) {
     }
 }
 
-function updateUserUI() {
-    const name = localStorage.getItem(userKey);
-    const signedIn = Boolean(name);
-    if (userDisplay) {
-        userDisplay.textContent = signedIn ? `Signed in as ${name}` : 'Not signed in';
+async function handleLogout() {
+    try {
+        await apiFetch('/api/auth/logout', { method: 'POST' });
+    } catch (error) {
+        console.error('Logout request failed', error);
     }
-    document.body.classList.toggle('signed-in', signedIn);
-    document.body.classList.toggle('not-signed-in', !signedIn);
+
+    setStoredAuth('', null);
+    setActiveChatId('');
+    currentUser = null;
+    chatSummaries = [];
+    openChatMenuId = null;
+    closeDeleteConfirm();
+    resetConversation();
+    updateAuthUI();
+    renderChatList();
 }
 
-if (mainNav && navToggle) {
-    navToggle.addEventListener('click', () => {
-        const isOpen = mainNav.classList.toggle('nav-open');
-        navToggle.setAttribute('aria-expanded', String(isOpen));
-    });
-
-    navLinks.forEach((link) => {
-        link.addEventListener('click', () => {
-            mainNav.classList.remove('nav-open');
-            navToggle.setAttribute('aria-expanded', 'false');
-        });
-    });
-}
-
-aiFormFull.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const value = aiInputFull.value.trim();
-    if (!value) return;
-    await sendAssistantMessage(value);
-});
-
-// Enter key to send message
-aiInputFull.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-        e.preventDefault();
-        aiFormFull.dispatchEvent(new Event('submit'));
-    }
-});
-
-quickPrompts.forEach((button) => {
-    button.addEventListener('click', async () => {
-        const prompt = button.dataset.prompt;
-        if (!prompt) return;
-        aiInputFull.value = prompt;
-        aiInputFull.focus();
-    });
-});
-
-window.addEventListener('resize', () => {
-    // Handle resize if needed
-});
-
-document.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape') {
-        closeSidebar();
-    }
-});
-
-updateUserUI();
-loadHistory();
-
-// ===== Sidebar Toggle Functions =====
 function toggleSidebar() {
     if (!sidebar) return;
     isSidebarOpen = !isSidebarOpen;
@@ -308,7 +537,75 @@ function closeSidebar() {
     document.body.style.overflow = '';
 }
 
-// Event Listeners for Sidebar Toggle
+if (mainNav && navToggle) {
+    navToggle.addEventListener('click', () => {
+        const isOpen = mainNav.classList.toggle('nav-open');
+        navToggle.setAttribute('aria-expanded', String(isOpen));
+    });
+
+    navLinks.forEach((link) => {
+        link.addEventListener('click', () => {
+            mainNav.classList.remove('nav-open');
+            navToggle.setAttribute('aria-expanded', 'false');
+        });
+    });
+}
+
+if (aiFormFull) {
+    aiFormFull.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const value = aiInputFull.value.trim();
+        if (!value) return;
+        await sendAssistantMessage(value);
+    });
+}
+
+if (aiInputFull) {
+    aiInputFull.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            aiFormFull.dispatchEvent(new Event('submit'));
+        }
+    });
+}
+
+if (newChatBtn) {
+    newChatBtn.addEventListener('click', () => {
+        openChatMenuId = null;
+        closeDeleteConfirm();
+        resetConversation('New Chat');
+        aiInputFull?.focus();
+        closeSidebar();
+    });
+}
+
+if (logoutBtn) {
+    logoutBtn.addEventListener('click', openLogoutConfirm);
+}
+
+if (confirmCancelBtn) {
+    confirmCancelBtn.addEventListener('click', closeDeleteConfirm);
+}
+
+if (confirmDeleteBtn) {
+    confirmDeleteBtn.addEventListener('click', async () => {
+        if (pendingConfirmAction === 'logout') {
+            closeDeleteConfirm();
+            await handleLogout();
+            return;
+        }
+
+        if (!pendingDeleteChat) {
+            closeDeleteConfirm();
+            return;
+        }
+
+        const chatToDelete = pendingDeleteChat;
+        closeDeleteConfirm();
+        await deleteChatById(chatToDelete.id);
+    });
+}
+
 if (menuToggleBtn) {
     menuToggleBtn.addEventListener('click', toggleSidebar);
     menuToggleBtn.addEventListener('touchend', (e) => {
@@ -333,9 +630,30 @@ if (sidebarCloseBtn) {
     });
 }
 
-// Escape key to close sidebar
 document.addEventListener('keydown', (e) => {
+    if (!confirmOverlay?.hidden && e.key === 'Escape') {
+        closeDeleteConfirm();
+        return;
+    }
+
     if (e.key === 'Escape' && isSidebarOpen) {
         closeSidebar();
     }
 });
+
+document.addEventListener('click', () => {
+    if (!openChatMenuId) return;
+    openChatMenuId = null;
+    renderChatList();
+});
+
+if (confirmOverlay) {
+    confirmOverlay.addEventListener('click', (event) => {
+        if (event.target === confirmOverlay) {
+            closeDeleteConfirm();
+        }
+    });
+}
+
+resetConversation();
+await bootstrapAuthState();

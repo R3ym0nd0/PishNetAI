@@ -1,8 +1,55 @@
+const fs = require('fs');
+const path = require('path');
 const axios = require('axios');
 
 const RDAP_BASE_URL = process.env.RDAP_BASE_URL || 'https://rdap.org/domain/';
 const domainIntelCache = new Map();
 const CACHE_TTL_MS = 1000 * 60 * 60 * 12;
+const LEGITIMATE_DATASET_PATH = path.resolve(__dirname, '..', '..', 'top-1m.csv');
+let legitimateDomainsCache = null;
+
+function getBaseDomain(hostname) {
+  const value = String(hostname || '').toLowerCase().trim();
+  const parts = value.split('.').filter(Boolean);
+  if (parts.length <= 2) return value;
+  return parts.slice(-2).join('.');
+}
+
+function loadLegitimateDomains() {
+  if (legitimateDomainsCache) return legitimateDomainsCache;
+
+  const domains = new Set();
+
+  try {
+    if (fs.existsSync(LEGITIMATE_DATASET_PATH)) {
+      const contents = fs.readFileSync(LEGITIMATE_DATASET_PATH, 'utf8');
+      contents.split(/\r?\n/).forEach((line) => {
+        const trimmed = String(line || '').trim();
+        if (!trimmed) return;
+
+        const [, domain] = trimmed.split(',', 2);
+        const normalized = String(domain || '').toLowerCase().trim();
+        if (!normalized) return;
+
+        domains.add(normalized);
+        domains.add(getBaseDomain(normalized));
+      });
+    }
+  } catch (error) {
+    // Ignore dataset loading failures and fall back to an empty trust list.
+  }
+
+  legitimateDomainsCache = domains;
+  return legitimateDomainsCache;
+}
+
+function isKnownLegitimateDomain(hostname) {
+  const normalized = String(hostname || '').toLowerCase().trim();
+  if (!normalized) return false;
+
+  const legitimateDomains = loadLegitimateDomains();
+  return legitimateDomains.has(normalized) || legitimateDomains.has(getBaseDomain(normalized));
+}
 
 function getCached(hostname) {
   const cached = domainIntelCache.get(hostname);
@@ -120,5 +167,6 @@ async function lookupDomainIntel(hostname) {
 }
 
 module.exports = {
-  lookupDomainIntel
+  lookupDomainIntel,
+  isKnownLegitimateDomain
 };

@@ -17,6 +17,10 @@ const aiForm = document.getElementById('aiForm');
 const aiInput = document.getElementById('aiInput');
 const aiMessages = document.getElementById('aiMessages');
 const aiFab = document.getElementById('aiFab');
+const AI_HISTORY_LIMIT = 12;
+const aiConversationHistory = [];
+const authTokenKey = 'phish_ai_token';
+const activeChatKey = 'phish_ai_active_chat';
 let resultStatusBadge = resultSection?.querySelector('.status-badge');
 let resultGrade = resultSection?.querySelector('.result-grade');
 let resultSite = resultSection?.querySelector('.result-site');
@@ -96,7 +100,7 @@ function ensureResultTemplate() {
                     <svg class="result-info-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
                         <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
                     </svg>
-                    <span class="result-info-label">SSL Status</span>
+                    <span class="result-info-label">TLS/SSL Status</span>
                     <span class="result-info-value">Unavailable</span>
                 </div>
                 <div class="result-info-item">
@@ -156,6 +160,10 @@ function ensureResultTemplate() {
                     <span class="result-recommendation-label">Recommendation</span>
                 </div>
                 <p></p>
+            </div>
+
+            <div class="result-disclaimer">
+                <p>Scanner results are not 100% accurate. Verify important links before entering sensitive information.</p>
             </div>
         </div>
     `;
@@ -239,11 +247,83 @@ if (urlForm) {
     });
 }
 
-// === Local Storage Chat ===
-function loadHistoryToWidget(){
+function getRecentConversationHistory() {
+    return aiConversationHistory.slice(-AI_HISTORY_LIMIT);
+}
+
+function getStoredToken() {
+    return localStorage.getItem(authTokenKey) || '';
+}
+
+function getActiveChatId() {
+    return localStorage.getItem(activeChatKey) || '';
+}
+
+function setActiveChatId(chatId) {
+    if (chatId) {
+        localStorage.setItem(activeChatKey, chatId);
+        return;
+    }
+
+    localStorage.removeItem(activeChatKey);
+}
+
+async function loadActiveChatForWidget() {
+    const token = getStoredToken();
+    const chatId = getActiveChatId();
+
+    if (!token || !chatId) {
+        return false;
+    }
+
+    try {
+        const response = await fetch(`${getApiBase()}/api/chats/${chatId}/messages`, {
+            headers: {
+                Accept: 'application/json',
+                Authorization: `Bearer ${token}`
+            }
+        });
+
+        const data = await readJsonResponse(response);
+        if (!response.ok || !data.chat) {
+            throw new Error(data.error || 'Could not load saved chat.');
+        }
+
+        aiConversationHistory.length = 0;
+        (data.chat.messages || []).forEach((entry) => {
+            aiConversationHistory.push({
+                role: entry.role === 'assistant' ? 'assistant' : 'user',
+                content: entry.content
+            });
+        });
+
+        renderWidgetConversation();
+        return true;
+    } catch (error) {
+        console.error('Failed to load widget chat history', error);
+        return false;
+    }
+}
+
+function renderWidgetConversation() {
     if (!aiMessages) return;
     aiMessages.innerHTML = '';
-    showAiWelcome();
+
+    if (!aiConversationHistory.length) {
+        showAiWelcome();
+        return;
+    }
+
+    aiConversationHistory.forEach((entry) => {
+        appendMessage(entry.content, entry.role === 'assistant' ? 'bot' : 'user');
+    });
+}
+
+async function loadHistoryToWidget() {
+    const restored = await loadActiveChatForWidget();
+    if (!restored) {
+        renderWidgetConversation();
+    }
 }
 
 function showAiWelcome() {
@@ -435,8 +515,11 @@ function renderScanError(submittedUrl, errorMessage) {
     ensureResultTemplate();
     showResultsPanel();
     animateResultsReveal();
-    setStatusBadge('Scan Error', 'high');
-    if (resultGrade) resultGrade.textContent = 'Grade: --';
+    const normalizedError = String(errorMessage || '');
+    const isForbiddenError = normalizedError.includes('status 403') || normalizedError.toLowerCase().includes('forbidden');
+
+    setStatusBadge(isForbiddenError ? '403 Forbidden' : 'Scan Error', 'high');
+    if (resultGrade) resultGrade.textContent = isForbiddenError ? 'Grade: Blocked' : 'Grade: Unavailable';
 
     resultInfoValues.forEach((node, index) => {
         const defaults = ['Unavailable', formatTimestamp(), 'Unavailable', 'Unavailable'];
@@ -446,13 +529,22 @@ function renderScanError(submittedUrl, errorMessage) {
     if (resultRiskValue) resultRiskValue.textContent = 'N/A';
     if (resultProgressFill) resultProgressFill.style.width = '100%';
 
-    updateIndicators([
-        'The scanner could not complete the analysis.',
-        'This may be caused by an invalid URL, website timeout, or backend service issue.'
-    ]);
+    updateIndicators(
+        isForbiddenError
+            ? [
+                'The website blocked the scan request with a 403 Forbidden response.',
+                'Some sites prevent automated requests or scraping from external scanners.'
+            ]
+            : [
+                'The scanner could not complete the analysis.',
+                'This may be caused by an invalid URL, website timeout, or backend service issue.'
+            ]
+    );
 
     if (resultPageOverviewText) {
-        resultPageOverviewText.textContent = 'A website snapshot could not be generated because the scan did not complete.';
+        resultPageOverviewText.textContent = isForbiddenError
+            ? 'A website snapshot could not be generated because the target site blocked access to the scan request.'
+            : 'A website snapshot could not be generated because the scan did not complete.';
     }
 
     if (resultSummaryText) {
@@ -460,7 +552,9 @@ function renderScanError(submittedUrl, errorMessage) {
     }
 
     if (resultRecommendationText) {
-        resultRecommendationText.textContent = 'Check the URL format, then try again. If the problem continues, verify that the backend and Python AI service are both running.';
+        resultRecommendationText.textContent = isForbiddenError
+            ? 'The site may be protected against automated access. Try another URL or review the domain manually before trusting it.'
+            : 'Check the URL format, then try again. If the problem continues, verify that the backend and Python AI service are both running.';
     }
 
 }
@@ -591,6 +685,7 @@ if (aiForm) {
         if (!v) return;
 
         appendMessage(v, 'user');
+        aiConversationHistory.push({ role: 'user', content: v });
         aiInput.value = '';
 
         const submitBtn = aiForm.querySelector('button[type="submit"]');
@@ -608,10 +703,21 @@ if (aiForm) {
         const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
 
         try {
+            const historyForRequest = getRecentConversationHistory().slice(0, -1);
+            const token = getStoredToken();
+            const chatId = token ? getActiveChatId() : '';
             const resp = await fetch(`${getApiBase()}/api/ai-chat`, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-                body: JSON.stringify({ message: v }),
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    ...(token ? { Authorization: `Bearer ${token}` } : {})
+                },
+                body: JSON.stringify({
+                    message: v,
+                    history: historyForRequest,
+                    ...(chatId ? { chatId } : {})
+                }),
                 signal: controller.signal
             });
             clearTimeout(timeoutId);
@@ -626,7 +732,12 @@ if (aiForm) {
 
             const data = await resp.json();
             if (data && data.ok) {
-                appendMessage(data.reply || 'AI replied, but no text.', 'bot');
+                const reply = data.reply || 'AI replied, but no text.';
+                if (token && data.chatId) {
+                    setActiveChatId(data.chatId);
+                }
+                aiConversationHistory.push({ role: 'assistant', content: reply });
+                appendMessage(reply, 'bot');
             } else {
                 throw new Error(data?.error || 'No reply from AI');
             }

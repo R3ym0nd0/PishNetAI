@@ -46,35 +46,39 @@
                 </ul>
             </div>
 
-            <!-- Quick Prompts (small section) -->
-            <section class="quick-prompts-section" id="quickPromptsSection">
-                <h3 class="history-title">Quick Prompts</h3>
-                <div class="quick-prompts-grid">
-                    <button type="button" class="prompt-btn assistant-prompt" data-prompt="Can you analyze this suspicious URL for phishing?">
-                        Analyze URL
-                    </button>
-                    <button type="button" class="prompt-btn assistant-prompt" data-prompt="What signs should I check before logging into a website?">
-                        Safety Check
-                    </button>
-                    <button type="button" class="prompt-btn assistant-prompt" data-prompt="I clicked a suspicious link. What should I do next?">
-                        After Clicking
-                    </button>
-                </div>
-            </section>
-
             <div class="sidebar-footer">
-                <a href="login.html" class="auth-btn signup">
+                <div class="user-status" id="userDisplay">Guest mode: chats are not saved</div>
+                <div class="profile-card" id="profileCard" hidden>
+                    <div class="profile-icon" aria-hidden="true">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                        </svg>
+                    </div>
+                    <div class="profile-copy">
+                        <strong id="profileName">Signed in</strong>
+                        <span>Your chats are being saved</span>
+                    </div>
+                </div>
+                <div class="auth-actions" id="authActions">
+                    <a href="login.html" class="auth-btn signup" id="signinBtn">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V7H4v3H1v2h3v3h2v-3h3v-2H6zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                        </svg>
+                        <span>Sign In</span>
+                    </a>
+                    <a href="signup.html" class="auth-btn signin" id="signupBtn">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                        </svg>
+                        <span>Sign Up</span>
+                    </a>
+                </div>
+                <button type="button" class="auth-btn signin logout-btn" id="logoutBtn" hidden>
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V7H4v3H1v2h3v3h2v-3h3v-2H6zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                        <path d="M13 3v2h4v14h-4v2h6V3zm-1 4-1.41 1.41L13.17 11H3v2h10.17l-2.58 2.59L12 17l5-5z"/>
                     </svg>
-                    <span>Sign In</span>
-                </a>
-                <a href="signup.html" class="auth-btn signin">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-                    </svg>
-                    <span>Sign Up</span>
-                </a>
+                    <span>Logout</span>
+                </button>
             </div>
         </aside>
 
@@ -125,6 +129,22 @@
                 </form>
             </section>
         </main>
+    </div>
+
+    <div class="confirm-overlay" id="confirmOverlay" hidden>
+        <div class="confirm-card" role="dialog" aria-modal="true" aria-labelledby="confirmTitle" aria-describedby="confirmText">
+            <div class="confirm-icon" aria-hidden="true">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                </svg>
+            </div>
+            <h3 id="confirmTitle">Delete chat?</h3>
+            <p id="confirmText">This chat will be removed from your history and cannot be undone.</p>
+            <div class="confirm-actions">
+                <button type="button" class="confirm-btn secondary" id="confirmCancelBtn">Cancel</button>
+                <button type="button" class="confirm-btn danger" id="confirmDeleteBtn">Delete</button>
+            </div>
+        </div>
     </div>
 
     <script type="module" src="assets/js/assistant.js"></script>

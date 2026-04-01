@@ -13,6 +13,19 @@ if (pRetry && typeof pRetry !== 'function' && pRetry.default) {
 
 const { normalizeAndValidateUrl } = require('./utils/urlValidation');
 const { scanUrl } = require('./services/scanService');
+const {
+  authenticateUser,
+  appendMessage,
+  createChat,
+  createSession,
+  createUser,
+  deleteChat,
+  destroySession,
+  getUserBySessionToken,
+  listChatsForUser,
+  listMessagesForChat,
+  updateChatTitle
+} = require('./services/appDataStore');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -58,6 +71,317 @@ function sendStaticFile(res, filePath, missingMessage) {
   return res.sendFile(filePath);
 }
 
+function getSessionToken(req) {
+  const authHeader = req.headers.authorization || '';
+  if (authHeader.startsWith('Bearer ')) {
+    return authHeader.slice(7).trim();
+  }
+
+  const headerToken = req.headers['x-session-token'];
+  return typeof headerToken === 'string' ? headerToken.trim() : '';
+}
+
+async function getAuthenticatedUser(req) {
+  const token = getSessionToken(req);
+  if (!token) return null;
+  return await getUserBySessionToken(token);
+}
+
+async function requireAuthenticatedUser(req, res) {
+  const user = await getAuthenticatedUser(req);
+  if (!user) {
+    res.status(401).json({ ok: false, error: 'You must sign in first.' });
+    return null;
+  }
+  return user;
+}
+
+function extractFirstUrlFromText(text) {
+  const value = String(text || '').trim();
+  if (!value) return null;
+
+  const match = value.match(/https?:\/\/[^\s<>"')\]]+/i);
+  return match ? match[0] : null;
+}
+
+function buildAssistantScanReply(scanResult, scannedUrl, aiExplanation = null) {
+  const statusLabel = scanResult.prediction === 'Phishing'
+    ? 'High Risk'
+    : (scanResult.riskLevel || 'Low Risk');
+
+  const summary = aiExplanation?.summary || scanResult.summary;
+  const pageOverview = aiExplanation?.pageOverview || scanResult.pageOverview;
+  const recommendation = aiExplanation?.recommendation || scanResult.recommendation;
+  const sourceIndicators = aiExplanation?.indicators?.length ? aiExplanation.indicators : scanResult.indicators;
+  const topIndicators = Array.isArray(sourceIndicators)
+    ? sourceIndicators.slice(0, 4)
+    : [];
+
+  const indicatorBlock = topIndicators.length
+    ? topIndicators.map((item) => `- ${item}`).join('\n')
+    : '- No strong scanner indicators were returned.';
+
+  return [
+    `I scanned **${scannedUrl}** for you.`,
+    '',
+    `**Result:** ${statusLabel}`,
+    `**Grade:** ${scanResult.grade}`,
+    `**Risk score:** ${scanResult.riskScore}%`,
+    '',
+    `**Quick summary:** ${summary}`,
+    '',
+    `**Website snapshot:** ${pageOverview}`,
+    '',
+    '**Top indicators:**',
+    indicatorBlock,
+    '',
+    `**What you should do:** ${recommendation}`,
+    '',
+    '_This assistant scan is helpful, but it is not 100% accurate. Always verify important links before entering sensitive information._'
+  ].join('\n');
+}
+
+function buildAssistantScanErrorReply(scannedUrl, error) {
+  const message = String(error?.message || 'The URL could not be scanned right now.');
+  const lowered = message.toLowerCase();
+  const isForbidden = message.includes('status 403') || lowered.includes('forbidden');
+  const isTimeout = lowered.includes('too long to respond');
+
+  if (isForbidden) {
+    return [
+      `I tried to scan **${scannedUrl}**, but the website blocked the request with **403 Forbidden**.`,
+      '',
+      'That usually means the site does not allow automated scanning or external bot access.',
+      '',
+      '**What you can do:**',
+      '- Review the domain manually before trusting it.',
+      '- Avoid entering passwords or personal information unless you fully trust the site.',
+      '- Try the official site directly or verify the link through another trusted source.',
+      '',
+      '_This does not automatically mean the site is phishing. It means the scan could not fully access the page._'
+    ].join('\n');
+  }
+
+  if (isTimeout) {
+    return [
+      `I tried to scan **${scannedUrl}**, but the website took too long to respond.`,
+      '',
+      'The page may be slow, temporarily unavailable, or blocking the scan request.',
+      '',
+      '**What you can do:**',
+      '- Try scanning it again in a moment.',
+      '- Check if the link opens normally in your browser.',
+      '- Be careful before entering any sensitive information.'
+    ].join('\n');
+  }
+
+  return [
+    `I tried to scan **${scannedUrl}**, but the request could not be completed.`,
+    '',
+    `**Scan note:** ${message}`,
+    '',
+    '**What you can do:**',
+    '- Check if the URL is complete and correct.',
+    '- Try scanning it again after a moment.',
+    '- If it keeps failing, review the site manually before trusting it.'
+  ].join('\n');
+}
+
+async function buildAiScanExplanation(scanResult) {
+  if (!process.env.GROQ_API_KEY) {
+    return null;
+  }
+
+  const features = scanResult.features || {};
+  const indicatorList = Array.isArray(scanResult.indicators)
+    ? scanResult.indicators.slice(0, 8).map((item) => `- ${item}`).join('\n')
+    : '- No indicators available.';
+
+  const prompt = [
+    'You are helping explain the result of a phishing scanner.',
+    'Write plain, natural, student-friendly Markdown.',
+    'Be calm, concise, and practical.',
+    'Do not change the scanner verdict, grade, or risk score.',
+    'Do not exaggerate certainty.',
+    'Return JSON only with these exact keys: summary, pageOverview, recommendation, indicators.',
+    '',
+    `URL: ${scanResult.url}`,
+    `Prediction: ${scanResult.prediction}`,
+    `Risk level: ${scanResult.riskLevel}`,
+    `Risk score: ${scanResult.riskScore}%`,
+    `Grade: ${scanResult.grade}`,
+    `Known legitimate domain: ${features.knownLegitimateDomain ? 'yes' : 'no'}`,
+    `Uses HTTPS: ${features.usesHttps ? 'yes' : 'no'}`,
+    `Has password field: ${features.hasPasswordField ? 'yes' : 'no'}`,
+    `Has external form action: ${features.hasExternalFormAction ? 'yes' : 'no'}`,
+    `Redirected: ${features.redirected ? 'yes' : 'no'}`,
+    `Domain age: ${features.domainAge || 'Unavailable'}`,
+    '',
+    'Indicators:',
+    indicatorList,
+    '',
+    'Writing goals:',
+    '- summary: 1 to 2 sentences explaining what the overall result means.',
+    '- pageOverview: 1 to 2 sentences describing what the scanned page appears to be based on the scan.',
+    '- recommendation: 1 to 2 sentences telling the user what to do next.',
+    '- indicators: return 4 to 6 short bullet-style strings that simplify the strongest scanner findings for regular users.',
+    '- Keep each field short and readable.'
+  ].join('\n');
+
+  try {
+    const result = await pRetry(() => {
+      return groq.chat.completions.create({
+        model: 'llama-3.1-8b-instant',
+        messages: [
+          {
+            role: 'system',
+            content: 'You generate short explanation text for phishing scan results. Output valid JSON only.'
+          },
+          {
+            role: 'user',
+            content: prompt
+          }
+        ],
+        temperature: 0.3
+      });
+    }, { retries: 1 });
+
+    const rawText = result?.choices?.[0]?.message?.content?.trim();
+    if (!rawText) {
+      return null;
+    }
+
+    const cleaned = rawText.replace(/```json/g, '').replace(/```/g, '').trim();
+    const parsed = JSON.parse(cleaned);
+
+    return {
+      summary: typeof parsed.summary === 'string' ? parsed.summary.trim() : '',
+      pageOverview: typeof parsed.pageOverview === 'string' ? parsed.pageOverview.trim() : '',
+      recommendation: typeof parsed.recommendation === 'string' ? parsed.recommendation.trim() : '',
+      indicators: Array.isArray(parsed.indicators)
+        ? parsed.indicators
+            .filter((item) => typeof item === 'string')
+            .map((item) => item.trim())
+            .filter(Boolean)
+            .slice(0, 6)
+        : []
+    };
+  } catch (error) {
+    console.warn('AI scan explanation fallback:', error.message || error);
+    return null;
+  }
+}
+
+async function buildChatTitleFromConversation(userMessage, assistantReply) {
+  const userText = String(userMessage || '').trim();
+  const assistantText = String(assistantReply || '').trim();
+
+  if (!userText && !assistantText) {
+    return 'New Chat';
+  }
+
+  if (!process.env.GROQ_API_KEY) {
+    return userText.length > 48 ? `${userText.slice(0, 48).trim()}...` : (userText || 'New Chat');
+  }
+
+  const prompt = [
+    'Create a very short chat title for this conversation.',
+    'Return plain text only.',
+    'No quotation marks.',
+    'No markdown.',
+    'No period at the end.',
+    'Keep it under 7 words.',
+    'Make it descriptive and natural like a chatbot history title.',
+    '',
+    `User message: ${userText}`,
+    `Assistant reply: ${assistantText}`
+  ].join('\n');
+
+  try {
+    const result = await pRetry(() => {
+      return groq.chat.completions.create({
+        model: 'llama-3.1-8b-instant',
+        messages: [
+          {
+            role: 'system',
+            content: 'You generate short chat history titles. Output plain text only.'
+          },
+          {
+            role: 'user',
+            content: prompt
+          }
+        ],
+        temperature: 0.2
+      });
+    }, { retries: 1 });
+
+    const title = String(result?.choices?.[0]?.message?.content || '')
+      .replace(/["`#*_]/g, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+
+    if (!title) {
+      return userText.length > 48 ? `${userText.slice(0, 48).trim()}...` : (userText || 'New Chat');
+    }
+
+    return title;
+  } catch (error) {
+    console.warn('Chat title generation fallback:', error.message || error);
+    return userText.length > 48 ? `${userText.slice(0, 48).trim()}...` : (userText || 'New Chat');
+  }
+}
+
+async function maybeUpdateChatTitle(user, chatId, userMessage, assistantReply) {
+  if (!user || !chatId) return null;
+
+  try {
+    const chat = await listMessagesForChat(chatId, user.id);
+    const currentTitle = String(chat.title || '').trim();
+    const shouldUpdate = currentTitle === 'New Chat' || chat.messages.length <= 2;
+
+    if (!shouldUpdate) {
+      return currentTitle;
+    }
+
+    const nextTitle = await buildChatTitleFromConversation(userMessage, assistantReply);
+    const updated = await updateChatTitle(chatId, user.id, nextTitle);
+    return updated.title;
+  } catch (error) {
+    console.warn('Chat title update skipped:', error.message || error);
+    return null;
+  }
+}
+
+function validateAuthPayload({ name, email, password, requireName = false }) {
+  const trimmedName = String(name || '').trim();
+  const trimmedEmail = String(email || '').trim().toLowerCase();
+  const rawPassword = String(password || '');
+
+  if (requireName && trimmedName.length < 2) {
+    const error = new Error('Please enter your full name.');
+    error.statusCode = 400;
+    throw error;
+  }
+
+  if (!trimmedEmail || !trimmedEmail.includes('@')) {
+    const error = new Error('Please enter a valid email address.');
+    error.statusCode = 400;
+    throw error;
+  }
+
+  if (rawPassword.length < 6) {
+    const error = new Error('Password must be at least 6 characters long.');
+    error.statusCode = 400;
+    throw error;
+  }
+
+  return {
+    name: trimmedName,
+    email: trimmedEmail,
+    password: rawPassword
+  };
+}
+
 app.get('/style.css', (req, res) => {
   const filePath = path.join(assetsDir, 'css', 'style.css');
   res.type('text/css');
@@ -85,12 +409,136 @@ app.get('/signup.html', (req, res) => {
   return sendStaticFile(res, filePath, 'signup.html not found');
 });
 
+app.get('/quiz.html', (req, res) => {
+  const filePath = path.join(publicDir, 'quiz.html');
+  return sendStaticFile(res, filePath, 'quiz.html not found');
+});
+
 app.get(['/', '/index.html'], (req, res) => {
   return res.sendFile(path.join(publicDir, 'index.html'));
 });
 
 app.get('/health', (req, res) => {
   res.json({ ok: true, ts: Date.now() });
+});
+
+app.post('/api/auth/signup', async (req, res) => {
+  try {
+    const { name, email, password } = validateAuthPayload({
+      ...req.body,
+      requireName: true
+    });
+
+    const user = await createUser({ name, email, password });
+    const token = await createSession(user.id);
+
+    return res.status(201).json({
+      ok: true,
+      token,
+      user
+    });
+  } catch (error) {
+    return res.status(error.statusCode || 500).json({
+      ok: false,
+      error: error.message || 'Could not create account right now.'
+    });
+  }
+});
+
+app.post('/api/auth/login', async (req, res) => {
+  try {
+    const { email, password } = validateAuthPayload(req.body || {});
+    const user = await authenticateUser({ email, password });
+    const token = await createSession(user.id);
+
+    return res.json({
+      ok: true,
+      token,
+      user
+    });
+  } catch (error) {
+    return res.status(error.statusCode || 500).json({
+      ok: false,
+      error: error.message || 'Could not sign in right now.'
+    });
+  }
+});
+
+app.get('/api/auth/me', async (req, res) => {
+  const user = await getAuthenticatedUser(req);
+  if (!user) {
+    return res.status(401).json({ ok: false, error: 'No active session.' });
+  }
+
+  return res.json({ ok: true, user });
+});
+
+app.post('/api/auth/logout', async (req, res) => {
+  const token = getSessionToken(req);
+  if (token) {
+    await destroySession(token);
+  }
+
+  return res.json({ ok: true });
+});
+
+app.get('/api/chats', async (req, res) => {
+  const user = await requireAuthenticatedUser(req, res);
+  if (!user) return;
+
+  return res.json({
+    ok: true,
+    chats: await listChatsForUser(user.id)
+  });
+});
+
+app.post('/api/chats', async (req, res) => {
+  const user = await requireAuthenticatedUser(req, res);
+  if (!user) return;
+
+  const titleSeed = typeof req.body?.title === 'string' ? req.body.title : '';
+  const chat = await createChat(user.id, titleSeed);
+
+  return res.status(201).json({
+    ok: true,
+    chat
+  });
+});
+
+app.get('/api/chats/:chatId/messages', async (req, res) => {
+  const user = await requireAuthenticatedUser(req, res);
+  if (!user) return;
+
+  try {
+    const chat = await listMessagesForChat(req.params.chatId, user.id);
+    return res.json({
+      ok: true,
+      chat
+    });
+  } catch (error) {
+    return res.status(error.statusCode || 500).json({
+      ok: false,
+      error: error.message || 'Could not load chat messages.'
+    });
+  }
+});
+
+app.delete('/api/chats/:chatId', async (req, res) => {
+  const user = await requireAuthenticatedUser(req, res);
+  if (!user) return;
+
+  try {
+    const deleted = await deleteChat(req.params.chatId, user.id);
+    return res.json({
+      ok: true,
+      deleted
+    });
+  } catch (error) {
+    return res.status(error.statusCode || 500).json({
+      ok: false,
+      error: error.message || 'Could not delete chat.'
+    });
+  }
 });
 
 // This route handles the phishing scan flow:
@@ -108,6 +556,7 @@ app.post('/api/scan', async (req, res) => {
     }
 
     const result = await scanUrl(validation.url);
+    const aiExplanation = await buildAiScanExplanation(result);
 
     return res.json({
       ok: true,
@@ -117,10 +566,10 @@ app.post('/api/scan', async (req, res) => {
       grade: result.grade,
       riskLevel: result.riskLevel,
       riskClass: result.riskClass,
-      summary: result.summary,
-      pageOverview: result.pageOverview,
-      recommendation: result.recommendation,
-      indicators: result.indicators,
+      summary: aiExplanation?.summary || result.summary,
+      pageOverview: aiExplanation?.pageOverview || result.pageOverview,
+      recommendation: aiExplanation?.recommendation || result.recommendation,
+      indicators: aiExplanation?.indicators?.length ? aiExplanation.indicators : result.indicators,
       features: result.features,
       url: result.url
     });
@@ -136,14 +585,101 @@ app.post('/api/scan', async (req, res) => {
 
 app.post('/api/ai-chat', async (req, res) => {
   try {
-    const { message } = req.body || {};
+    const { message, history, chatId } = req.body || {};
 
     if (!message || typeof message !== 'string') {
       return res.status(400).json({ ok: false, error: 'Missing message in request' });
     }
 
+    const authenticatedUser = await getAuthenticatedUser(req);
+    let activeChatId = authenticatedUser ? String(chatId || '').trim() : '';
+    let persistedHistory = [];
+
+    if (authenticatedUser && activeChatId) {
+      const existingChat = await listMessagesForChat(activeChatId, authenticatedUser.id);
+      persistedHistory = existingChat.messages
+        .slice(-12)
+        .map((entry) => ({
+          role: entry.role === 'assistant' ? 'assistant' : 'user',
+          content: entry.content
+        }));
+    }
+
+    const detectedUrl = extractFirstUrlFromText(message);
+    if (detectedUrl) {
+      const validation = normalizeAndValidateUrl(detectedUrl);
+
+      if (!validation.ok) {
+        return res.status(400).json({ ok: false, error: validation.error });
+      }
+
+      try {
+        if (authenticatedUser && !activeChatId) {
+          activeChatId = (await createChat(authenticatedUser.id, message)).id;
+        }
+
+        const scanResult = await scanUrl(validation.url);
+        const aiExplanation = await buildAiScanExplanation(scanResult);
+        const reply = buildAssistantScanReply(
+          scanResult,
+          scanResult.url || validation.url,
+          aiExplanation
+        );
+
+        if (authenticatedUser && activeChatId) {
+          await appendMessage(activeChatId, authenticatedUser.id, 'user', message);
+          await appendMessage(activeChatId, authenticatedUser.id, 'assistant', reply);
+          await maybeUpdateChatTitle(authenticatedUser, activeChatId, message, reply);
+        }
+
+        return res.json({
+          ok: true,
+          reply,
+          chatId: activeChatId || null,
+          scanResult: {
+            prediction: scanResult.prediction,
+            riskScore: scanResult.riskScore,
+            grade: scanResult.grade,
+            riskLevel: scanResult.riskLevel,
+            url: scanResult.url
+          }
+        });
+      } catch (scanError) {
+        const reply = buildAssistantScanErrorReply(validation.url, scanError);
+
+        if (authenticatedUser) {
+          if (!activeChatId) {
+            activeChatId = (await createChat(authenticatedUser.id, message)).id;
+          }
+
+          await appendMessage(activeChatId, authenticatedUser.id, 'user', message);
+          await appendMessage(activeChatId, authenticatedUser.id, 'assistant', reply);
+          await maybeUpdateChatTitle(authenticatedUser, activeChatId, message, reply);
+        }
+
+        return res.json({
+          ok: true,
+          reply,
+          chatId: activeChatId || null
+        });
+      }
+    }
+
+    const normalizedHistory = authenticatedUser && activeChatId
+      ? persistedHistory
+      : Array.isArray(history)
+      ? history
+          .filter((entry) => entry && typeof entry.content === 'string')
+          .map((entry) => ({
+            role: entry.role === 'assistant' ? 'assistant' : 'user',
+            content: entry.content.trim()
+          }))
+          .filter((entry) => entry.content.length > 0)
+          .slice(-12)
+      : [];
+
     const systemPrompt = [
-      'You are Phinny, a friendly and helpful cybersecurity assistant specialized ONLY in phishing detection.',
+      'You are Phinny, a friendly and helpful AI assistant for PhishNet AI.',
       '',
       'Your personality:',
       '- Be friendly, calm, and easy to understand.',
@@ -151,20 +687,18 @@ app.post('/api/ai-chat', async (req, res) => {
       '- Be supportive, not scary or overly technical.',
       '- Keep explanations simple but insightful.',
       '',
-      'You analyze URLs, messages, and websites. Always consider prior messages in the same session for context.',
+      'Primary expertise: phishing detection, suspicious links, online scams, account safety, and related cybersecurity awareness.',
+      'You can still answer general questions, greetings, or casual messages, but keep those replies short and natural.',
+      'Give more detailed explanations only when the topic is phishing, suspicious URLs, scam messages, account safety, or closely related cybersecurity topics.',
+      'If the topic is unrelated to phishing or cybersecurity, answer briefly and do not become overly detailed.',
+      'You analyze URLs, messages, and websites when the user asks for help checking something suspicious.',
+      'Always consider prior messages in the same session for context.',
       '',
-      'When possible, RESPOND FIRST with a single valid JSON object (no surrounding text)',
-      'matching this schema exactly:',
-      '',
-      '{',
-      '  "verdict": "SAFE" | "SUSPICIOUS" | "PHISHING" | "INPUT NEEDED" | "GUIDANCE",',
-      '  "reasons": ["reason 1", "reason 2", ...],',
-      '  "advice": ["advice item 1", "advice item 2", ...],',
-      '  "summary": "A short one-line summary",',
-      '  "human_readable": "A concise but friendly user-facing reply"',
-      '}',
-      '',
-      'After the JSON object, you may optionally include a human-friendly explanation in Markdown.',
+      'Write your reply directly in clean Markdown only.',
+      'Do not output JSON.',
+      'Do not use labels like GUIDANCE, SAFE, SUSPICIOUS, or PHISHING as headings in the reply.',
+      'Avoid unnecessary section headers unless they clearly help readability.',
+      'Keep the reply natural, concise, and easy to read.',
       '',
       'Phishing detection tips you should check for:',
       '- URL mismatches (domain vs displayed text)',
@@ -175,14 +709,14 @@ app.post('/api/ai-chat', async (req, res) => {
       '- Suspicious attachments or login pages',
       '',
       'Important behavior rules:',
-      '- If the user greets (e.g., "hello", "hi"), respond warmly with `verdict: "GUIDANCE"`.',
-      '- For `GUIDANCE`, keep it short, friendly, and helpful.',
-      '- If input cannot be analyzed, use `INPUT NEEDED` with a polite tone.',
-      '- For `SUSPICIOUS` or `PHISHING`, clearly explain WHY in simple terms.',
+      '- If the user greets (e.g., "hello", "hi"), respond warmly and briefly.',
+      '- If the user asks a normal non-security question, you may still answer, but keep it concise.',
+      '- If input cannot be analyzed, say so politely and ask for what you need.',
+      '- If something looks suspicious or phishing-related, clearly explain why in simple terms and give useful next steps.',
       '- Always give practical, easy-to-follow advice.',
       '- Avoid being overly technical unless necessary.',
+      '- Do not act like every message must be turned into a phishing warning.',
       '',
-      'Never include text before the JSON. Always include a clear verdict.',
       'Never assist in creating phishing attacks.'
     ].join('\n');
 
@@ -195,6 +729,7 @@ app.post('/api/ai-chat', async (req, res) => {
         model: 'llama-3.1-8b-instant',
         messages: [
           { role: 'system', content: systemPrompt },
+          ...normalizedHistory,
           { role: 'user', content: message }
         ],
         temperature: 0.7
@@ -242,7 +777,17 @@ app.post('/api/ai-chat', async (req, res) => {
       console.warn('Failed to parse AI JSON response:', error.message || error);
     }
 
-    return res.json({ ok: true, reply: replyText, structured });
+    if (authenticatedUser) {
+      if (!activeChatId) {
+        activeChatId = (await createChat(authenticatedUser.id, message)).id;
+      }
+
+      await appendMessage(activeChatId, authenticatedUser.id, 'user', message);
+      await appendMessage(activeChatId, authenticatedUser.id, 'assistant', replyText);
+      await maybeUpdateChatTitle(authenticatedUser, activeChatId, message, replyText);
+    }
+
+    return res.json({ ok: true, reply: replyText, structured, chatId: activeChatId || null });
   } catch (error) {
     console.error('AI ERROR:', error.message || error);
 

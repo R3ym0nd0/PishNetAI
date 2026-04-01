@@ -26,80 +26,75 @@ function getRiskClass(riskScore) {
   return 'high';
 }
 
-function buildRiskScore(prediction, confidence) {
-  const normalizedConfidence = clamp(Number(confidence) || 0, 0, 1);
-  const phishingProbability = prediction === 1
-    ? normalizedConfidence
-    : (1 - normalizedConfidence);
-
-  return Math.round(clamp(phishingProbability * 100, 0, 100));
+function buildRiskScore(phishingProbability) {
+  const normalizedProbability = clamp(Number(phishingProbability) || 0, 0, 1);
+  return Math.round(normalizedProbability * 100);
 }
 
-function buildHeuristicAssessment(features) {
+function buildBehaviorAssessment(features) {
   const reasons = [];
   let score = 0;
   let hardFlag = false;
+  const trustedLegitimateDomain = Boolean(features.knownLegitimateDomain);
 
   const add = (points, reason) => {
     score += points;
     reasons.push(reason);
   };
 
-  if (!features.usesHttps) add(14, 'The page does not use HTTPS.');
+  if (!features.usesHttps) add(16, 'The page does not use HTTPS.');
   if (features.hasIpAddressInUrl) add(24, 'The URL uses an IP address instead of a normal domain.');
-  if (features.hasShortenerDomain) add(14, 'The URL uses a shortened-link service.');
-  if (features.hasPunycode) add(22, 'The hostname contains punycode, which can hide lookalike domains.');
+  if (features.hasShortenerDomain) add(10, 'The URL uses a shortened-link service.');
+  if (features.hasPunycode) add(24, 'The hostname contains punycode, which can hide lookalike domains.');
   if (features.suspiciousTld) add(10, 'The domain uses a higher-risk top-level domain.');
-  if (features.finalDomainDiffersFromInput) add(12, 'The final destination domain differs from the submitted domain.');
-  if (features.redirectCount >= 2) add(Math.min(16, features.redirectCount * 4), 'The page uses multiple redirects.');
-  if (features.subdomainCount >= 3) add(Math.min(14, features.subdomainCount * 4), 'The URL has an unusually high number of subdomains.');
-  if (features.pathDepth >= 4) add(Math.min(10, features.pathDepth * 2), 'The URL path is unusually deep.');
-  if (features.queryParamCount >= 5) add(8, 'The URL contains many query parameters.');
-  if (features.encodedPathCount > 0 || features.encodedQueryCount > 0) add(8, 'The URL contains encoded characters in the path or query.');
-  if (features.suspiciousPathKeywordHits >= 2) add(12, 'The endpoint path contains multiple phishing-related keywords.');
-  if (features.suspiciousQueryKeywordHits >= 2) add(10, 'The query string contains multiple phishing-related keywords.');
-  if (features.sensitiveQueryParamHits > 0) add(14, 'Sensitive-looking query parameters were found in the URL.');
+  if (features.finalDomainDiffersFromInput) add(10, 'The final destination domain differs from the submitted domain.');
+  if (features.redirectCount >= 2) add(10, 'The page uses multiple redirects.');
+  if (features.sensitiveQueryParamHits > 0) add(12, 'Sensitive-looking query parameters were found in the URL.');
   if (features.hasAtSymbol) add(12, 'The URL contains an @ symbol, which is commonly abused in phishing URLs.');
-  if (features.hasDoubleSlashInPath) add(8, 'The path contains a double slash pattern.');
-  if (features.urlLength >= 90) add(10, 'The URL is unusually long.');
-  if (features.hostnameLength >= 30) add(8, 'The hostname is unusually long.');
-  if (features.hyphenCount >= 2) add(6, 'The hostname uses multiple hyphens.');
-  if (features.digitCount >= 8) add(6, 'The URL contains many digits.');
-  if (features.specialCharCount >= 12) add(6, 'The URL contains many special characters.');
-  if (features.iframeCount > 0) add(8, 'The page includes iframe elements.');
-  if (features.externalScriptCount >= 5) add(10, 'The page loads many external scripts.');
-  if (features.externalLinkCount >= 10) add(6, 'The page contains many external links.');
-  if (features.hiddenInputCount >= 3) add(8, 'The page contains several hidden input fields.');
-  if (features.suspiciousKeywordHits >= 3) add(Math.min(15, features.suspiciousKeywordHits * 3), 'Several phishing-related keywords were found in the page content.');
-  if (!features.dnsResolves) add(18, 'The hostname did not resolve cleanly during lookup.');
-  if (features.nameserverCount === 0) add(8, 'No nameserver records were found during lookup.');
+  if (features.urlLength >= 90) add(8, 'The URL is unusually long.');
+
   if (typeof features.domainAgeDays === 'number' && features.domainAgeDays >= 0 && features.domainAgeDays < 30) {
-    add(18, 'The domain appears to be very new.');
+    add(12, 'The domain appears to be very new.');
   } else if (typeof features.domainAgeDays === 'number' && features.domainAgeDays < 180) {
-    add(10, 'The domain appears to be relatively new.');
+    add(6, 'The domain appears to be relatively new.');
+  }
+
+  if (!features.dnsResolves) add(16, 'The hostname did not resolve cleanly during lookup.');
+  if (features.hasExternalFormAction && !trustedLegitimateDomain) {
+    add(24, 'A form submits data to an external domain.');
+  } else if (features.hasExternalFormAction && features.hasPasswordField) {
+    add(24, 'A credential-related form submits data to an external domain.');
   }
 
   if (features.hasPasswordField && !features.usesHttps) {
-    add(18, 'A password field is present on a page without HTTPS.');
-  }
-
-  if (features.hasExternalFormAction) {
-    add(20, 'A form submits data to an external domain.');
+    add(22, 'A password field is present on a page without HTTPS.');
+    hardFlag = true;
   }
 
   if (features.hasPasswordField && features.hasExternalFormAction) {
-    add(24, 'A password form appears to submit to a different domain.');
+    add(30, 'A password form appears to submit to a different domain.');
     hardFlag = true;
   }
 
   if (features.hasIpAddressInUrl && features.hasPasswordField) {
-    add(24, 'The page requests credentials while using an IP-based URL.');
+    add(30, 'The page requests credentials while using an IP-based URL.');
     hardFlag = true;
   }
 
-  if (features.hasPunycode && features.suspiciousKeywordHits >= 2) {
-    add(18, 'Lookalike-domain signals appear together with phishing language.');
+  if (features.hasPunycode && features.hasPasswordField) {
+    add(26, 'A lookalike-domain signal appears together with a credential form.');
     hardFlag = true;
+  }
+
+  if (
+    features.suspiciousKeywordHits >= 3 &&
+    (features.hasPasswordField || features.hasExternalFormAction || features.suspiciousPathKeywordHits > 0)
+  ) {
+    add(14, 'The page uses phishing-related language together with login-style behavior.');
+  }
+
+  if (trustedLegitimateDomain && !hardFlag && !features.hasPasswordField) {
+    score = Math.min(score, 8);
   }
 
   return {
@@ -109,20 +104,77 @@ function buildHeuristicAssessment(features) {
   };
 }
 
-function buildHybridRiskScore(modelRiskScore, heuristicScore, hardFlag) {
-  const blended = Math.round((Number(modelRiskScore) * 0.58) + (Number(heuristicScore) * 0.42));
+function buildFinalRiskScore(modelRiskScore, behaviorAssessment, features) {
+  const trustedLegitimateDomain = Boolean(features.knownLegitimateDomain);
+  const noCredentialCollection = !features.hasPasswordField;
+  const noCredentialRiskBehavior = !features.hasPasswordField && !behaviorAssessment.hardFlag;
+  const cleanUrlShape =
+    !features.hasIpAddressInUrl &&
+    !features.hasPunycode &&
+    !features.hasShortenerDomain &&
+    !features.suspiciousTld &&
+    !features.hasAtSymbol;
 
-  if (hardFlag) {
-    return clamp(Math.max(blended, heuristicScore, 72), 0, 100);
+  if (trustedLegitimateDomain && noCredentialCollection && !behaviorAssessment.hardFlag) {
+    const hasSuspiciousUrlSignals =
+      features.suspiciousPathKeywordHits > 0 ||
+      features.suspiciousQueryKeywordHits > 0 ||
+      features.sensitiveQueryParamHits > 0 ||
+      features.redirectCount > 0;
+    const isPlainRootLikeUrl =
+      features.pathDepth === 0 &&
+      features.queryParamCount === 0 &&
+      features.pathLength <= 1 &&
+      !hasSuspiciousUrlSignals;
+    const isNormalTrustedSubpage =
+      features.pathDepth <= 3 &&
+      features.queryParamCount <= 1 &&
+      features.pathLength <= 48 &&
+      !hasSuspiciousUrlSignals;
+    const safeTrustedCap = hasSuspiciousUrlSignals
+      ? ((Number(modelRiskScore) || 0) <= 25 ? 8 : 12)
+      : (isPlainRootLikeUrl
+        ? ((Number(modelRiskScore) || 0) <= 25 ? 4 : 8)
+        : (isNormalTrustedSubpage
+          ? ((Number(modelRiskScore) || 0) <= 25 ? 10 : 14)
+          : ((Number(modelRiskScore) || 0) <= 25 ? 8 : 12)));
+    return clamp(Math.min(Number(modelRiskScore) || 0, safeTrustedCap), 0, safeTrustedCap);
   }
 
-  return clamp(blended, 0, 100);
+  let finalScore = Math.round((Number(modelRiskScore) * 0.78) + (Number(behaviorAssessment.score) * 0.22));
+
+  if (behaviorAssessment.hardFlag) {
+    finalScore = Math.max(finalScore, behaviorAssessment.score, 78);
+  }
+
+  if (trustedLegitimateDomain && Number(modelRiskScore) <= 20 && noCredentialCollection && cleanUrlShape && noCredentialRiskBehavior) {
+    finalScore = Math.min(finalScore, 10);
+  } else if (trustedLegitimateDomain && noCredentialCollection && cleanUrlShape && noCredentialRiskBehavior) {
+    finalScore = Math.min(finalScore, 15);
+  } else if (trustedLegitimateDomain && cleanUrlShape && behaviorAssessment.score < 35 && !behaviorAssessment.hardFlag) {
+    finalScore = Math.min(finalScore, 24);
+  } else if (trustedLegitimateDomain && cleanUrlShape && !behaviorAssessment.hardFlag) {
+    finalScore = Math.min(finalScore, 38);
+  }
+
+  return clamp(finalScore, 0, 100);
+}
+
+function buildFinalPrediction(modelRiskScore, behaviorAssessment, finalRiskScore) {
+  if (finalRiskScore <= 15) return 'Safe';
+  if (finalRiskScore <= 25) return 'Safe';
+  if (behaviorAssessment.hardFlag) return 'Phishing';
+  if (modelRiskScore >= 85) return 'Phishing';
+  if (modelRiskScore >= 70 && behaviorAssessment.score >= 25) return 'Phishing';
+  if (finalRiskScore >= 70) return 'Phishing';
+  return 'Safe';
 }
 
 module.exports = {
   buildRiskScore,
-  buildHeuristicAssessment,
-  buildHybridRiskScore,
+  buildBehaviorAssessment,
+  buildFinalPrediction,
+  buildFinalRiskScore,
   getGradeFromRiskScore,
   getRiskClass,
   getRiskLevel

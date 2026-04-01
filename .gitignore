@@ -8,5 +8,6 @@ yarn-error.log*
 .DS_Store
 Thumbs.db
 ai-service/model/
+ai-service/data/url_training_data.csv
 __pycache__/
 *.pyc

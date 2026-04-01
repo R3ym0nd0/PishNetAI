@@ -1,7 +1,7 @@
 const dns = require('dns').promises;
 const cheerio = require('cheerio');
 const { MODEL_FEATURE_ORDER } = require('../constants/featureOrder');
-const { lookupDomainIntel } = require('./domainIntelService');
+const { lookupDomainIntel, isKnownLegitimateDomain } = require('./domainIntelService');
 
 const SUSPICIOUS_KEYWORDS = [
   'login',
@@ -83,8 +83,8 @@ function countSubdomains(hostname) {
   return parts.length - 2;
 }
 
-function countKeywordHits(html) {
-  const lowered = String(html || '').toLowerCase();
+function countKeywordHits(value) {
+  const lowered = String(value || '').toLowerCase();
   return SUSPICIOUS_KEYWORDS.reduce((count, keyword) => {
     return count + (lowered.includes(keyword) ? 1 : 0);
   }, 0);
@@ -113,8 +113,8 @@ function hasSuspiciousTld(hostname) {
   return SUSPICIOUS_TLDS.has(tld);
 }
 
-function collectKeywordFlags(html) {
-  const lowered = String(html || '').toLowerCase();
+function collectKeywordFlags(value) {
+  const lowered = String(value || '').toLowerCase();
   return {
     keyword_login: Number(lowered.includes('login')),
     keyword_verify: Number(lowered.includes('verify')),
@@ -289,6 +289,8 @@ async function extractFeatures({ inputUrl, response }) {
   const redirectCount = Number(response?.request?._redirectable?._redirectCount || 0);
   const suspiciousKeywordHits = countKeywordHits(pageHtml);
   const keywordFlags = collectKeywordFlags(pageHtml);
+  const urlSuspiciousKeywordHits = countKeywordHits(finalUrl.toString());
+  const urlKeywordFlags = collectKeywordFlags(finalUrl.toString());
   const finalDomainDiffersFromInput = finalUrl.hostname !== inputParsedUrl.hostname;
   const hostnameLength = finalUrl.hostname.length;
   const pathLength = finalUrl.pathname.length;
@@ -308,6 +310,7 @@ async function extractFeatures({ inputUrl, response }) {
   const hasDoubleSlashInPath = finalUrl.pathname.includes('//');
   const punycodeInHost = finalUrl.hostname.includes('xn--');
   const domainIntel = await lookupDomainIntel(finalUrl.hostname);
+  const knownLegitimateDomain = isKnownLegitimateDomain(finalUrl.hostname);
   const pageContext = extractPageContext($, pageHtml, finalUrl);
 
   const features = {
@@ -315,6 +318,7 @@ async function extractFeatures({ inputUrl, response }) {
     finalUrl: finalUrl.toString(),
     ipAddress,
     domain: finalUrl.hostname,
+    knownLegitimateDomain,
     usesHttps: finalUrl.protocol === 'https:',
     hasIpAddressInUrl: IPV4_HOST_REGEX.test(finalUrl.hostname),
     subdomainCount: countSubdomains(finalUrl.hostname),
@@ -351,8 +355,10 @@ async function extractFeatures({ inputUrl, response }) {
     emptyLinkCount,
     mailtoLinkCount,
     suspiciousKeywordHits,
+    urlSuspiciousKeywordHits,
     matchedKeywords: SUSPICIOUS_KEYWORDS.filter((keyword) => pageHtml.toLowerCase().includes(keyword)),
     keywordFlags,
+    urlKeywordFlags,
     sslStatus: finalUrl.protocol === 'https:' ? 'HTTPS detected' : 'No HTTPS detected',
     dnsResolves: Boolean(ipAddress),
     mxRecordExists,
@@ -392,19 +398,21 @@ async function extractFeatures({ inputUrl, response }) {
     has_shortener_domain: Number(features.hasShortenerDomain),
     has_punycode: Number(features.hasPunycode),
     suspicious_tld: Number(features.suspiciousTld),
-    form_count: features.formCount,
-    input_count: features.inputCount,
-    password_field_count: features.passwordFieldCount,
-    hidden_input_count: features.hiddenInputCount,
-    has_external_form_action: Number(features.hasExternalFormAction),
-    iframe_count: features.iframeCount,
-    external_link_count: features.externalLinkCount,
-    external_script_count: features.externalScriptCount,
-    suspicious_keyword_hits: features.suspiciousKeywordHits,
-    redirect_count: features.redirectCount,
-    final_domain_differs_from_input: Number(features.finalDomainDiffersFromInput),
-    redirected: Number(features.redirected),
-    ...features.keywordFlags
+    // The current large retraining datasets are URL-based, so keep HTML-heavy
+    // signals out of the model path and let the heuristic layer handle them.
+    form_count: 0,
+    input_count: 0,
+    password_field_count: 0,
+    hidden_input_count: 0,
+    has_external_form_action: 0,
+    iframe_count: 0,
+    external_link_count: 0,
+    external_script_count: 0,
+    suspicious_keyword_hits: features.urlSuspiciousKeywordHits,
+    redirect_count: 0,
+    final_domain_differs_from_input: 0,
+    redirected: 0,
+    ...features.urlKeywordFlags
   };
 
   // Keep the model payload in a stable order for training and inference.

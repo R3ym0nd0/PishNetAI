@@ -445,6 +445,17 @@ html {
     padding: 0;
 }
 
+.ai-msg a {
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-thickness: 1.5px;
+    text-underline-offset: 2px;
+}
+
+.ai-msg.user a {
+    color: #ffffff;
+}
+
 .ai-msg.bot::before {
     content: "Phinny";
     display: block;
@@ -519,12 +530,18 @@ html {
     background: rgba(255, 255, 255, 0.96);
     border-top: 1px solid var(--border-color);
     flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
 .form-input-wrapper {
     display: flex;
     align-items: flex-end;
     gap: 12px;
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
     background: linear-gradient(180deg, #f8fbff 0%, #f4f8fc 100%);
     border: 1px solid rgba(0, 51, 102, 0.10);
     border-radius: var(--border-radius);
@@ -611,8 +628,9 @@ html {
     text-align: center;
     font-size: 0.75rem;
     color: var(--text-soft);
-    margin-top: 12px;
-    padding: 0 16px;
+    margin-top: 0;
+    padding: 0;
+    width: 100%;
 }
 
 .ai-footer {
@@ -2246,6 +2264,19 @@ html {
     border: 1px solid rgba(197, 216, 234, 0.92);
 }
 
+.result-disclaimer {
+    grid-column: 1 / -1;
+    padding: 2px 2px 0;
+}
+
+.result-disclaimer p {
+    margin: 0;
+    color: rgba(74, 85, 104, 0.9);
+    font-size: 0.8rem;
+    line-height: 1.55;
+    text-align: center;
+}
+
 .result-page-overview-label,
 .result-summary-label,
 .result-recommendation-label {
@@ -2504,6 +2535,10 @@ html {
         border-radius: 17px;
     }
 
+    .result-disclaimer {
+        padding: 2px 2px 0;
+    }
+
     .result-risk-section {
         padding: 18px 16px;
         border-radius: 20px;
@@ -2602,6 +2637,10 @@ html {
     .result-recommendation {
         padding: 15px 14px;
         border-radius: 16px;
+    }
+
+    .result-disclaimer {
+        padding: 2px 2px 0;
     }
 
     .result-risk-section {
@@ -2711,6 +2750,10 @@ html {
         border-radius: 14px;
     }
 
+    .result-disclaimer {
+        padding: 2px 2px 0;
+    }
+
     .result-info-item {
         grid-template-columns: auto 1fr;
         row-gap: 4px;
@@ -2760,9 +2803,10 @@ html {
     }
 
     .result-summary p,
-    .result-recommendation p {
-        font-size: 0.86rem;
-        line-height: 1.58;
+    .result-recommendation p,
+    .result-disclaimer p {
+        font-size: 0.8rem;
+        line-height: 1.5;
     }
 }
 

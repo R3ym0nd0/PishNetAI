@@ -36,11 +36,13 @@ def predict():
     frame = pd.DataFrame([row], columns=FEATURE_COLUMNS)
     probabilities = model.predict_proba(frame)[0]
     predicted_class = int(model.predict(frame)[0])
-    confidence = float(max(probabilities))
+    phishing_probability = float(probabilities[1]) if len(probabilities) > 1 else float(probabilities[0])
+    confidence = float(probabilities[predicted_class])
 
     return jsonify({
         "prediction": predicted_class,
-        "confidence": round(confidence, 4)
+        "confidence": round(confidence, 4),
+        "phishing_probability": round(phishing_probability, 4)
     })
 
 

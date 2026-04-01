@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>PhishNet AI - Quiz</title>
+    <link rel="icon" href="assets/images/logo.png" type="image/png">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/quiz.css">
+</head>
+<body>
+    <div class="page-shell">
+        <nav class="main-nav">
+            <div class="nav-brand">
+                <div class="nav-brand-mark">LCC</div>
+                <div>
+                    <p>PhishNet AI</p>
+                    <span>Kaypian Campus</span>
+                </div>
+            </div>
+
+            <button type="button" class="nav-toggle" aria-label="Open navigation menu" aria-expanded="false" aria-controls="navLinks">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+
+            <div class="nav-links" id="navLinks">
+                <a href="index.html#home">Home</a>
+                <a href="index.html#scanner">Scanner</a>
+                <a href="index.html#tutorial">Tutorial</a>
+                <a href="index.html#guide">Guide</a>
+                <a href="quiz.html">Quiz</a>
+                <button id="aiToggle" class="nav-assistant" aria-controls="aiWidget" aria-expanded="false" title="Open AI Assistant">AI Assistant</button>
+            </div>
+        </nav>
+
+        <main class="main-content">
+            <section class="quiz-hero-panel">
+                <div class="quiz-hero-content">
+                    <div class="quiz-hero-text">
+                        <h1>Test Your Phishing Awareness</h1>
+                        <p>Challenge yourself with interactive quizzes designed to strengthen your phishing awareness. Learn to identify suspicious links, spot red flags, and protect yourself from online threats.</p>
+                        <div class="quiz-hero-actions">
+                            <a href="login.html" class="hero-button primary-button">Sign In</a>
+                            <a href="signup.html" class="hero-button secondary-button">Sign Up</a>
+                        </div>
+                    </div>
+                    <div class="quiz-hero-visual">
+                        <img src="assets/images/logo.png" alt="PhishNet AI Logo" class="quiz-hero-logo">
+                        <div class="quiz-hero-stats">
+                            <div class="quiz-stat">
+                                <span class="quiz-stat-value">50+</span>
+                                <span class="quiz-stat-label">Questions</span>
+                            </div>
+                            <div class="quiz-stat">
+                                <span class="quiz-stat-value">5</span>
+                                <span class="quiz-stat-label">Quiz Sets</span>
+                            </div>
+                            <div class="quiz-stat">
+                                <span class="quiz-stat-value">Free</span>
+                                <span class="quiz-stat-label">For Everyone</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="panel" id="quizzes">
+                <div class="section-heading">
+                    <h2>Available Quizzes</h2>
+                    <p class="section-text">Choose a quiz set to test your phishing awareness and learn how to stay safe online.</p>
+                </div>
+
+                <div class="quiz-grid">
+                    <article class="quiz-card">
+                        <div class="quiz-card-header">
+                            <span class="quiz-badge popular">Popular</span>
+                            <span class="quiz-icon">📧</span>
+                        </div>
+                        <h3>URL Basics</h3>
+                        <p>Learn to identify suspicious URLs and recognize common phishing tactics used in emails.</p>
+                        <div class="quiz-meta">
+                            <span>10 Questions</span>
+                            <span>~3 min</span>
+                            <span class="difficulty easy">Easy</span>
+                        </div>
+                        <button type="button" class="quiz-start-btn" data-quiz="url-basics">Start Quiz</button>
+                    </article>
+
+                    <article class="quiz-card">
+                        <div class="quiz-card-header">
+                            <span class="quiz-badge recommended">Recommended</span>
+                            <span class="quiz-icon">⚠️</span>
+                        </div>
+                        <h3>Message Red Flags</h3>
+                        <p>Master the art of spotting warning signs in emails, texts, and messages that indicate phishing attempts.</p>
+                        <div class="quiz-meta">
+                            <span>12 Questions</span>
+                            <span>~4 min</span>
+                            <span class="difficulty medium">Intermediate</span>
+                        </div>
+                        <button type="button" class="quiz-start-btn" data-quiz="message-red-flags">Start Quiz</button>
+                    </article>
+
+                    <article class="quiz-card">
+                        <div class="quiz-card-header">
+                            <span class="quiz-badge new">New</span>
+                            <span class="quiz-icon">🔒</span>
+                        </div>
+                        <h3>After Clicking: What to Do?</h3>
+                        <p>Test your knowledge on steps to take if you've clicked a suspicious link or provided sensitive information.</p>
+                        <div class="quiz-meta">
+                            <span>8 Questions</span>
+                            <span>~2 min</span>
+                            <span class="difficulty easy">Easy</span>
+                        </div>
+                        <button type="button" class="quiz-start-btn" data-quiz="after-clicking">Start Quiz</button>
+                    </article>
+
+                    <article class="quiz-card">
+                        <div class="quiz-card-header">
+                            <span class="quiz-badge">Advanced</span>
+                            <span class="quiz-icon">🎯</span>
+                        </div>
+                        <h3>Phishing Scenarios</h3>
+                        <p>Real-world scenarios to test your decision-making skills in identifying and responding to phishing.</p>
+                        <div class="quiz-meta">
+                            <span>15 Questions</span>
+                            <span>~5 min</span>
+                            <span class="difficulty hard">Advanced</span>
+                        </div>
+                        <button type="button" class="quiz-start-btn" data-quiz="phishing-scenarios">Start Quiz</button>
+                    </article>
+
+                    <article class="quiz-card">
+                        <div class="quiz-card-header">
+                            <span class="quiz-badge">Essential</span>
+                            <span class="quiz-icon">💡</span>
+                        </div>
+                        <h3>Best Practices</h3>
+                        <p>Learn security best practices and how to protect yourself and your organization from email threats.</p>
+                        <div class="quiz-meta">
+                            <span>10 Questions</span>
+                            <span>~3 min</span>
+                            <span class="difficulty medium">Intermediate</span>
+                        </div>
+                        <button type="button" class="quiz-start-btn" data-quiz="best-practices">Start Quiz</button>
+                    </article>
+                </div>
+            </section>
+
+            <section class="panel">
+                <div class="section-heading">
+                    <h2>Track Your Progress</h2>
+                    <p class="section-text">Sign in to save your quiz scores and track your learning progress over time.</p>
+                </div>
+
+                <div class="info-list">
+                    <article class="info-item">
+                        <span class="info-kicker">Analytics</span>
+                        <h3>View detailed score analytics</h3>
+                        <p>See your performance across different quiz categories and identify areas for improvement.</p>
+                    </article>
+                    <article class="info-item">
+                        <span class="info-kicker">History</span>
+                        <h3>Track improvement over time</h3>
+                        <p>Monitor your progress and see how your phishing awareness skills develop with each quiz attempt.</p>
+                    </article>
+                    <article class="info-item">
+                        <span class="info-kicker">Achievements</span>
+                        <h3>Earn badges for achievements</h3>
+                        <p>Unlock badges as you complete quizzes and demonstrate your cybersecurity knowledge.</p>
+                    </article>
+                </div>
+
+                <div class="hero-actions" style="margin-top: 24px; justify-content: center;">
+                    <a href="login.html" class="hero-button primary-button">Sign In to Save Progress</a>
+                    <a href="signup.html" class="hero-button secondary-button">Create Account</a>
+                </div>
+            </section>
+
+            <section class="panel">
+                <div class="section-heading">
+                    <h2>Compete with Classmates</h2>
+                    <p class="section-text">Join the leaderboard and see how you stack up against your peers.</p>
+                </div>
+
+                <div class="info-list">
+                    <article class="info-item">
+                        <span class="info-kicker">Rankings</span>
+                        <h3>Global leaderboard rankings</h3>
+                        <p>See where you stand among all quiz takers and strive to reach the top of the leaderboard.</p>
+                    </article>
+                    <article class="info-item">
+                        <span class="info-kicker">Challenges</span>
+                        <h3>Weekly & monthly challenges</h3>
+                        <p>Participate in timed challenges to test your skills and earn special recognition.</p>
+                    </article>
+                    <article class="info-item">
+                        <span class="info-kicker">Community</span>
+                        <h3>Class-based competitions</h3>
+                        <p>Compete with your classmates and foster a culture of cybersecurity awareness together.</p>
+                    </article>
+                </div>
+
+                <div class="hero-actions" style="margin-top: 24px; justify-content: center;">
+                    <a href="signup.html" class="hero-button primary-button">Sign Up to Compete</a>
+                </div>
+            </section>
+        </main>
+
+        <footer class="site-footer">
+            <div class="footer-inner">
+                <div class="footer-top">
+                    <div class="footer-brand">
+                        <img src="assets/images/logo.png" alt="La Concepcion College logo" class="footer-logo">
+                        <div>
+                            <p>&copy; 2026 PhishNet AI</p>
+                        </div>
+                    </div>
+
+                    <div class="footer-nav">
+                        <p class="footer-heading">Quick Links</p>
+                        <div class="footer-nav-links">
+                            <a href="index.html#home">Home</a>
+                            <a href="index.html#tutorial">Tutorial</a>
+                            <a href="index.html#scanner">Scanner</a>
+                            <a href="quiz.html">Quiz</a>
+                            <a href="index.html#guide">Guide</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="footer-divider"></div>
+
+                <div class="footer-bottom">
+                    <div class="footer-contact">
+                        <p class="footer-about">PhishNet AI helps students identify suspicious links and understand common phishing patterns. If you have questions or want to contribute, reach out.</p>
+
+                        <form id="newsletterForm" class="newsletter-form" action="#" onsubmit="event.preventDefault();">
+                            <input id="newsletterEmail" type="email" placeholder="Your email (optional)" aria-label="Your email for updates">
+                            <button type="submit">Subscribe</button>
+                        </form>
+                    </div>
+
+                    <div class="footer-links">
+                        <a href="https://github.com/R3ym0nd0/PishNetAI" target="_blank" rel="noreferrer" aria-label="GitHub">
+                            <span class="footer-icon github-icon" aria-hidden="true"></span>
+                            <span>GitHub</span>
+                        </a>
+                        <a href="https://laconcepcioncollege.com/" target="_blank" rel="noreferrer" aria-label="School Portal">
+                            <span class="footer-icon campus-icon" aria-hidden="true"></span>
+                            <span>LCC Campus</span>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="footer-divider"></div>
+
+                <div class="footer-team-row">
+                    <div class="footer-team">
+                        <p class="footer-heading">Research Team</p>
+                        <div class="footer-team-list">
+                            <span>Belas, Rem</span>
+                            <span>Costa, Marco</span>
+                            <span>Deocampo, John Michael</span>
+                            <span>Dorado, Leo Lustre</span>
+                            <span>Hernandez, Luis Christian</span>
+                            <span>Joaquin, Reymond P.</span>
+                            <span>Malibago, Hans</span>
+                            <span>Parati, Justin Kurt</span>
+                            <span>Ponce, Jiro</span>
+                            <span>Toel, Michael</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <div id="aiWidget" class="ai-widget" aria-hidden="true" role="dialog" aria-label="AI Assistant">
+        <div class="ai-header">
+            <div class="ai-header-left">
+                <h2 class="ai-title">AI Assistant</h2>
+            </div>
+            <div class="ai-header-right">
+                <a href="assistant.html" class="ai-header-btn" title="Open full assistant">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/>
+                    </svg>
+                </a>
+                <button id="aiClose" class="ai-close" aria-label="Close assistant">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <div id="aiMessages" class="ai-messages" role="log" aria-live="polite">
+            <div class="ai-welcome" id="aiWelcome">
+                <img src="assets/images/logo.png" alt="PhishNet AI logo" class="ai-welcome-logo">
+                <h3>How can I help you today?</h3>
+                <p>I'm Phinny, your phishing-focused assistant. Paste a suspicious URL, message, or ask what to do next.</p>
+            </div>
+        </div>
+        <form id="aiForm" class="ai-form" autocomplete="off">
+            <div class="form-input-wrapper">
+                <textarea 
+                    id="aiInput" 
+                    class="chat-input" 
+                    placeholder="Ask about phishing" 
+                    rows="1"
+                    aria-label="Ask the assistant"
+                ></textarea>
+                <button type="submit" class="send-btn" id="aiSend" title="Send message">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+                    </svg>
+                </button>
+            </div>
+            <p class="input-hint">PhishNet AI may produce inaccurate information. Consider verifying important information.</p>
+        </form>
+    </div>
+    
+    <button id="aiFab" class="ai-fab" aria-label="Open AI Assistant">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+        </svg>
+    </button>
+
+    <script type="module" src="assets/js/script.js"></script>
+    <script src="assets/js/quiz.js"></script>
+</body>
+</html>
