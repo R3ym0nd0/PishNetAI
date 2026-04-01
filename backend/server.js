@@ -16,6 +16,7 @@ const { scanUrl } = require('./services/scanService');
 const {
   authenticateUser,
   appendMessage,
+  createPasswordResetToken,
   createChat,
   createSession,
   createUser,
@@ -24,6 +25,7 @@ const {
   getUserBySessionToken,
   listChatsForUser,
   listMessagesForChat,
+  resetPasswordWithToken,
   updateChatTitle
 } = require('./services/appDataStore');
 
@@ -409,6 +411,11 @@ app.get('/signup.html', (req, res) => {
   return sendStaticFile(res, filePath, 'signup.html not found');
 });
 
+app.get('/reset-password.html', (req, res) => {
+  const filePath = path.join(publicDir, 'reset-password.html');
+  return sendStaticFile(res, filePath, 'reset-password.html not found');
+});
+
 app.get('/quiz.html', (req, res) => {
   const filePath = path.join(publicDir, 'quiz.html');
   return sendStaticFile(res, filePath, 'quiz.html not found');
@@ -480,6 +487,66 @@ app.post('/api/auth/logout', async (req, res) => {
   }
 
   return res.json({ ok: true });
+});
+
+app.post('/api/auth/forgot-password', async (req, res) => {
+  try {
+    const email = String(req.body?.email || '').trim().toLowerCase();
+
+    if (!email || !email.includes('@')) {
+      return res.status(400).json({
+        ok: false,
+        error: 'Please enter a valid email address.'
+      });
+    }
+
+    const resetEntry = await createPasswordResetToken(email);
+    const baseUrl = `${req.protocol}://${req.get('host')}`;
+
+    return res.json({
+      ok: true,
+      message: 'If an account with that email exists, a password reset link has been prepared.',
+      resetUrl: resetEntry ? `${baseUrl}/reset-password.html?token=${resetEntry.token}` : null
+    });
+  } catch (error) {
+    return res.status(error.statusCode || 500).json({
+      ok: false,
+      error: error.message || 'Could not start password reset right now.'
+    });
+  }
+});
+
+app.post('/api/auth/reset-password', async (req, res) => {
+  try {
+    const token = String(req.body?.token || '').trim();
+    const password = String(req.body?.password || '');
+
+    if (!token) {
+      return res.status(400).json({
+        ok: false,
+        error: 'Missing reset token.'
+      });
+    }
+
+    if (password.length < 6) {
+      return res.status(400).json({
+        ok: false,
+        error: 'Password must be at least 6 characters long.'
+      });
+    }
+
+    await resetPasswordWithToken(token, password);
+
+    return res.json({
+      ok: true,
+      message: 'Your password has been updated. You can sign in now.'
+    });
+  } catch (error) {
+    return res.status(error.statusCode || 500).json({
+      ok: false,
+      error: error.message || 'Could not reset password right now.'
+    });
+  }
 });
 
 app.get('/api/chats', async (req, res) => {
@@ -716,6 +783,10 @@ app.post('/api/ai-chat', async (req, res) => {
       '- Always give practical, easy-to-follow advice.',
       '- Avoid being overly technical unless necessary.',
       '- Do not act like every message must be turned into a phishing warning.',
+      '- Lightly mirror the user\'s tone when it feels natural.',
+      '- If the user casually calls you "bro", "pre", "sis", or similar friendly terms, you may casually respond in a similar style sometimes.',
+      '- Do not force these terms into every reply. Use them lightly, mainly near the start of the response when it feels natural.',
+      '- Keep the tone warm and conversational, but still clear and helpful.',
       '',
       'Never assist in creating phishing attacks.'
     ].join('\n');

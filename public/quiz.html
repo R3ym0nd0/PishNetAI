@@ -26,10 +26,10 @@
             </button>
 
             <div class="nav-links" id="navLinks">
-                <a href="index.html#home">Home</a>
-                <a href="index.html#scanner">Scanner</a>
-                <a href="index.html#tutorial">Tutorial</a>
-                <a href="index.html#guide">Guide</a>
+                <a href="/#home">Home</a>
+                <a href="/#scanner">Scanner</a>
+                <a href="/#tutorial">Tutorial</a>
+                <a href="/#guide">Guide</a>
                 <a href="quiz.html">Quiz</a>
                 <button id="aiToggle" class="nav-assistant" aria-controls="aiWidget" aria-expanded="false" title="Open AI Assistant">AI Assistant</button>
             </div>
@@ -40,10 +40,10 @@
                 <div class="quiz-hero-content">
                     <div class="quiz-hero-text">
                         <h1>Test Your Phishing Awareness</h1>
-                        <p>Challenge yourself with interactive quizzes designed to strengthen your phishing awareness. Learn to identify suspicious links, spot red flags, and protect yourself from online threats.</p>
+                        <p>Challenge yourself with short quiz sets that help students recognize suspicious links, message red flags, and safer online decisions.</p>
                         <div class="quiz-hero-actions">
-                            <a href="login.html" class="hero-button primary-button">Sign In</a>
-                            <a href="signup.html" class="hero-button secondary-button">Sign Up</a>
+                            <a href="login.html" class="hero-button primary-button">Sign In to Track Progress</a>
+                            <a href="#quizzes" class="hero-button secondary-button">Try as Guest</a>
                         </div>
                     </div>
                     <div class="quiz-hero-visual">
@@ -51,15 +51,15 @@
                         <div class="quiz-hero-stats">
                             <div class="quiz-stat">
                                 <span class="quiz-stat-value">50+</span>
-                                <span class="quiz-stat-label">Questions</span>
+                                <span class="quiz-stat-label">Awareness Questions</span>
                             </div>
                             <div class="quiz-stat">
                                 <span class="quiz-stat-value">5</span>
-                                <span class="quiz-stat-label">Quiz Sets</span>
+                                <span class="quiz-stat-label">Core Quiz Sets</span>
                             </div>
                             <div class="quiz-stat">
                                 <span class="quiz-stat-value">Free</span>
-                                <span class="quiz-stat-label">For Everyone</span>
+                                <span class="quiz-stat-label">Guest Access</span>
                             </div>
                         </div>
                     </div>
@@ -69,17 +69,16 @@
             <section class="panel" id="quizzes">
                 <div class="section-heading">
                     <h2>Available Quizzes</h2>
-                    <p class="section-text">Choose a quiz set to test your phishing awareness and learn how to stay safe online.</p>
+                    <p class="section-text">Choose a quiz set and strengthen your phishing awareness one topic at a time.</p>
                 </div>
 
                 <div class="quiz-grid">
                     <article class="quiz-card">
                         <div class="quiz-card-header">
                             <span class="quiz-badge popular">Popular</span>
-                            <span class="quiz-icon">📧</span>
                         </div>
                         <h3>URL Basics</h3>
-                        <p>Learn to identify suspicious URLs and recognize common phishing tactics used in emails.</p>
+                        <p>Practice checking links and recognizing URL patterns that are often used in phishing attempts.</p>
                         <div class="quiz-meta">
                             <span>10 Questions</span>
                             <span>~3 min</span>
@@ -91,10 +90,9 @@
                     <article class="quiz-card">
                         <div class="quiz-card-header">
                             <span class="quiz-badge recommended">Recommended</span>
-                            <span class="quiz-icon">⚠️</span>
                         </div>
                         <h3>Message Red Flags</h3>
-                        <p>Master the art of spotting warning signs in emails, texts, and messages that indicate phishing attempts.</p>
+                        <p>Learn how to notice warning signs in emails, texts, and chat messages before they put your account or information at risk.</p>
                         <div class="quiz-meta">
                             <span>12 Questions</span>
                             <span>~4 min</span>
@@ -106,10 +104,9 @@
                     <article class="quiz-card">
                         <div class="quiz-card-header">
                             <span class="quiz-badge new">New</span>
-                            <span class="quiz-icon">🔒</span>
                         </div>
                         <h3>After Clicking: What to Do?</h3>
-                        <p>Test your knowledge on steps to take if you've clicked a suspicious link or provided sensitive information.</p>
+                        <p>Review the right steps to take after clicking a suspicious link or sharing personal details on an unsafe page.</p>
                         <div class="quiz-meta">
                             <span>8 Questions</span>
                             <span>~2 min</span>
@@ -121,10 +118,9 @@
                     <article class="quiz-card">
                         <div class="quiz-card-header">
                             <span class="quiz-badge">Advanced</span>
-                            <span class="quiz-icon">🎯</span>
                         </div>
                         <h3>Phishing Scenarios</h3>
-                        <p>Real-world scenarios to test your decision-making skills in identifying and responding to phishing.</p>
+                        <p>Go through realistic situations that test how well you can identify and respond to possible phishing attempts.</p>
                         <div class="quiz-meta">
                             <span>15 Questions</span>
                             <span>~5 min</span>
@@ -136,10 +132,9 @@
                     <article class="quiz-card">
                         <div class="quiz-card-header">
                             <span class="quiz-badge">Essential</span>
-                            <span class="quiz-icon">💡</span>
                         </div>
                         <h3>Best Practices</h3>
-                        <p>Learn security best practices and how to protect yourself and your organization from email threats.</p>
+                        <p>Strengthen your everyday safety habits with practical best practices for accounts, messages, and suspicious websites.</p>
                         <div class="quiz-meta">
                             <span>10 Questions</span>
                             <span>~3 min</span>
@@ -150,62 +145,210 @@
                 </div>
             </section>
 
-            <section class="panel">
-                <div class="section-heading">
-                    <h2>Track Your Progress</h2>
-                    <p class="section-text">Sign in to save your quiz scores and track your learning progress over time.</p>
+            <section class="panel quiz-session-panel" id="quizWorkspace" hidden>
+                <div class="quiz-session-head">
+                    <div>
+                        <p class="quiz-session-kicker">Quiz in Progress</p>
+                        <h2 id="quizSessionTitle">Quiz Title</h2>
+                        <p id="quizSessionDesc" class="quiz-session-desc">Quiz description</p>
+                    </div>
+                    <button type="button" class="quiz-exit-btn" id="quizExitBtn">Exit Quiz</button>
                 </div>
 
-                <div class="info-list">
-                    <article class="info-item">
-                        <span class="info-kicker">Analytics</span>
-                        <h3>View detailed score analytics</h3>
-                        <p>See your performance across different quiz categories and identify areas for improvement.</p>
-                    </article>
-                    <article class="info-item">
-                        <span class="info-kicker">History</span>
-                        <h3>Track improvement over time</h3>
-                        <p>Monitor your progress and see how your phishing awareness skills develop with each quiz attempt.</p>
-                    </article>
-                    <article class="info-item">
-                        <span class="info-kicker">Achievements</span>
-                        <h3>Earn badges for achievements</h3>
-                        <p>Unlock badges as you complete quizzes and demonstrate your cybersecurity knowledge.</p>
-                    </article>
+                <div class="quiz-session-progress">
+                    <div class="quiz-session-progress-top">
+                        <span id="quizQuestionCounter">Question 1 of 5</span>
+                        <span id="quizScoreHint">Choose the safest answer based on the situation.</span>
+                    </div>
+                    <div class="quiz-session-progress-bar" aria-hidden="true">
+                        <span id="quizProgressFill"></span>
+                    </div>
                 </div>
 
-                <div class="hero-actions" style="margin-top: 24px; justify-content: center;">
-                    <a href="login.html" class="hero-button primary-button">Sign In to Save Progress</a>
-                    <a href="signup.html" class="hero-button secondary-button">Create Account</a>
+                <div class="quiz-question-card" id="quizQuestionCard">
+                    <p class="quiz-question-kicker" id="quizQuestionTopic">Awareness Check</p>
+                    <h3 id="quizQuestionText">Question text goes here.</h3>
+                    <div class="quiz-options" id="quizOptions"></div>
+                    <div class="quiz-feedback" id="quizFeedback" hidden></div>
+                    <div class="quiz-question-actions">
+                        <button type="button" class="quiz-next-btn" id="quizNextBtn" disabled>Next Question</button>
+                    </div>
+                </div>
+
+                <div class="quiz-result-card" id="quizResultCard" hidden>
+                    <div class="quiz-result-top">
+                        <span class="quiz-result-score" id="quizResultScore">0%</span>
+                        <div>
+                            <p class="quiz-result-kicker">Quiz Complete</p>
+                            <h3 id="quizResultTitle">Awareness result</h3>
+                        </div>
+                    </div>
+
+                    <p class="quiz-result-summary" id="quizResultSummary"></p>
+
+                    <div class="quiz-result-meta">
+                        <div class="quiz-result-meta-item">
+                            <span class="quiz-result-meta-label">Correct Answers</span>
+                            <strong id="quizCorrectCount">0 / 0</strong>
+                        </div>
+                        <div class="quiz-result-meta-item">
+                            <span class="quiz-result-meta-label">Quiz Set</span>
+                            <strong id="quizResultQuizName">URL Basics</strong>
+                        </div>
+                    </div>
+
+                    <div class="quiz-result-prompt guest-prompt" id="guestQuizPrompt" hidden>
+                        <div>
+                            <p class="quiz-result-prompt-kicker">Keep your awareness progress</p>
+                            <h4>Sign in to save this score, review past attempts, and unlock more quiz features.</h4>
+                            <p class="quiz-result-prompt-text">You can keep taking quizzes as a guest, but your scores and future progress will not be stored.</p>
+                        </div>
+                        <div class="quiz-result-prompt-actions">
+                            <a href="login.html" class="hero-button primary-button">Sign In</a>
+                            <a href="signup.html" class="hero-button secondary-button">Create Account</a>
+                        </div>
+                    </div>
+
+                    <div class="quiz-result-actions">
+                        <button type="button" class="quiz-next-btn" id="quizRetryBtn">Try Again</button>
+                        <button type="button" class="quiz-secondary-btn" id="quizChooseAnotherBtn">Choose Another Quiz</button>
+                    </div>
                 </div>
             </section>
 
-            <section class="panel">
+            <section class="panel quiz-hook-panel">
                 <div class="section-heading">
-                    <h2>Compete with Classmates</h2>
-                    <p class="section-text">Join the leaderboard and see how you stack up against your peers.</p>
+                    <h2>More When You Sign In</h2>
+                    <p class="section-text">Guests can start with core quizzes now. Sign in to save progress, unlock advanced quiz sets, and join awareness-based features built for returning users.</p>
                 </div>
 
-                <div class="info-list">
-                    <article class="info-item">
-                        <span class="info-kicker">Rankings</span>
-                        <h3>Global leaderboard rankings</h3>
-                        <p>See where you stand among all quiz takers and strive to reach the top of the leaderboard.</p>
+                <div class="quiz-hook-grid">
+                    <article class="quiz-hook-card">
+                        <div class="quiz-hook-top">
+                            <span class="info-kicker quiz-hook-kicker">
+                                <span class="quiz-hook-icon" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" fill="none">
+                                        <path d="M12 3l2.3 4.66L19 8.34l-3.5 3.41.83 4.83L12 14.2l-4.33 2.38.83-4.83L5 8.34l4.7-.68L12 3z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+                                    </svg>
+                                </span>
+                                Leaderboard
+                            </span>
+                            <span class="quiz-hook-lock">Members</span>
+                        </div>
+                        <h3>Leaderboard Preview</h3>
+                        <p>See who is consistently scoring well and use the rankings as motivation to improve your phishing awareness.</p>
+                        <div class="leaderboard-preview">
+                            <div class="leaderboard-row">
+                                <span class="leaderboard-rank">#1</span>
+                                <span class="leaderboard-name">Luis C.</span>
+                                <span class="leaderboard-score">94 pts</span>
+                            </div>
+                            <div class="leaderboard-row">
+                                <span class="leaderboard-rank">#2</span>
+                                <span class="leaderboard-name">Reymond P.</span>
+                                <span class="leaderboard-score">91 pts</span>
+                            </div>
+                            <div class="leaderboard-row">
+                                <span class="leaderboard-rank">#3</span>
+                                <span class="leaderboard-name">Marco C.</span>
+                                <span class="leaderboard-score">89 pts</span>
+                            </div>
+                        </div>
                     </article>
-                    <article class="info-item">
-                        <span class="info-kicker">Challenges</span>
-                        <h3>Weekly & monthly challenges</h3>
-                        <p>Participate in timed challenges to test your skills and earn special recognition.</p>
+
+                    <article class="quiz-hook-card">
+                        <div class="quiz-hook-top">
+                            <span class="info-kicker quiz-hook-kicker">
+                                <span class="quiz-hook-icon" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" fill="none">
+                                        <path d="M5 12.5l4 4L19 7.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <path d="M12 22C6.48 22 2 17.52 2 12S6.48 2 12 2c3.14 0 5.95 1.45 7.78 3.72" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                                    </svg>
+                                </span>
+                                Progress
+                            </span>
+                            <span class="quiz-hook-lock">Saved</span>
+                        </div>
+                        <h3>Track Your Awareness Growth</h3>
+                        <p>Review completed quiz sets, score trends, and your strongest phishing awareness topics over time.</p>
+                        <div class="progress-preview">
+                            <div class="progress-preview-row">
+                                <span>Quiz completion</span>
+                                <strong>3 / 8 sets</strong>
+                            </div>
+                            <div class="progress-bar"><span style="width: 38%;"></span></div>
+                            <div class="progress-preview-row">
+                                <span>Average score</span>
+                                <strong>84%</strong>
+                            </div>
+                        </div>
                     </article>
-                    <article class="info-item">
-                        <span class="info-kicker">Community</span>
-                        <h3>Class-based competitions</h3>
-                        <p>Compete with your classmates and foster a culture of cybersecurity awareness together.</p>
+
+                    <article class="quiz-hook-card">
+                        <div class="quiz-hook-top">
+                            <span class="info-kicker quiz-hook-kicker">
+                                <span class="quiz-hook-icon" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" fill="none">
+                                        <path d="M12 7v5l3 2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        <path d="M21 12a9 9 0 10-3.06 6.77" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                                        <path d="M21 3v6h-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                </span>
+                                History
+                            </span>
+                            <span class="quiz-hook-lock">Saved</span>
+                        </div>
+                        <h3>Review Past Attempts</h3>
+                        <p>Look back at previous quiz attempts so you can see where your answers improved and where you still need more practice.</p>
+                        <div class="history-preview">
+                            <span class="history-chip">URL Basics • 8/10</span>
+                            <span class="history-chip">Message Red Flags • 10/12</span>
+                            <span class="history-chip">After Clicking • In Progress</span>
+                        </div>
+                    </article>
+
+                    <article class="quiz-hook-card">
+                        <div class="quiz-hook-top">
+                            <span class="info-kicker quiz-hook-kicker">
+                                <span class="quiz-hook-icon" aria-hidden="true">
+                                    <svg viewBox="0 0 24 24" fill="none">
+                                        <path d="M7 11V8a5 5 0 0110 0v3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                                        <rect x="4" y="11" width="16" height="10" rx="2.5" stroke="currentColor" stroke-width="1.8"/>
+                                        <path d="M12 15v2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                                    </svg>
+                                </span>
+                                Advanced
+                            </span>
+                            <span class="quiz-hook-lock">Locked</span>
+                        </div>
+                        <h3>Unlock More Quiz Sets</h3>
+                        <p>Signed-in users can move beyond the core quiz sets and access more challenging awareness-focused scenarios.</p>
+                        <div class="locked-set-list">
+                            <div class="locked-set-item">
+                                <strong>Campus Email Scenarios</strong>
+                                <span>Locked until sign in</span>
+                            </div>
+                            <div class="locked-set-item">
+                                <strong>Social Media Impersonation</strong>
+                                <span>Locked until sign in</span>
+                            </div>
+                            <div class="locked-set-item">
+                                <strong>Urgent Account Recovery Cases</strong>
+                                <span>Locked until sign in</span>
+                            </div>
+                        </div>
                     </article>
                 </div>
 
-                <div class="hero-actions" style="margin-top: 24px; justify-content: center;">
-                    <a href="signup.html" class="hero-button primary-button">Sign Up to Compete</a>
+                <div class="quiz-cta-strip">
+                    <div>
+                        <p class="quiz-cta-kicker">Start as guest, grow more when signed in</p>
+                        <h3>Take the core quizzes now, then sign in for saved progress and more advanced awareness sets.</h3>
+                    </div>
+                    <div class="quiz-cta-actions">
+                        <a href="login.html" class="hero-button primary-button">Sign In</a>
+                        <a href="signup.html" class="hero-button secondary-button">Create Account</a>
+                    </div>
                 </div>
             </section>
         </main>
@@ -223,11 +366,11 @@
                     <div class="footer-nav">
                         <p class="footer-heading">Quick Links</p>
                         <div class="footer-nav-links">
-                            <a href="index.html#home">Home</a>
-                            <a href="index.html#tutorial">Tutorial</a>
-                            <a href="index.html#scanner">Scanner</a>
+                            <a href="/#home">Home</a>
+                            <a href="/#tutorial">Tutorial</a>
+                            <a href="/#scanner">Scanner</a>
                             <a href="quiz.html">Quiz</a>
-                            <a href="index.html#guide">Guide</a>
+                            <a href="/#guide">Guide</a>
                         </div>
                     </div>
                 </div>
@@ -324,8 +467,12 @@
     </div>
     
     <button id="aiFab" class="ai-fab" aria-label="Open AI Assistant">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M6.4 7.8c0-1.1.9-2 2-2h7.2c1.1 0 2 .9 2 2v4.9c0 1.1-.9 2-2 2h-3.15l-2.83 2.57a.55.55 0 0 1-.92-.41V14.7H8.4c-1.1 0-2-.9-2-2V7.8Z" fill="currentColor"/>
+            <circle cx="10.15" cy="10.2" r=".72" fill="#0d4d86"/>
+            <circle cx="12" cy="10.2" r=".72" fill="#0d4d86"/>
+            <circle cx="13.85" cy="10.2" r=".72" fill="#0d4d86"/>
+            <path d="M18.55 4.2l.28.87c.09.28.31.5.59.59l.87.28-.87.28a.93.93 0 0 0-.59.59l-.28.87-.28-.87a.93.93 0 0 0-.59-.59l-.87-.28.87-.28a.93.93 0 0 0 .59-.59l.28-.87Z" fill="#ffffff"/>
         </svg>
     </button>
 

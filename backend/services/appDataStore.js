@@ -31,9 +31,17 @@ function getChatTitleFromMessage(message) {
   return cleaned.length > 48 ? `${cleaned.slice(0, 48).trim()}...` : cleaned;
 }
 
+function buildPasswordData(password) {
+  const passwordData = hashPassword(password);
+  return {
+    passwordHash: passwordData.hash,
+    passwordSalt: passwordData.salt
+  };
+}
+
 async function createUser({ name, email, password }) {
   const normalizedEmail = normalizeEmail(email);
-  const passwordData = hashPassword(password);
+  const passwordData = buildPasswordData(password);
 
   try {
     const result = await query(
@@ -42,7 +50,7 @@ async function createUser({ name, email, password }) {
         VALUES ($1, $2, $3, $4)
         RETURNING id, name, email, created_at
       `,
-      [String(name || '').trim(), normalizedEmail, passwordData.hash, passwordData.salt]
+      [String(name || '').trim(), normalizedEmail, passwordData.passwordHash, passwordData.passwordSalt]
     );
 
     return sanitizeUser(result.rows[0]);
@@ -135,6 +143,114 @@ async function destroySession(token) {
     `,
     [token]
   );
+}
+
+async function createPasswordResetToken(email) {
+  const normalizedEmail = normalizeEmail(email);
+  const userResult = await query(
+    `
+      SELECT id, email
+      FROM users
+      WHERE email = $1
+      LIMIT 1
+    `,
+    [normalizedEmail]
+  );
+
+  const user = userResult.rows[0];
+  if (!user) {
+    return null;
+  }
+
+  const token = crypto.randomBytes(32).toString('hex');
+
+  await withTransaction(async (client) => {
+    await client.query(
+      `
+        DELETE FROM password_reset_tokens
+        WHERE user_id = $1
+      `,
+      [user.id]
+    );
+
+    await client.query(
+      `
+        INSERT INTO password_reset_tokens (token, user_id, expires_at)
+        VALUES ($1, $2, NOW() + INTERVAL '30 minutes')
+      `,
+      [token, user.id]
+    );
+  });
+
+  return {
+    token,
+    userId: user.id,
+    email: user.email
+  };
+}
+
+async function resetPasswordWithToken(token, password) {
+  const tokenResult = await query(
+    `
+      SELECT token, user_id, expires_at
+      FROM password_reset_tokens
+      WHERE token = $1
+      LIMIT 1
+    `,
+    [String(token || '').trim()]
+  );
+
+  const resetEntry = tokenResult.rows[0];
+  if (!resetEntry) {
+    const error = new Error('This reset link is invalid or has already been used.');
+    error.statusCode = 400;
+    throw error;
+  }
+
+  if (new Date(resetEntry.expires_at).getTime() < Date.now()) {
+    await query(
+      `
+        DELETE FROM password_reset_tokens
+        WHERE token = $1
+      `,
+      [resetEntry.token]
+    );
+
+    const error = new Error('This reset link has expired. Please request a new one.');
+    error.statusCode = 400;
+    throw error;
+  }
+
+  const passwordData = buildPasswordData(password);
+
+  await withTransaction(async (client) => {
+    await client.query(
+      `
+        UPDATE users
+        SET password_hash = $2, password_salt = $3
+        WHERE id = $1
+      `,
+      [resetEntry.user_id, passwordData.passwordHash, passwordData.passwordSalt]
+    );
+
+    await client.query(
+      `
+        DELETE FROM password_reset_tokens
+        WHERE user_id = $1
+      `,
+      [resetEntry.user_id]
+    );
+
+    await client.query(
+      `
+        DELETE FROM sessions
+        WHERE user_id = $1
+      `,
+      [resetEntry.user_id]
+    );
+  });
+
+  return { ok: true };
 }
 
 async function createChat(userId, firstMessage = '') {
@@ -333,6 +449,7 @@ async function deleteChat(chatId, userId) {
 module.exports = {
   authenticateUser,
   appendMessage,
+  createPasswordResetToken,
   createChat,
   createSession,
   createUser,
@@ -341,5 +458,6 @@ module.exports = {
   getUserBySessionToken,
   listChatsForUser,
   listMessagesForChat,
+  resetPasswordWithToken,
   updateChatTitle
 };

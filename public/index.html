@@ -122,17 +122,137 @@
             <section class="panel tutorial-panel" id="tutorial">
                 <div class="section-heading">
                     <h2>How PhishNet AI works</h2>
-                    <p class="section-text">
-                        Watch this short walkthrough to see how to submit a suspicious link, understand the scan result, and review key phishing indicators.
-                    </p>
                 </div>
 
-                <div class="video-wrapper">
-                    <iframe width="560" height="315" src="https://www.youtube.com/embed/yqWX86uT5jM?si=xt0FIWbfeRAs8HBf" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                <div class="tutorial-layout">
+                    <aside class="tutorial-flow" aria-label="Tutorial steps">
+                        <div class="tutorial-flow-head">
+                            <span class="tutorial-flow-kicker">Guided Walkthrough</span>
+                            <h3>Learn the scan process before you try it.</h3>
+                            <p>Follow the same flow students will use when checking a suspicious link with PhishNet AI.</p>
+                        </div>
+
+                        <div class="tutorial-steps">
+                            <article class="tutorial-step">
+                                <span class="tutorial-step-number">01</span>
+                                <div>
+                                    <h4>Paste the link</h4>
+                                    <p>Submit a suspicious URL in the scanner field to begin the check.</p>
+                                </div>
+                            </article>
+                            <article class="tutorial-step">
+                                <span class="tutorial-step-number">02</span>
+                                <div>
+                                    <h4>Review the result</h4>
+                                    <p>Check the grade, summary, and indicators shown after the analysis.</p>
+                                </div>
+                            </article>
+                            <article class="tutorial-step">
+                                <span class="tutorial-step-number">03</span>
+                                <div>
+                                    <h4>Decide safely</h4>
+                                    <p>Use the recommendation to decide whether to continue or avoid the website.</p>
+                                </div>
+                            </article>
+                        </div>
+                    </aside>
+
+                    <div class="video-wrapper">
+                        <iframe width="560" height="315" src="https://www.youtube.com/embed/yqWX86uT5jM?si=xt0FIWbfeRAs8HBf" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                    </div>
                 </div>
             </section>
 
             <section class="info-grid" id="guide">
+                <aside class="panel score-guide">
+                    <div class="section-heading">
+                        <h2>How to read the URL rating</h2>
+                    </div>
+
+                    <div class="score-groups">
+                        <section class="score-group safe-group">
+                            <p class="score-group-label">Safe</p>
+                            <div class="score-band-list">
+                                <article class="score-band">
+                                    <span class="score-band-grade">A+</span>
+                                    <div>
+                                        <h3>Highest trust level</h3>
+                                        <p>The website appears very safe based on the current scan.</p>
+                                    </div>
+                                </article>
+                                <article class="score-band">
+                                    <span class="score-band-grade">A</span>
+                                    <div>
+                                        <h3>Very safe</h3>
+                                        <p>Low warning signs were found, but users should still stay alert.</p>
+                                    </div>
+                                </article>
+                                <article class="score-band">
+                                    <span class="score-band-grade">B+</span>
+                                    <div>
+                                        <h3>Mostly safe</h3>
+                                        <p>Only minor concerns were detected in the scan.</p>
+                                    </div>
+                                </article>
+                                <article class="score-band">
+                                    <span class="score-band-grade">B</span>
+                                    <div>
+                                        <h3>Proceed carefully</h3>
+                                        <p>The link looks acceptable, but extra caution is still recommended.</p>
+                                    </div>
+                                </article>
+                            </div>
+                        </section>
+
+                        <section class="score-group caution-group">
+                            <p class="score-group-label">Caution</p>
+                            <div class="score-band-list">
+                                <article class="score-band">
+                                    <span class="score-band-grade">C+</span>
+                                    <div>
+                                        <h3>Verify first</h3>
+                                        <p>Moderate warning signs were detected and the link should be checked first.</p>
+                                    </div>
+                                </article>
+                                <article class="score-band">
+                                    <span class="score-band-grade">C</span>
+                                    <div>
+                                        <h3>Suspicious</h3>
+                                        <p>The page looks risky enough that users should not continue without confirmation.</p>
+                                    </div>
+                                </article>
+                            </div>
+                        </section>
+
+                        <section class="score-group danger-group">
+                            <p class="score-group-label">Danger</p>
+                            <div class="score-band-list">
+                                <article class="score-band">
+                                    <span class="score-band-grade">D+</span>
+                                    <div>
+                                        <h3>High risk</h3>
+                                        <p>Strong warning signs are present and the link should be avoided.</p>
+                                    </div>
+                                </article>
+                                <article class="score-band">
+                                    <span class="score-band-grade">D</span>
+                                    <div>
+                                        <h3>Very high risk</h3>
+                                        <p>The scan suggests the page is likely unsafe or deceptive.</p>
+                                    </div>
+                                </article>
+                                <article class="score-band">
+                                    <span class="score-band-grade">F</span>
+                                    <div>
+                                        <h3>Avoid immediately</h3>
+                                        <p>The page is flagged as confirmed or near-confirmed phishing risk.</p>
+                                    </div>
+                                </article>
+                            </div>
+                        </section>
+                    </div>
+                </aside>
+
                 <section class="panel tips-panel" id="tipsSection">
                     <div class="section-heading">
                         <h2>Quick anti-phishing reminders</h2>
@@ -156,41 +276,6 @@
                         </article>
                     </div>
                 </section>
-
-                <aside class="panel score-guide">
-                    <div class="section-heading">
-                        <h2>How to read the URL rating</h2>
-                    </div>
-
-                    <div class="score-groups">
-                        <section class="score-group safe-group">
-                            <p class="score-group-label">Safe</p>
-                            <ul class="score-list">
-                                <li><strong>A+</strong> Highest trust level. The website appears very safe.</li>
-                                <li><strong>A</strong> Very safe, but users should still review the page carefully.</li>
-                                <li><strong>B+</strong> Mostly safe with only minor concerns.</li>
-                                <li><strong>B</strong> Acceptable but still requires caution.</li>
-                            </ul>
-                        </section>
-
-                        <section class="score-group caution-group">
-                            <p class="score-group-label">Caution</p>
-                            <ul class="score-list">
-                                <li><strong>C+</strong> Moderately suspicious and should be verified first.</li>
-                                <li><strong>C</strong> Suspicious. Do not proceed without confirmation.</li>
-                            </ul>
-                        </section>
-
-                        <section class="score-group danger-group">
-                            <p class="score-group-label">Danger</p>
-                            <ul class="score-list">
-                                <li><strong>D+</strong> High risk. Strong warning signs are present.</li>
-                                <li><strong>D</strong> Very high risk and likely unsafe.</li>
-                                <li><strong>F</strong> Confirmed or near-confirmed phishing risk. Avoid immediately.</li>
-                            </ul>
-                        </section>
-                    </div>
-                </aside>
             </section>
         </main>
 
@@ -309,8 +394,12 @@
     </div>
     
     <button id="aiFab" class="ai-fab" aria-label="Open AI Assistant">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M6.4 7.8c0-1.1.9-2 2-2h7.2c1.1 0 2 .9 2 2v4.9c0 1.1-.9 2-2 2h-3.15l-2.83 2.57a.55.55 0 0 1-.92-.41V14.7H8.4c-1.1 0-2-.9-2-2V7.8Z" fill="currentColor"/>
+            <circle cx="10.15" cy="10.2" r=".72" fill="#0d4d86"/>
+            <circle cx="12" cy="10.2" r=".72" fill="#0d4d86"/>
+            <circle cx="13.85" cy="10.2" r=".72" fill="#0d4d86"/>
+            <path d="M18.55 4.2l.28.87c.09.28.31.5.59.59l.87.28-.87.28a.93.93 0 0 0-.59.59l-.28.87-.28-.87a.93.93 0 0 0-.59-.59l-.87-.28.87-.28a.93.93 0 0 0 .59-.59l.28-.87Z" fill="#ffffff"/>
         </svg>
     </button>
 

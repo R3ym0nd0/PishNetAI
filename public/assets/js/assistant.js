@@ -54,18 +54,54 @@ function getApiBase() {
 }
 
 function getStoredToken() {
-    return localStorage.getItem(authTokenKey) || '';
+    return localStorage.getItem(authTokenKey) || sessionStorage.getItem(authTokenKey) || '';
 }
 
 function getActiveChatId() {
-    return localStorage.getItem(activeChatKey) || '';
+    return localStorage.getItem(activeChatKey) || sessionStorage.getItem(activeChatKey) || '';
+}
+
+function getAuthStorage() {
+    if (localStorage.getItem(authTokenKey)) return localStorage;
+    if (sessionStorage.getItem(authTokenKey)) return sessionStorage;
+    return localStorage;
 }
 
 function setActiveChatId(chatId) {
+    const storage = getAuthStorage();
+
     if (chatId) {
-        localStorage.setItem(activeChatKey, chatId);
+        localStorage.removeItem(activeChatKey);
+        sessionStorage.removeItem(activeChatKey);
+        storage.setItem(activeChatKey, chatId);
     } else {
         localStorage.removeItem(activeChatKey);
+        sessionStorage.removeItem(activeChatKey);
+    }
+}
+
+function clearStoredAuth() {
+    localStorage.removeItem(authTokenKey);
+    localStorage.removeItem(authUserKey);
+    localStorage.removeItem(activeChatKey);
+    sessionStorage.removeItem(authTokenKey);
+    sessionStorage.removeItem(authUserKey);
+    sessionStorage.removeItem(activeChatKey);
+}
+
+function setStoredAuth(token, user) {
+    if (!token) {
+        clearStoredAuth();
+        return;
+    }
+
+    const storage = getAuthStorage();
+    storage.setItem(authTokenKey, token);
+
+    if (user?.name) {
+        storage.setItem(authUserKey, user.name);
+    } else {
+        storage.removeItem(authUserKey);
     }
 }
 
@@ -104,20 +140,6 @@ async function apiFetch(path, options = {}) {
     }
 
     return data;
-}
-
-function setStoredAuth(token, user) {
-    if (token) {
-        localStorage.setItem(authTokenKey, token);
-    } else {
-        localStorage.removeItem(authTokenKey);
-    }
-
-    if (user?.name) {
-        localStorage.setItem(authUserKey, user.name);
-    } else {
-        localStorage.removeItem(authUserKey);
-    }
 }
 
 function showWelcomeMessage() {

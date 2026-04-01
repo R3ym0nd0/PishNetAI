@@ -53,6 +53,8 @@ const RENDER_API_BASE = 'https://phishnetai-fb30.onrender.com';
 
 let previousFocus = null;
 let focusTrapHandler = null;
+let navManualTargetId = '';
+let navManualTargetTimer = null;
 
 function cacheResultElements() {
     resultStatusBadge = resultSection?.querySelector('.status-badge');
@@ -203,6 +205,135 @@ if (mainNav && navToggle) {
     });
 }
 
+function setActiveNavLink(targetId = '') {
+    const hashTarget = targetId ? `#${targetId}` : '';
+
+    navLinks.forEach((link) => {
+        if (!(link instanceof HTMLAnchorElement)) return;
+
+        const href = link.getAttribute('href') || '';
+        const normalizedHref = href.startsWith('../index.html')
+            ? href.replace('../index.html', '')
+            : href.startsWith('/#')
+            ? href.slice(1)
+            : href;
+
+        const shouldActivate = hashTarget
+            ? normalizedHref === hashTarget
+            : false;
+
+        link.classList.toggle('is-active', shouldActivate);
+    });
+}
+
+function getSectionIdFromHref(href = '') {
+    if (!href.includes('#')) return '';
+    const fragment = href.split('#')[1] || '';
+    return fragment.trim();
+}
+
+function lockActiveNavToTarget(targetId) {
+    navManualTargetId = targetId;
+
+    if (navManualTargetTimer) {
+        clearTimeout(navManualTargetTimer);
+    }
+
+    navManualTargetTimer = window.setTimeout(() => {
+        navManualTargetId = '';
+        navManualTargetTimer = null;
+    }, 900);
+}
+
+function syncActiveNavWithPage() {
+    const pageSections = ['home', 'scanner', 'tutorial', 'guide']
+        .map((id) => document.getElementById(id))
+        .filter(Boolean);
+
+    if (!pageSections.length) {
+        const currentPath = window.location.pathname.split('/').pop() || 'index.html';
+        navLinks.forEach((link) => {
+            if (!(link instanceof HTMLAnchorElement)) return;
+
+            const href = link.getAttribute('href') || '';
+            const normalizedHref = href.replace('../', '');
+            const isCurrentPage = normalizedHref === currentPath;
+            link.classList.toggle('is-active', isCurrentPage);
+        });
+        return;
+    }
+
+    const updateActiveSection = () => {
+        const hashTargetId = window.location.hash.replace('#', '').trim();
+        if (hashTargetId && pageSections.some((section) => section.id === hashTargetId)) {
+            setActiveNavLink(hashTargetId);
+            return;
+        }
+
+        if (navManualTargetId) {
+            setActiveNavLink(navManualTargetId);
+            return;
+        }
+
+        const anchorOffset = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--anchor-offset'), 10) || 106;
+        const triggerLine = anchorOffset + 40;
+
+        let activeSectionId = pageSections[0].id;
+
+        pageSections.forEach((section) => {
+            const rect = section.getBoundingClientRect();
+            if (rect.top <= triggerLine) {
+                activeSectionId = section.id;
+            }
+        });
+
+        setActiveNavLink(activeSectionId);
+    };
+
+    updateActiveSection();
+    window.addEventListener('scroll', updateActiveSection, { passive: true });
+    window.addEventListener('resize', updateActiveSection);
+}
+
+syncActiveNavWithPage();
+
+function scrollToHashTarget(hashValue = window.location.hash) {
+    if (!hashValue || hashValue === '#') return;
+
+    const targetId = hashValue.replace('#', '').trim();
+    if (!targetId) return;
+
+    const targetElement = document.getElementById(targetId);
+    if (!targetElement) return;
+
+    lockActiveNavToTarget(targetId);
+    setActiveNavLink(targetId);
+
+    window.setTimeout(() => {
+        targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 60);
+}
+
+window.addEventListener('load', () => {
+    scrollToHashTarget();
+});
+
+window.addEventListener('hashchange', () => {
+    scrollToHashTarget();
+});
+
+navLinks.forEach((link) => {
+    if (!(link instanceof HTMLAnchorElement)) return;
+
+    link.addEventListener('click', () => {
+        const targetId = getSectionIdFromHref(link.getAttribute('href') || '');
+        if (targetId) {
+            lockActiveNavToTarget(targetId);
+            setActiveNavLink(targetId);
+        }
+    });
+});
+
 // === URL Scan Submission ===
 if (urlForm) {
     urlForm.addEventListener("submit", async (event) => {
@@ -252,20 +383,31 @@ function getRecentConversationHistory() {
 }
 
 function getStoredToken() {
-    return localStorage.getItem(authTokenKey) || '';
+    return localStorage.getItem(authTokenKey) || sessionStorage.getItem(authTokenKey) || '';
 }
 
 function getActiveChatId() {
-    return localStorage.getItem(activeChatKey) || '';
+    return localStorage.getItem(activeChatKey) || sessionStorage.getItem(activeChatKey) || '';
+}
+
+function getAuthStorage() {
+    if (localStorage.getItem(authTokenKey)) return localStorage;
+    if (sessionStorage.getItem(authTokenKey)) return sessionStorage;
+    return localStorage;
 }
 
 function setActiveChatId(chatId) {
+    const storage = getAuthStorage();
+
     if (chatId) {
-        localStorage.setItem(activeChatKey, chatId);
+        localStorage.removeItem(activeChatKey);
+        sessionStorage.removeItem(activeChatKey);
+        storage.setItem(activeChatKey, chatId);
         return;
     }
 
     localStorage.removeItem(activeChatKey);
+    sessionStorage.removeItem(activeChatKey);
 }
 
 async function loadActiveChatForWidget() {

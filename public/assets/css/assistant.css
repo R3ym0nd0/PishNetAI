@@ -786,6 +786,17 @@ button {
     box-shadow: 0 10px 22px rgba(0, 51, 102, 0.08), 0 4px 12px rgba(0, 51, 102, 0.04);
 }
 
+.ai-msg.bot:not(.pending)::before {
+    content: "Phinny";
+    display: block;
+    margin-bottom: 8px;
+    color: var(--accent-color);
+    font-size: 0.8rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+}
+
 .ai-msg p {
     margin: 0;
     word-break: break-word;

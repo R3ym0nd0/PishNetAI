@@ -1,12 +1,17 @@
 const authTokenKey = 'phish_ai_token';
 const authUserKey = 'phish_ai_user';
+const activeChatKey = 'phish_ai_active_chat';
 const NETLIFY_FRONTEND_ORIGIN = 'https://phishnetai.netlify.app';
 const RENDER_API_BASE = 'https://phishnetai-fb30.onrender.com';
 
 const loginForm = document.getElementById('loginForm');
 const signupForm = document.getElementById('signupForm');
+const forgotPasswordForm = document.getElementById('forgotPasswordForm');
+const resetPasswordForm = document.getElementById('resetPasswordForm');
 const authAlert = document.getElementById('authAlert');
 const authAlertMsg = document.getElementById('authAlertMsg');
+const authSuccess = document.getElementById('authSuccess');
+const authSuccessMsg = document.getElementById('authSuccessMsg');
 
 function getApiBase() {
     const { origin, hostname } = window.location;
@@ -24,6 +29,17 @@ function showAlert(message) {
 function hideAlert() {
     if (!authAlert) return;
     authAlert.classList.remove('show');
+}
+
+function showSuccess(message) {
+    if (!authSuccess || !authSuccessMsg) return;
+    authSuccessMsg.textContent = message;
+    authSuccess.classList.add('show');
+}
+
+function hideSuccess() {
+    if (!authSuccess) return;
+    authSuccess.classList.remove('show');
 }
 
 async function apiFetch(path, options = {}) {
@@ -52,9 +68,21 @@ async function apiFetch(path, options = {}) {
     return data;
 }
 
-function storeAuth(token, user) {
-    localStorage.setItem(authTokenKey, token);
-    localStorage.setItem(authUserKey, user?.name || '');
+function clearStoredAuth() {
+    localStorage.removeItem(authTokenKey);
+    localStorage.removeItem(authUserKey);
+    localStorage.removeItem(activeChatKey);
+    sessionStorage.removeItem(authTokenKey);
+    sessionStorage.removeItem(authUserKey);
+    sessionStorage.removeItem(activeChatKey);
+}
+
+function storeAuth(token, user, rememberMe = true) {
+    clearStoredAuth();
+
+    const storage = rememberMe ? localStorage : sessionStorage;
+    storage.setItem(authTokenKey, token);
+    storage.setItem(authUserKey, user?.name || '');
 }
 
 function wirePasswordToggle(buttonId, inputId, iconId) {
@@ -80,6 +108,7 @@ if (loginForm) {
 
         const email = document.getElementById('loginEmail')?.value.trim();
         const password = document.getElementById('loginPassword')?.value || '';
+        const rememberMe = Boolean(loginForm.querySelector('input[type="checkbox"]')?.checked);
 
         try {
             const data = await apiFetch('/api/auth/login', {
@@ -87,12 +116,126 @@ if (loginForm) {
                 body: JSON.stringify({ email, password })
             });
 
-            storeAuth(data.token, data.user);
+            storeAuth(data.token, data.user, rememberMe);
             window.location.href = 'assistant.html';
         } catch (error) {
             showAlert(error.message || 'Could not sign in.');
         }
     });
+}
+
+if (forgotPasswordForm || resetPasswordForm) {
+    hideAlert();
+    hideSuccess();
+    wirePasswordToggle('toggleResetPw', 'resetPassword', 'toggleResetPwIcon');
+    wirePasswordToggle('toggleResetConfirmPw', 'resetConfirmPassword', 'toggleResetConfirmPwIcon');
+
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get('token') || '';
+    const resetIntro = document.getElementById('resetIntro');
+    const resetLinkPreview = document.getElementById('resetLinkPreview');
+    const resetLinkAnchor = document.getElementById('resetLinkAnchor');
+    const resetLinkText = document.getElementById('resetLinkText');
+    const copyResetLinkBtn = document.getElementById('copyResetLinkBtn');
+    const resetTokenInput = document.getElementById('resetToken');
+
+    if (token && resetPasswordForm && forgotPasswordForm) {
+        forgotPasswordForm.hidden = true;
+        resetPasswordForm.hidden = false;
+        if (resetIntro) {
+            resetIntro.textContent = 'Enter your new password below to finish resetting your account.';
+        }
+        if (resetTokenInput) {
+            resetTokenInput.value = token;
+        }
+    }
+
+    if (forgotPasswordForm) {
+        forgotPasswordForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            hideAlert();
+            hideSuccess();
+
+            const email = document.getElementById('forgotEmail')?.value.trim();
+
+            try {
+                const data = await apiFetch('/api/auth/forgot-password', {
+                    method: 'POST',
+                    body: JSON.stringify({ email })
+                });
+
+                showSuccess(data.message || 'Reset instructions are ready.');
+
+                if (data.resetUrl && resetLinkPreview && resetLinkAnchor) {
+                    resetLinkPreview.hidden = false;
+                    resetLinkAnchor.href = data.resetUrl;
+                    if (resetLinkText) {
+                        resetLinkText.textContent = 'Use the button below to open the reset page, or copy the link for testing on another tab or device.';
+                    }
+                    if (copyResetLinkBtn) {
+                        copyResetLinkBtn.dataset.url = data.resetUrl;
+                        copyResetLinkBtn.textContent = 'Copy link';
+                    }
+                }
+            } catch (error) {
+                showAlert(error.message || 'Could not prepare a reset link.');
+            }
+        });
+    }
+
+    if (resetPasswordForm) {
+        resetPasswordForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            hideAlert();
+            hideSuccess();
+
+            const tokenValue = document.getElementById('resetToken')?.value.trim();
+            const password = document.getElementById('resetPassword')?.value || '';
+            const confirmPassword = document.getElementById('resetConfirmPassword')?.value || '';
+
+            if (!tokenValue) {
+                showAlert('Missing reset token. Please open a valid reset link.');
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                showAlert('Passwords do not match.');
+                return;
+            }
+
+            try {
+                const data = await apiFetch('/api/auth/reset-password', {
+                    method: 'POST',
+                    body: JSON.stringify({ token: tokenValue, password })
+                });
+
+                showSuccess(data.message || 'Password updated successfully.');
+                resetPasswordForm.reset();
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 1200);
+            } catch (error) {
+                showAlert(error.message || 'Could not reset password.');
+            }
+        });
+    }
+
+    if (copyResetLinkBtn) {
+        copyResetLinkBtn.addEventListener('click', async () => {
+            const resetUrl = copyResetLinkBtn.dataset.url || '';
+            if (!resetUrl) return;
+
+            try {
+                await navigator.clipboard.writeText(resetUrl);
+                copyResetLinkBtn.textContent = 'Copied';
+                setTimeout(() => {
+                    copyResetLinkBtn.textContent = 'Copy link';
+                }, 1400);
+            } catch (error) {
+                showAlert('Could not copy the reset link. Please open it directly instead.');
+            }
+        });
+    }
 }
 
 if (signupForm) {
@@ -126,7 +269,7 @@ if (signupForm) {
                 body: JSON.stringify({ name, email, password })
             });
 
-            storeAuth(data.token, data.user);
+            storeAuth(data.token, data.user, true);
             window.location.href = 'assistant.html';
         } catch (error) {
             showAlert(error.message || 'Could not create account.');
