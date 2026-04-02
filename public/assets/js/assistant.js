@@ -34,7 +34,10 @@ const menuToggleBtn = document.getElementById('menuToggleBtn');
 const sidebarCloseBtn = document.getElementById('sidebarCloseBtn');
 const mobileOverlay = document.getElementById('mobileOverlay');
 
-const NETLIFY_FRONTEND_ORIGIN = 'https://phishnetai.netlify.app';
+const DEPLOY_FRONTEND_ORIGINS = new Set([
+    'https://phishnetai.netlify.app',
+    'https://phishnetai.vercel.app'
+]);
 const RENDER_API_BASE = 'https://phishnetai-fb30.onrender.com';
 
 let isSidebarOpen = false;
@@ -49,7 +52,7 @@ let pendingConfirmAction = null;
 function getApiBase() {
     const { origin, hostname } = window.location;
     if (hostname === 'localhost' || hostname === '127.0.0.1') return origin;
-    if (origin === NETLIFY_FRONTEND_ORIGIN) return RENDER_API_BASE;
+    if (DEPLOY_FRONTEND_ORIGINS.has(origin)) return RENDER_API_BASE;
     return origin;
 }
 

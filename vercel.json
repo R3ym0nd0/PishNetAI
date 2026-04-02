@@ -1,0 +1,22 @@
+{
+  "rewrites": [
+    { "source": "/", "destination": "/public/index.html" },
+    { "source": "/assistant.html", "destination": "/public/assistant.html" },
+    { "source": "/quiz.html", "destination": "/public/quiz.html" },
+    { "source": "/login.html", "destination": "/public/login.html" },
+    { "source": "/signup.html", "destination": "/public/signup.html" },
+    { "source": "/reset-password.html", "destination": "/public/reset-password.html" },
+    { "source": "/assets/(.*)", "destination": "/public/assets/$1" }
+  ],
+  "headers": [
+    {
+      "source": "/assets/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    }
+  ]
+}

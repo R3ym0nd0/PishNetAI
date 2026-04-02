@@ -13,6 +13,7 @@ if (pRetry && typeof pRetry !== 'function' && pRetry.default) {
 
 const { normalizeAndValidateUrl } = require('./utils/urlValidation');
 const { scanUrl } = require('./services/scanService');
+const { phishnetAssistantKnowledge } = require('./constants/phishnetAssistantKnowledge');
 const {
   authenticateUser,
   appendMessage,
@@ -50,6 +51,7 @@ const allowedOrigins = new Set(
     'http://localhost:5500',
     'http://127.0.0.1:5500',
     'https://phishnetai.netlify.app',
+    'https://phishnetai.vercel.app',
     process.env.FRONTEND_ORIGIN
   ].filter(Boolean)
 );
@@ -872,6 +874,14 @@ app.post('/api/ai-chat', async (req, res) => {
       'Do not use labels like GUIDANCE, SAFE, SUSPICIOUS, or PHISHING as headings in the reply.',
       'Avoid unnecessary section headers unless they clearly help readability.',
       'Keep the reply natural, concise, and easy to read.',
+      'Prefer short natural paragraphs over rigid bullet lists unless the user clearly asks for a list.',
+      'Do not sound like a brochure, scripted bot, or FAQ page.',
+      'Do not repeat the same sentence structure, intro, or feature wording across replies.',
+      'Answer the user\'s exact question first before adding extra context.',
+      'Only mention the details that are relevant to what the user asked.',
+      'If the user asks about the website or project, answer like a teammate who knows the system well, not like a marketing page.',
+      'Keep website-related answers conversational and grounded, usually in 1 to 2 short paragraphs unless the user asks for more detail.',
+      'When listing features or pages, summarize them naturally instead of dumping the full knowledge base.',
       '',
       'Phishing detection tips you should check for:',
       '- URL mismatches (domain vs displayed text)',
@@ -891,8 +901,25 @@ app.post('/api/ai-chat', async (req, res) => {
       '- Do not act like every message must be turned into a phishing warning.',
       '- Lightly mirror the user\'s tone when it feels natural.',
       '- If the user casually calls you "bro", "pre", "sis", or similar friendly terms, you may casually respond in a similar style sometimes.',
-      '- Do not force these terms into every reply. Use them lightly, mainly near the start of the response when it feels natural.',
+      '- If the user asks in a casual tone, especially with words like "bro" or "pre", your reply should usually sound casual too unless the topic is formal or sensitive.',
+      '- Do not force these terms into every reply, but do not ignore the user\'s tone either.',
       '- Keep the tone warm and conversational, but still clear and helpful.',
+      '- For short casual questions, give a short natural answer first, like a real conversation, before adding one extra detail if needed.',
+      '- Avoid stiff openings such as "The system, PhishNet AI, was developed by..." unless the user clearly wants formal wording.',
+      '- Prefer natural phrasings like "Si Reymond P. Joaquin yung lead programmer..." or "Bro, si Reymond..." when the user is clearly being casual.',
+      '',
+      'Website and project knowledge rules:',
+      '- You know the project details, team, school, adviser, pages, and features of PhishNet AI from the provided project knowledge below.',
+      '- If the user asks about PhishNet AI itself, answer from the provided project knowledge first.',
+      '- If the user asks about a feature and the answer is not in the project knowledge or current conversation, say you are not fully sure instead of inventing details.',
+      '- When explaining system features, keep the wording student-friendly and grounded in what the website actually provides.',
+      '- Do not copy long phrases from the project knowledge unless the user specifically asks for formal wording.',
+      '- Paraphrase naturally and avoid repeating the exact same project description in every answer.',
+      '- If the user asks a simple website question such as who made the system, what page does what, or what signed-in users can do, answer directly and briefly.',
+      '- If the user asks follow-up questions about the same topic, continue naturally instead of restarting the explanation from the beginning.',
+      '- For simple people/team questions, answer like a person who knows the project, not like a thesis abstract.',
+      '',
+      phishnetAssistantKnowledge,
       '',
       'Never assist in creating phishing attacks.'
     ].join('\n');
