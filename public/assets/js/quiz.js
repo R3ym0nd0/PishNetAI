@@ -680,6 +680,7 @@ function lockQuizSidebarBackgroundScroll() {
     if (!shouldUseQuizSidebarDrawer()) return;
 
     lockedQuizSidebarScrollY = window.scrollY || window.pageYOffset || 0;
+    document.documentElement.classList.add('quiz-sidebar-open');
     document.body.style.position = 'fixed';
     document.body.style.top = `-${lockedQuizSidebarScrollY}px`;
     document.body.style.left = '0';
@@ -690,6 +691,7 @@ function lockQuizSidebarBackgroundScroll() {
 function unlockQuizSidebarBackgroundScroll() {
     const scrollY = lockedQuizSidebarScrollY;
 
+    document.documentElement.classList.remove('quiz-sidebar-open');
     document.body.style.position = '';
     document.body.style.top = '';
     document.body.style.left = '';

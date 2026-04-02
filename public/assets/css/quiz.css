@@ -3692,6 +3692,12 @@ body.guest-quiz-open::before {
 }
 
 @media (max-width: 1024px) {
+    html.quiz-sidebar-open,
+    html.quiz-sidebar-open body {
+        overflow: hidden;
+        overscroll-behavior: none;
+    }
+
     body.quiz-signed-in.quiz-sidebar-open {
         overflow: hidden;
         overscroll-behavior: none;
@@ -3757,6 +3763,16 @@ body.guest-quiz-open::before {
 
     body.quiz-signed-in.quiz-sidebar-open .quiz-sidebar {
         transform: translateX(0);
+    }
+
+    body.quiz-signed-in.quiz-sidebar-open .quiz-app-content {
+        pointer-events: none;
+    }
+
+    body.quiz-signed-in.quiz-sidebar-open .quiz-sidebar,
+    body.quiz-signed-in.quiz-sidebar-open .quiz-sidebar-overlay,
+    body.quiz-signed-in.quiz-sidebar-open .quiz-mobile-topbar {
+        pointer-events: auto;
     }
 
     body.quiz-signed-in .quiz-app-content {
