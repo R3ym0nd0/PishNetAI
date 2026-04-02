@@ -390,6 +390,7 @@ let answers = [];
 let signedInQuizAttempts = [];
 let currentQuizPage = 1;
 let lockedQuizSidebarScrollY = 0;
+let quizSidebarTouchStartY = 0;
 const quizCardsPerPage = 6;
 const totalQuizPages = 10;
 
@@ -673,6 +674,60 @@ function shouldUseQuizSidebarDrawer() {
 function syncQuizSidebarToggleState(isOpen) {
     if (quizSidebarToggle) {
         quizSidebarToggle.setAttribute('aria-expanded', String(isOpen));
+    }
+}
+
+function isQuizSidebarDrawerOpen() {
+    return document.body.classList.contains('quiz-sidebar-open') && shouldUseQuizSidebarDrawer();
+}
+
+function getQuizSidebarScrollableAncestor(target) {
+    if (!(target instanceof Element) || !quizSidebar) return null;
+
+    let current = target.closest('.quiz-sidebar-section, .quiz-sidebar');
+
+    while (current && quizSidebar.contains(current)) {
+        if (current.scrollHeight > current.clientHeight + 1) {
+            return current;
+        }
+        current = current.parentElement?.closest('.quiz-sidebar-section, .quiz-sidebar') || null;
+    }
+
+    return null;
+}
+
+function handleQuizSidebarTouchStart(event) {
+    if (!isQuizSidebarDrawerOpen()) return;
+    quizSidebarTouchStartY = event.touches?.[0]?.clientY || 0;
+}
+
+function handleQuizSidebarTouchMove(event) {
+    if (!isQuizSidebarDrawerOpen()) return;
+
+    const target = event.target;
+    if (!(target instanceof Element)) {
+        event.preventDefault();
+        return;
+    }
+
+    if (!quizSidebar?.contains(target)) {
+        event.preventDefault();
+        return;
+    }
+
+    const scrollableAncestor = getQuizSidebarScrollableAncestor(target);
+    if (!scrollableAncestor) {
+        event.preventDefault();
+        return;
+    }
+
+    const currentY = event.touches?.[0]?.clientY || 0;
+    const deltaY = currentY - quizSidebarTouchStartY;
+    const atTop = scrollableAncestor.scrollTop <= 0;
+    const atBottom = scrollableAncestor.scrollTop + scrollableAncestor.clientHeight >= scrollableAncestor.scrollHeight - 1;
+
+    if ((atTop && deltaY > 0) || (atBottom && deltaY < 0)) {
+        event.preventDefault();
     }
 }
 
@@ -1949,6 +2004,9 @@ quizLogoutConfirmOverlay?.addEventListener('click', (event) => {
         closeQuizLogoutConfirm();
     }
 });
+
+document.addEventListener('touchstart', handleQuizSidebarTouchStart, { passive: true });
+document.addEventListener('touchmove', handleQuizSidebarTouchMove, { passive: false });
 
 window.addEventListener('resize', () => {
     if (!shouldUseQuizSidebarDrawer()) {

@@ -3693,9 +3693,12 @@ body.guest-quiz-open::before {
 
 @media (max-width: 1024px) {
     html.quiz-sidebar-open,
-    html.quiz-sidebar-open body {
+    html.quiz-sidebar-open body,
+    html.quiz-sidebar-open body .page-shell,
+    html.quiz-sidebar-open body .main-content {
         overflow: hidden;
         overscroll-behavior: none;
+        height: 100dvh;
     }
 
     body.quiz-signed-in.quiz-sidebar-open {
@@ -3707,6 +3710,22 @@ body.guest-quiz-open::before {
         grid-template-columns: 1fr;
         gap: 0;
         min-height: 100vh;
+    }
+
+    body.quiz-signed-in.quiz-sidebar-open .page-shell {
+        position: fixed;
+        inset: 0;
+        width: 100%;
+        height: 100dvh;
+        overflow: hidden;
+    }
+
+    body.quiz-signed-in.quiz-sidebar-open .main-content {
+        position: fixed;
+        inset: 0;
+        width: 100%;
+        height: 100dvh;
+        overflow: hidden;
     }
 
     body.quiz-signed-in .quiz-mobile-topbar {
