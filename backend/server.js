@@ -51,7 +51,7 @@ const allowedOrigins = new Set(
     'http://localhost:5500',
     'http://127.0.0.1:5500',
     'https://phishnetai.netlify.app',
-    'https://phishnetai.vercel.app',
+    'https://pishnetai.vercel.app',
     process.env.FRONTEND_ORIGIN
   ].filter(Boolean)
 );

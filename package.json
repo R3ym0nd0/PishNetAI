@@ -1,7 +1,7 @@
 {
   "name": "aiphisingdetection",
   "version": "1.0.0",
-  "description": "https://phishnetai.vercel.app/",
+  "description": "https://pishnetai.vercel.app/",
   "main": "app.js",
   "scripts": {
     "start": "node app.js",

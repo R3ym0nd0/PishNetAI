@@ -3,7 +3,7 @@ const authUserKey = 'phish_ai_user';
 const activeChatKey = 'phish_ai_active_chat';
 const DEPLOY_FRONTEND_ORIGINS = new Set([
     'https://phishnetai.netlify.app',
-    'https://phishnetai.vercel.app'
+    'https://pishnetai.vercel.app'
 ]);
 const RENDER_API_BASE = 'https://phishnetai-fb30.onrender.com';
 const coreQuizIds = ['url-basics', 'message-red-flags', 'after-clicking'];
