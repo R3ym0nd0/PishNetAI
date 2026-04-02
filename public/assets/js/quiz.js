@@ -389,6 +389,7 @@ let score = 0;
 let answers = [];
 let signedInQuizAttempts = [];
 let currentQuizPage = 1;
+let lockedQuizSidebarScrollY = 0;
 const quizCardsPerPage = 6;
 const totalQuizPages = 10;
 
@@ -675,13 +676,42 @@ function syncQuizSidebarToggleState(isOpen) {
     }
 }
 
+function lockQuizSidebarBackgroundScroll() {
+    if (!shouldUseQuizSidebarDrawer()) return;
+
+    lockedQuizSidebarScrollY = window.scrollY || window.pageYOffset || 0;
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${lockedQuizSidebarScrollY}px`;
+    document.body.style.left = '0';
+    document.body.style.right = '0';
+    document.body.style.width = '100%';
+}
+
+function unlockQuizSidebarBackgroundScroll() {
+    const scrollY = lockedQuizSidebarScrollY;
+
+    document.body.style.position = '';
+    document.body.style.top = '';
+    document.body.style.left = '';
+    document.body.style.right = '';
+    document.body.style.width = '';
+
+    if (scrollY > 0) {
+        window.scrollTo(0, scrollY);
+    }
+
+    lockedQuizSidebarScrollY = 0;
+}
+
 function closeQuizSidebarDrawer() {
     document.body.classList.remove('quiz-sidebar-open');
+    unlockQuizSidebarBackgroundScroll();
     syncQuizSidebarToggleState(false);
 }
 
 function openQuizSidebarDrawer() {
     if (!isLoggedIn() || !shouldUseQuizSidebarDrawer()) return;
+    lockQuizSidebarBackgroundScroll();
     document.body.classList.add('quiz-sidebar-open');
     syncQuizSidebarToggleState(true);
 }

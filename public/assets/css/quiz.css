@@ -3692,6 +3692,11 @@ body.guest-quiz-open::before {
 }
 
 @media (max-width: 1024px) {
+    body.quiz-signed-in.quiz-sidebar-open {
+        overflow: hidden;
+        overscroll-behavior: none;
+    }
+
     body.quiz-signed-in .main-content {
         grid-template-columns: 1fr;
         gap: 0;
@@ -3730,6 +3735,7 @@ body.guest-quiz-open::before {
     body.quiz-signed-in.quiz-sidebar-open .quiz-sidebar-overlay {
         opacity: 1;
         pointer-events: auto;
+        touch-action: none;
     }
 
     body.quiz-signed-in .quiz-sidebar {
@@ -3745,6 +3751,8 @@ body.guest-quiz-open::before {
         transform: translateX(-100%);
         transition: transform 0.24s ease;
         box-shadow: 22px 0 48px rgba(15, 23, 42, 0.18);
+        overscroll-behavior: contain;
+        touch-action: pan-y;
     }
 
     body.quiz-signed-in.quiz-sidebar-open .quiz-sidebar {
