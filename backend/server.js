@@ -16,15 +16,20 @@ const { scanUrl } = require('./services/scanService');
 const {
   authenticateUser,
   appendMessage,
+  createQuizAttempt,
   createPasswordResetToken,
   createChat,
   createSession,
   createUser,
   deleteChat,
+  getQuizAttemptById,
+  getPublicQuizProfile,
   destroySession,
+  getQuizLeaderboard,
   getUserBySessionToken,
   listChatsForUser,
   listMessagesForChat,
+  listQuizAttemptsForUser,
   resetPasswordWithToken,
   updateChatTitle
 } = require('./services/appDataStore');
@@ -545,6 +550,107 @@ app.post('/api/auth/reset-password', async (req, res) => {
     return res.status(error.statusCode || 500).json({
       ok: false,
       error: error.message || 'Could not reset password right now.'
+    });
+  }
+});
+
+app.get('/api/quiz/attempts', async (req, res) => {
+  const user = await requireAuthenticatedUser(req, res);
+  if (!user) return;
+
+  return res.json({
+    ok: true,
+    attempts: await listQuizAttemptsForUser(user.id)
+  });
+});
+
+app.post('/api/quiz/attempts', async (req, res) => {
+  const user = await requireAuthenticatedUser(req, res);
+  if (!user) return;
+
+  const quizId = String(req.body?.quizId || '').trim();
+  const quizTitle = String(req.body?.quizTitle || '').trim();
+  const score = Number(req.body?.score || 0);
+  const totalQuestions = Number(req.body?.totalQuestions || 0);
+  const percentage = Number(req.body?.percentage || 0);
+  const reviewData = Array.isArray(req.body?.reviewData) ? req.body.reviewData : [];
+
+  if (!quizId || !quizTitle || !Number.isFinite(score) || !Number.isFinite(totalQuestions) || !Number.isFinite(percentage) || totalQuestions <= 0) {
+    return res.status(400).json({
+      ok: false,
+      error: 'Invalid quiz attempt payload.'
+    });
+  }
+
+  const attempt = await createQuizAttempt(user.id, {
+    quizId,
+    quizTitle,
+    score,
+    totalQuestions,
+    percentage,
+    reviewData
+  });
+
+  return res.status(201).json({
+    ok: true,
+    attempt
+  });
+});
+
+app.get('/api/quiz/attempts/:attemptId', async (req, res) => {
+  const user = await requireAuthenticatedUser(req, res);
+  if (!user) return;
+
+  try {
+    const attempt = await getQuizAttemptById(user.id, req.params.attemptId);
+    return res.json({
+      ok: true,
+      attempt
+    });
+  } catch (error) {
+    const statusCode = error.statusCode || 500;
+    return res.status(statusCode).json({
+      ok: false,
+      error: error.message || 'Could not load quiz attempt review right now.'
+    });
+  }
+});
+
+app.get('/api/quiz/public-leaderboard', async (_req, res) => {
+  return res.json({
+    ok: true,
+    minimumAttempts: 2,
+    leaderboard: await getQuizLeaderboard(3)
+  });
+});
+
+app.get('/api/quiz/leaderboard', async (req, res) => {
+  const user = await requireAuthenticatedUser(req, res);
+  if (!user) return;
+
+  return res.json({
+    ok: true,
+    minimumAttempts: 2,
+    currentUserId: user.id,
+    leaderboard: await getQuizLeaderboard()
+  });
+});
+
+app.get('/api/quiz/public-profile/:userId', async (req, res) => {
+  const user = await requireAuthenticatedUser(req, res);
+  if (!user) return;
+
+  try {
+    const profile = await getPublicQuizProfile(req.params.userId);
+    return res.json({
+      ok: true,
+      profile
+    });
+  } catch (error) {
+    const statusCode = error.statusCode || 500;
+    return res.status(statusCode).json({
+      ok: false,
+      error: error.message || 'Could not load public quiz profile right now.'
     });
   }
 });

@@ -36,60 +36,326 @@
         </nav>
 
         <main class="main-content">
+            <aside class="quiz-sidebar" id="quizSidebar" hidden>
+                <div class="quiz-sidebar-header">
+                    <div class="quiz-sidebar-brand">
+                        <img src="assets/images/logo.png" alt="PhishNet AI logo" class="quiz-sidebar-logo">
+                        <div class="quiz-sidebar-brand-copy">
+                            <strong>PhishNet AI</strong>
+                            <span>Quiz Workspace</span>
+                        </div>
+                    </div>
+                    <a href="/#home" class="quiz-sidebar-back-btn" aria-label="Back to home page" title="Back to home">
+                        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                            <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/>
+                        </svg>
+                    </a>
+                </div>
+
+                <button type="button" class="quiz-sidebar-primary-btn" id="quizSidebarStartBtn">
+                    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                        <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                    </svg>
+                    <span>Start a Quiz</span>
+                </button>
+
+                <div class="quiz-sidebar-section">
+                    <h3 class="quiz-sidebar-section-title">Quiz Navigation</h3>
+                    <nav class="quiz-sidebar-nav" aria-label="Quiz dashboard navigation">
+                        <a href="#quizzes" class="quiz-sidebar-link" data-quiz-nav-link>
+                            <span class="quiz-sidebar-link-icon" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M4 6.75A1.25 1.25 0 1 0 4 9.25a1.25 1.25 0 0 0 0-2.5Zm4 1.25c0-.41.34-.75.75-.75h10.5a.75.75 0 0 1 0 1.5H8.75A.75.75 0 0 1 8 8Zm-4 4A1.25 1.25 0 1 0 4 14.5a1.25 1.25 0 0 0 0-2.5Zm4 1.25c0-.41.34-.75.75-.75h10.5a.75.75 0 0 1 0 1.5H8.75a.75.75 0 0 1-.75-.75Zm-4 4A1.25 1.25 0 1 0 4 20a1.25 1.25 0 0 0 0-2.5Zm4 1.25c0-.41.34-.75.75-.75h10.5a.75.75 0 0 1 0 1.5H8.75a.75.75 0 0 1-.75-.75Z"/>
+                                </svg>
+                            </span>
+                            <span>Quiz Sets</span>
+                        </a>
+                        <a href="#quizHistoryPanel" class="quiz-sidebar-link" data-quiz-nav-link>
+                            <span class="quiz-sidebar-link-icon" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M13 3a9 9 0 1 0 8.95 10h-2.02A7 7 0 1 1 13 5v3l4-4-4-4v3Zm-1 5h2v5.17l3.24 1.94-1 1.72L12 14.33V8Z"/>
+                                </svg>
+                            </span>
+                            <span>History</span>
+                        </a>
+                        <a href="#quizLeaderboardPanel" class="quiz-sidebar-link" data-quiz-nav-link>
+                            <span class="quiz-sidebar-link-icon" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M7 16H3v5h4v-5Zm7-6h-4v11h4V10Zm7-4h-4v15h4V6ZM13 3l1.55 3.15L18 6.66l-2.5 2.44.59 3.46L13 10.93 9.91 12.56l.59-3.46L8 6.66l3.45-.51L13 3Z"/>
+                                </svg>
+                            </span>
+                            <span>Leaderboard</span>
+                        </a>
+                    </nav>
+                </div>
+
+                <div class="quiz-sidebar-footer">
+                    <button type="button" class="quiz-sidebar-user" id="quizSidebarProfileBtn">
+                        <div class="quiz-sidebar-avatar" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <p class="quiz-sidebar-label">Signed in as</p>
+                            <strong id="quizSidebarName">Student</strong>
+                            <span id="quizSidebarEmail">Your account</span>
+                        </div>
+                    </button>
+                    <a href="/#home" class="quiz-sidebar-home-link">
+                        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                            <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+                        </svg>
+                        <span>Back to Home</span>
+                    </a>
+                    <button type="button" class="quiz-sidebar-logout-btn" id="quizSidebarLogoutBtn">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                            <path d="M13 3v2h4v14h-4v2h6V3zm-1 4-1.41 1.41L13.17 11H3v2h10.17l-2.58 2.59L12 17l5-5z"/>
+                        </svg>
+                        <span>Logout</span>
+                    </button>
+                </div>
+            </aside>
+
+            <div class="quiz-sidebar-overlay" id="quizSidebarOverlay"></div>
+
+            <div class="quiz-app-content">
+            <div class="quiz-mobile-topbar" id="quizMobileTopbar" hidden>
+                <button
+                    type="button"
+                    class="quiz-sidebar-toggle"
+                    id="quizSidebarToggle"
+                    aria-label="Open quiz navigation"
+                    aria-expanded="false"
+                    aria-controls="quizSidebar"
+                >
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <div class="quiz-mobile-topbar-copy">
+                    <strong>Quiz Workspace</strong>
+                    <span id="quizMobileTopbarLabel">Signed in</span>
+                </div>
+            </div>
+
             <section class="quiz-hero-panel">
                 <div class="quiz-hero-content">
                     <div class="quiz-hero-text">
-                        <h1>Test Your Phishing Awareness</h1>
-                        <p>Challenge yourself with short quiz sets that help students recognize suspicious links, message red flags, and safer online decisions.</p>
+                        <p class="quiz-hero-eyebrow" id="quizHeroEyebrow"></p>
+                        <h1 id="quizHeroTitle">Test Your Phishing Awareness</h1>
+                        <p id="quizHeroDescription">Challenge yourself with short quiz sets that help students recognize suspicious links, message red flags, and safer online decisions.</p>
                         <div class="quiz-hero-actions">
-                            <a href="login.html" class="hero-button primary-button">Sign In to Track Progress</a>
-                            <a href="#quizzes" class="hero-button secondary-button">Try as Guest</a>
+                            <a href="login.html?returnTo=quiz.html" class="hero-button primary-button" id="quizHeroPrimaryAction">Sign In to Track Progress</a>
+                            <a href="#quizzes" class="hero-button secondary-button" id="quizHeroSecondaryAction">Try as Guest</a>
                         </div>
                     </div>
                     <div class="quiz-hero-visual">
                         <img src="assets/images/logo.png" alt="PhishNet AI Logo" class="quiz-hero-logo">
                         <div class="quiz-hero-stats">
                             <div class="quiz-stat">
-                                <span class="quiz-stat-value">50+</span>
-                                <span class="quiz-stat-label">Awareness Questions</span>
+                                <span class="quiz-stat-value" id="quizHeroStatValue1">50+</span>
+                                <span class="quiz-stat-label" id="quizHeroStatLabel1">Awareness Questions</span>
                             </div>
                             <div class="quiz-stat">
-                                <span class="quiz-stat-value">5</span>
-                                <span class="quiz-stat-label">Core Quiz Sets</span>
+                                <span class="quiz-stat-value" id="quizHeroStatValue2">5</span>
+                                <span class="quiz-stat-label" id="quizHeroStatLabel2">Core Quiz Sets</span>
                             </div>
                             <div class="quiz-stat">
-                                <span class="quiz-stat-value">Free</span>
-                                <span class="quiz-stat-label">Guest Access</span>
+                                <span class="quiz-stat-value" id="quizHeroStatValue3">Free</span>
+                                <span class="quiz-stat-label" id="quizHeroStatLabel3">Guest Access</span>
                             </div>
                         </div>
                     </div>
                 </div>
             </section>
 
+            <section class="panel quiz-leaderboard-panel" id="quizLeaderboardPanel" hidden>
+                <div class="quiz-leaderboard-head">
+                    <div class="quiz-leaderboard-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M7 16H3v5h4v-5Zm7-6h-4v11h4V10Zm7-4h-4v15h4V6ZM13 3l1.55 3.15L18 6.66l-2.5 2.44.59 3.46L13 10.93 9.91 12.56l.59-3.46L8 6.66l3.45-.51L13 3Z"/>
+                        </svg>
+                    </div>
+                    <div class="quiz-leaderboard-copy">
+                        <h3>Awareness Rankings</h3>
+                        <p>See the strongest awareness scores, then open a user profile to explore their progress.</p>
+                    </div>
+                    <div class="quiz-leaderboard-head-chip">
+                        <span class="quiz-leaderboard-head-chip-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 2 9.8 6.6 4.7 7.3l3.7 3.6-.9 5.1L12 13.7l4.5 2.3-.9-5.1 3.7-3.6-5.1-.7L12 2Z"/>
+                            </svg>
+                        </span>
+                        <span>Public Rankings</span>
+                    </div>
+                </div>
+
+                <div class="quiz-leaderboard-list" id="quizLeaderboardList">
+                    <div class="quiz-history-empty" id="quizLeaderboardEmpty">
+                        <strong>No leaderboard data yet</strong>
+                        <p>Once quiz attempts are saved, the top awareness scores will appear here.</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="panel quiz-history-panel" id="quizHistoryPanel" hidden>
+                <div class="section-heading quiz-dashboard-heading">
+                    <h2>Your Quiz History</h2>
+                </div>
+
+                <div class="quiz-history-panel">
+                    <div class="quiz-history-archive-summary">
+                        <article class="quiz-history-archive-card">
+                            <p class="quiz-dashboard-kicker">Saved Attempts</p>
+                            <strong class="quiz-history-archive-value" id="quizHistoryArchiveAttempts">0</strong>
+                        </article>
+                        <article class="quiz-history-archive-card">
+                            <p class="quiz-dashboard-kicker">Best Result</p>
+                            <strong class="quiz-history-archive-value" id="quizHistoryArchiveBest">--</strong>
+                        </article>
+                        <article class="quiz-history-archive-card">
+                            <p class="quiz-dashboard-kicker">Needs Review</p>
+                            <strong class="quiz-history-archive-value" id="quizHistoryArchiveReview">0</strong>
+                        </article>
+                    </div>
+
+                    <div class="quiz-history-groups">
+                        <section class="quiz-history-group quiz-history-group-review">
+                            <div class="quiz-history-group-head">
+                                <div>
+                                    <p class="quiz-dashboard-kicker">Focus First</p>
+                                    <h3>Needs Review</h3>
+                                </div>
+                                <span class="quiz-history-group-chip" id="quizHistoryReviewBadge">0 attempts</span>
+                            </div>
+                            <div class="quiz-history-list" id="quizHistoryReviewList">
+                                <div class="quiz-history-empty" id="quizHistoryReviewEmpty">
+                                    <strong>No review attempts right now</strong>
+                                    <p>Your lower-score quiz attempts will show here when they need another pass.</p>
+                                </div>
+                            </div>
+                        </section>
+
+                        <section class="quiz-history-group quiz-history-group-other">
+                            <div class="quiz-history-group-head">
+                                <div>
+                                    <p class="quiz-dashboard-kicker">Saved Archive</p>
+                                    <h3>Other Attempts</h3>
+                                </div>
+                                <span class="quiz-history-group-chip" id="quizHistoryOtherBadge">0 attempts</span>
+                            </div>
+                            <div class="quiz-history-list" id="quizHistoryOtherList">
+                                <div class="quiz-history-empty" id="quizHistoryOtherEmpty">
+                                    <strong>No other attempts yet</strong>
+                                    <p>Your stronger or improving quiz attempts will appear here.</p>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+            </section>
+
+            <section class="panel quiz-profile-panel" id="quizProfilePanel" hidden>
+                <div class="section-heading quiz-dashboard-heading">
+                    <h2>Your Quiz Profile</h2>
+                    <p class="section-text">A personal view of your account, awareness progress, and earned quiz milestones.</p>
+                </div>
+
+                <div class="quiz-profile-grid">
+                    <article class="quiz-profile-card quiz-profile-identity">
+                        <div class="quiz-profile-head">
+                            <div class="quiz-profile-avatar" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M12 12c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5Zm0 2c-3.33 0-10 1.67-10 5v3h20v-3c0-3.33-6.67-5-10-5Z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="quiz-dashboard-kicker">Account</p>
+                                <h3 id="quizProfileName">Student</h3>
+                                <p class="quiz-profile-subtext" id="quizProfileEmail">Quiz account</p>
+                            </div>
+                        </div>
+                        <div class="quiz-profile-summary">
+                            <div class="quiz-profile-stat">
+                                <span>Total Attempts</span>
+                                <strong id="quizProfileAttempts">0</strong>
+                            </div>
+                            <div class="quiz-profile-stat">
+                                <span>Average Score</span>
+                                <strong id="quizProfileAverage">--</strong>
+                            </div>
+                            <div class="quiz-profile-stat">
+                                <span>Best Score</span>
+                                <strong id="quizProfileBest">--</strong>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="quiz-profile-card quiz-profile-progress-card">
+                        <div class="quiz-history-heading">
+                            <div>
+                                <p class="quiz-dashboard-kicker">Progress by Topic</p>
+                                <h3>Awareness Growth</h3>
+                            </div>
+                            <span class="quiz-history-badge" id="quizProfileProgressBadge">0 topics</span>
+                        </div>
+
+                        <div class="quiz-profile-progress-list" id="quizProfileProgressList">
+                            <div class="quiz-history-empty" id="quizProfileProgressEmpty">
+                                <strong>No topic progress yet</strong>
+                                <p>Finish a signed-in quiz and we will start tracking your strongest and weakest quiz topics here.</p>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article class="quiz-profile-card quiz-profile-badges-card">
+                        <div class="quiz-history-heading">
+                            <div>
+                                <p class="quiz-dashboard-kicker">Earned Badges</p>
+                                <h3>Awareness Milestones</h3>
+                            </div>
+                            <span class="quiz-history-badge" id="quizProfileBadgeCount">0 unlocked</span>
+                        </div>
+
+                        <div class="quiz-profile-badge-list" id="quizProfileBadgeList">
+                            <div class="quiz-history-empty" id="quizProfileBadgeEmpty">
+                                <strong>No badges yet</strong>
+                                <p>Finish a few signed-in quizzes and your first awareness badges will show here.</p>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+            </section>
+
             <section class="panel" id="quizzes">
                 <div class="section-heading">
-                    <h2>Available Quizzes</h2>
-                    <p class="section-text">Choose a quiz set and strengthen your phishing awareness one topic at a time.</p>
+                    <h2 id="quizSectionTitle">Available Quizzes</h2>
+                    <p class="section-text" id="quizSectionDescription">Choose a quiz set and strengthen your phishing awareness one topic at a time.</p>
+                </div>
+
+                <div class="quiz-library-toolbar" id="quizLibraryToolbar">
+                    <div class="quiz-page-tabs" id="quizPagination" aria-label="Quiz pages"></div>
                 </div>
 
                 <div class="quiz-grid">
-                    <article class="quiz-card">
+                    <article class="quiz-card" data-quiz-card="url-basics">
                         <div class="quiz-card-header">
-                            <span class="quiz-badge popular">Popular</span>
+                            <span class="quiz-badge popular">Core Series</span>
                         </div>
                         <h3>URL Basics</h3>
                         <p>Practice checking links and recognizing URL patterns that are often used in phishing attempts.</p>
                         <div class="quiz-meta">
                             <span>10 Questions</span>
                             <span>~3 min</span>
-                            <span class="difficulty easy">Easy</span>
+                            <span class="difficulty easy">Beginner</span>
                         </div>
                         <button type="button" class="quiz-start-btn" data-quiz="url-basics">Start Quiz</button>
                     </article>
 
-                    <article class="quiz-card">
+                    <article class="quiz-card" data-quiz-card="message-red-flags">
                         <div class="quiz-card-header">
-                            <span class="quiz-badge recommended">Recommended</span>
+                            <span class="quiz-badge recommended">Core Series</span>
                         </div>
                         <h3>Message Red Flags</h3>
                         <p>Learn how to notice warning signs in emails, texts, and chat messages before they put your account or information at risk.</p>
@@ -101,23 +367,23 @@
                         <button type="button" class="quiz-start-btn" data-quiz="message-red-flags">Start Quiz</button>
                     </article>
 
-                    <article class="quiz-card">
+                    <article class="quiz-card" data-quiz-card="after-clicking">
                         <div class="quiz-card-header">
-                            <span class="quiz-badge new">New</span>
+                            <span class="quiz-badge new">Core Series</span>
                         </div>
                         <h3>After Clicking: What to Do?</h3>
                         <p>Review the right steps to take after clicking a suspicious link or sharing personal details on an unsafe page.</p>
                         <div class="quiz-meta">
                             <span>8 Questions</span>
                             <span>~2 min</span>
-                            <span class="difficulty easy">Easy</span>
+                            <span class="difficulty easy">Beginner</span>
                         </div>
                         <button type="button" class="quiz-start-btn" data-quiz="after-clicking">Start Quiz</button>
                     </article>
 
-                    <article class="quiz-card">
+                    <article class="quiz-card" data-quiz-card="phishing-scenarios">
                         <div class="quiz-card-header">
-                            <span class="quiz-badge">Advanced</span>
+                            <span class="quiz-badge">Advanced Series</span>
                         </div>
                         <h3>Phishing Scenarios</h3>
                         <p>Go through realistic situations that test how well you can identify and respond to possible phishing attempts.</p>
@@ -126,12 +392,13 @@
                             <span>~5 min</span>
                             <span class="difficulty hard">Advanced</span>
                         </div>
+                        <p class="quiz-unlock-note" id="quizUnlockNote-phishing-scenarios" hidden></p>
                         <button type="button" class="quiz-start-btn" data-quiz="phishing-scenarios">Start Quiz</button>
                     </article>
 
-                    <article class="quiz-card">
+                    <article class="quiz-card" data-quiz-card="best-practices">
                         <div class="quiz-card-header">
-                            <span class="quiz-badge">Essential</span>
+                            <span class="quiz-badge">Mastery Series</span>
                         </div>
                         <h3>Best Practices</h3>
                         <p>Strengthen your everyday safety habits with practical best practices for accounts, messages, and suspicious websites.</p>
@@ -140,6 +407,7 @@
                             <span>~3 min</span>
                             <span class="difficulty medium">Intermediate</span>
                         </div>
+                        <p class="quiz-unlock-note" id="quizUnlockNote-best-practices" hidden></p>
                         <button type="button" class="quiz-start-btn" data-quiz="best-practices">Start Quiz</button>
                     </article>
                 </div>
@@ -152,7 +420,11 @@
                         <h2 id="quizSessionTitle">Quiz Title</h2>
                         <p id="quizSessionDesc" class="quiz-session-desc">Quiz description</p>
                     </div>
-                    <button type="button" class="quiz-exit-btn" id="quizExitBtn">Exit Quiz</button>
+                    <button type="button" class="quiz-exit-btn" id="quizExitBtn" aria-label="Exit quiz">
+                        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                            <path d="M18.3 5.71 12 12l6.3 6.29-1.41 1.42L10.59 13.4 4.29 19.7 2.88 18.3 9.17 12 2.88 5.71 4.29 4.29l6.3 6.3 6.29-6.3z"/>
+                        </svg>
+                    </button>
                 </div>
 
                 <div class="quiz-session-progress">
@@ -177,46 +449,50 @@
 
                 <div class="quiz-result-card" id="quizResultCard" hidden>
                     <div class="quiz-result-top">
-                        <span class="quiz-result-score" id="quizResultScore">0%</span>
-                        <div>
+                        <div class="quiz-result-score-block">
+                            <span class="quiz-result-score" id="quizResultScore">0%</span>
+                        </div>
+                        <div class="quiz-result-main">
                             <p class="quiz-result-kicker">Quiz Complete</p>
                             <h3 id="quizResultTitle">Awareness result</h3>
+                            <p class="quiz-result-summary" id="quizResultSummary"></p>
                         </div>
                     </div>
 
-                    <p class="quiz-result-summary" id="quizResultSummary"></p>
-
-                    <div class="quiz-result-meta">
-                        <div class="quiz-result-meta-item">
-                            <span class="quiz-result-meta-label">Correct Answers</span>
-                            <strong id="quizCorrectCount">0 / 0</strong>
-                        </div>
-                        <div class="quiz-result-meta-item">
-                            <span class="quiz-result-meta-label">Quiz Set</span>
-                            <strong id="quizResultQuizName">URL Basics</strong>
+                    <div class="quiz-result-body">
+                        <div class="quiz-result-meta">
+                            <div class="quiz-result-meta-item">
+                                <span class="quiz-result-meta-label">Correct Answers</span>
+                                <strong id="quizCorrectCount">0 / 0</strong>
+                            </div>
+                            <div class="quiz-result-meta-item">
+                                <span class="quiz-result-meta-label">Quiz Set</span>
+                                <strong id="quizResultQuizName">URL Basics</strong>
+                            </div>
                         </div>
                     </div>
 
                     <div class="quiz-result-prompt guest-prompt" id="guestQuizPrompt" hidden>
                         <div>
-                            <p class="quiz-result-prompt-kicker">Keep your awareness progress</p>
-                            <h4>Sign in to save this score, review past attempts, and unlock more quiz features.</h4>
-                            <p class="quiz-result-prompt-text">You can keep taking quizzes as a guest, but your scores and future progress will not be stored.</p>
+                            <p class="quiz-result-prompt-kicker">Save Your Progress</p>
+                            <h4>Sign in to save your progress</h4>
                         </div>
                         <div class="quiz-result-prompt-actions">
-                            <a href="login.html" class="hero-button primary-button">Sign In</a>
-                            <a href="signup.html" class="hero-button secondary-button">Create Account</a>
+                            <a href="login.html?returnTo=quiz.html" class="hero-button primary-button">Sign In</a>
+                            <a href="signup.html?returnTo=quiz.html" class="hero-button secondary-button">Create Account</a>
                         </div>
                     </div>
 
-                    <div class="quiz-result-actions">
-                        <button type="button" class="quiz-next-btn" id="quizRetryBtn">Try Again</button>
-                        <button type="button" class="quiz-secondary-btn" id="quizChooseAnotherBtn">Choose Another Quiz</button>
+                    <div class="quiz-result-footer">
+                        <div class="quiz-result-actions">
+                            <button type="button" class="quiz-next-btn" id="quizRetryBtn">Try Again</button>
+                            <button type="button" class="quiz-secondary-btn" id="quizChooseAnotherBtn">Choose Another Quiz</button>
+                        </div>
                     </div>
                 </div>
             </section>
 
-            <section class="panel quiz-hook-panel">
+            <section class="panel quiz-hook-panel" id="quizHookPanel">
                 <div class="section-heading">
                     <h2>More When You Sign In</h2>
                     <p class="section-text">Guests can start with core quizzes now. Sign in to save progress, unlock advanced quiz sets, and join awareness-based features built for returning users.</p>
@@ -237,21 +513,11 @@
                         </div>
                         <h3>Leaderboard Preview</h3>
                         <p>See who is consistently scoring well and use the rankings as motivation to improve your phishing awareness.</p>
-                        <div class="leaderboard-preview">
+                        <div class="leaderboard-preview" id="guestLeaderboardPreview">
                             <div class="leaderboard-row">
                                 <span class="leaderboard-rank">#1</span>
-                                <span class="leaderboard-name">Luis C.</span>
-                                <span class="leaderboard-score">94 pts</span>
-                            </div>
-                            <div class="leaderboard-row">
-                                <span class="leaderboard-rank">#2</span>
-                                <span class="leaderboard-name">Reymond P.</span>
-                                <span class="leaderboard-score">91 pts</span>
-                            </div>
-                            <div class="leaderboard-row">
-                                <span class="leaderboard-rank">#3</span>
-                                <span class="leaderboard-name">Marco C.</span>
-                                <span class="leaderboard-score">89 pts</span>
+                                <span class="leaderboard-name">Loading...</span>
+                                <span class="leaderboard-score">--</span>
                             </div>
                         </div>
                     </article>
@@ -346,11 +612,12 @@
                         <h3>Take the core quizzes now, then sign in for saved progress and more advanced awareness sets.</h3>
                     </div>
                     <div class="quiz-cta-actions">
-                        <a href="login.html" class="hero-button primary-button">Sign In</a>
-                        <a href="signup.html" class="hero-button secondary-button">Create Account</a>
+                        <a href="login.html?returnTo=quiz.html" class="hero-button primary-button">Sign In</a>
+                        <a href="signup.html?returnTo=quiz.html" class="hero-button secondary-button">Create Account</a>
                     </div>
                 </div>
             </section>
+            </div>
         </main>
 
         <footer class="site-footer">
@@ -475,6 +742,68 @@
             <path d="M18.55 4.2l.28.87c.09.28.31.5.59.59l.87.28-.87.28a.93.93 0 0 0-.59.59l-.28.87-.28-.87a.93.93 0 0 0-.59-.59l-.87-.28.87-.28a.93.93 0 0 0 .59-.59l.28-.87Z" fill="#ffffff"/>
         </svg>
     </button>
+
+    <div class="quiz-profile-modal-overlay" id="quizPublicProfileOverlay" hidden>
+        <div class="quiz-profile-modal" role="dialog" aria-modal="true" aria-labelledby="quizPublicProfileTitle">
+            <div class="quiz-profile-modal-head">
+                <div>
+                    <p class="quiz-dashboard-kicker">Leaderboard Profile</p>
+                    <h3 id="quizPublicProfileTitle">Public Quiz Profile</h3>
+                </div>
+                <button type="button" class="quiz-profile-modal-close" id="quizPublicProfileClose" aria-label="Close profile">
+                    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                        <path d="M18.3 5.71 12 12l6.3 6.29-1.41 1.42L10.59 13.4 4.29 19.7 2.88 18.3 9.17 12 2.88 5.71 4.29 4.29l6.3 6.3 6.29-6.3z"/>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="quiz-profile-modal-body" id="quizPublicProfileBody">
+                <div class="quiz-history-empty">
+                    <strong>Loading profile</strong>
+                    <p>Please wait while we load the public quiz stats.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="quiz-profile-modal-overlay" id="quizAttemptReviewOverlay" hidden>
+        <div class="quiz-profile-modal quiz-attempt-review-modal" role="dialog" aria-modal="true" aria-labelledby="quizAttemptReviewTitle">
+            <div class="quiz-profile-modal-head">
+                <div>
+                    <p class="quiz-dashboard-kicker">Attempt Review</p>
+                    <h3 id="quizAttemptReviewTitle">Quiz Attempt Details</h3>
+                </div>
+                <button type="button" class="quiz-profile-modal-close" id="quizAttemptReviewClose" aria-label="Close attempt review">
+                    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                        <path d="M18.3 5.71 12 12l6.3 6.29-1.41 1.42L10.59 13.4 4.29 19.7 2.88 18.3 9.17 12 2.88 5.71 4.29 4.29l6.3 6.3 6.29-6.3z"/>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="quiz-profile-modal-body" id="quizAttemptReviewBody">
+                <div class="quiz-history-empty">
+                    <strong>Loading attempt</strong>
+                    <p>Please wait while we load the quiz review.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="confirm-overlay" id="quizLogoutConfirmOverlay" hidden>
+        <div class="confirm-card" role="dialog" aria-modal="true" aria-labelledby="quizLogoutConfirmTitle" aria-describedby="quizLogoutConfirmText">
+            <div class="confirm-icon" aria-hidden="true">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                </svg>
+            </div>
+            <h3 id="quizLogoutConfirmTitle">Logout?</h3>
+            <p id="quizLogoutConfirmText">You will be signed out of your current session. You can sign back in anytime.</p>
+            <div class="confirm-actions">
+                <button type="button" class="confirm-btn secondary" id="quizLogoutCancelBtn">Cancel</button>
+                <button type="button" class="confirm-btn danger" id="quizLogoutConfirmBtn">Logout</button>
+            </div>
+        </div>
+    </div>
 
     <script type="module" src="assets/js/script.js"></script>
     <script src="assets/js/quiz.js"></script>

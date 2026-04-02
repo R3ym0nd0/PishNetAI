@@ -446,18 +446,240 @@ async function deleteChat(chatId, userId) {
   };
 }
 
+async function createQuizAttempt(userId, { quizId, quizTitle, score, totalQuestions, percentage, reviewData = [] }) {
+  const result = await query(
+    `
+      INSERT INTO quiz_attempts (user_id, quiz_id, quiz_title, score, total_questions, percentage, review_data)
+      VALUES ($1, $2, $3, $4, $5, $6, $7::jsonb)
+      RETURNING id, user_id, quiz_id, quiz_title, score, total_questions, percentage, review_data, created_at
+    `,
+    [
+      userId,
+      String(quizId || '').trim(),
+      String(quizTitle || '').trim(),
+      Number(score || 0),
+      Number(totalQuestions || 0),
+      Number(percentage || 0),
+      JSON.stringify(Array.isArray(reviewData) ? reviewData : [])
+    ]
+  );
+
+  const row = result.rows[0];
+  return {
+    id: row.id,
+    userId: row.user_id,
+    quizId: row.quiz_id,
+    quizTitle: row.quiz_title,
+      score: Number(row.score),
+      totalQuestions: Number(row.total_questions),
+      percentage: Number(row.percentage),
+      reviewData: Array.isArray(row.review_data) ? row.review_data : [],
+      createdAt: row.created_at
+    };
+  }
+
+async function listQuizAttemptsForUser(userId, limit = 20) {
+  const result = await query(
+    `
+      SELECT id, user_id, quiz_id, quiz_title, score, total_questions, percentage, created_at
+      FROM quiz_attempts
+      WHERE user_id = $1
+      ORDER BY created_at DESC
+      LIMIT $2
+    `,
+    [userId, Math.max(1, Math.min(Number(limit) || 20, 50))]
+  );
+
+  return result.rows.map((row) => ({
+    id: row.id,
+    userId: row.user_id,
+    quizId: row.quiz_id,
+    quizTitle: row.quiz_title,
+    score: Number(row.score),
+    totalQuestions: Number(row.total_questions),
+    percentage: Number(row.percentage),
+    createdAt: row.created_at
+  }));
+}
+
+async function getQuizAttemptById(userId, attemptId) {
+  const result = await query(
+    `
+      SELECT id, user_id, quiz_id, quiz_title, score, total_questions, percentage, review_data, created_at
+      FROM quiz_attempts
+      WHERE user_id = $1 AND id = $2
+      LIMIT 1
+    `,
+    [userId, attemptId]
+  );
+
+  const row = result.rows[0];
+  if (!row) {
+    const error = new Error('Quiz attempt not found.');
+    error.statusCode = 404;
+    throw error;
+  }
+
+  return {
+    id: row.id,
+    userId: row.user_id,
+    quizId: row.quiz_id,
+    quizTitle: row.quiz_title,
+    score: Number(row.score),
+    totalQuestions: Number(row.total_questions),
+    percentage: Number(row.percentage),
+    reviewData: Array.isArray(row.review_data) ? row.review_data : [],
+    createdAt: row.created_at
+  };
+}
+
+async function getQuizLeaderboard(limit = 10) {
+  const result = await query(
+    `
+      SELECT
+        qa.user_id,
+        u.name,
+        COUNT(qa.id)::int AS attempts_count,
+        ROUND(AVG(qa.percentage)::numeric, 1) AS average_score,
+        MAX(qa.percentage)::numeric AS best_score,
+        MAX(qa.created_at) AS last_attempt_at
+      FROM quiz_attempts qa
+      INNER JOIN users u ON u.id = qa.user_id
+      GROUP BY qa.user_id, u.name
+      HAVING COUNT(qa.id) >= 2
+      ORDER BY average_score DESC, best_score DESC, last_attempt_at DESC
+      LIMIT $1
+    `,
+    [Math.max(1, Math.min(Number(limit) || 10, 25))]
+  );
+
+  return result.rows.map((row, index) => ({
+    rank: index + 1,
+    userId: row.user_id,
+    name: row.name,
+    attemptsCount: Number(row.attempts_count),
+    averageScore: Number(row.average_score),
+    bestScore: Number(row.best_score),
+    lastAttemptAt: row.last_attempt_at
+  }));
+}
+
+async function getPublicQuizProfile(userId) {
+  const summaryResult = await query(
+    `
+      SELECT
+        u.id,
+        u.name,
+        COUNT(qa.id)::int AS attempts_count,
+        ROUND(AVG(qa.percentage)::numeric, 1) AS average_score,
+        MAX(qa.percentage)::numeric AS best_score,
+        MAX(qa.created_at) AS last_attempt_at
+      FROM users u
+      LEFT JOIN quiz_attempts qa ON qa.user_id = u.id
+      WHERE u.id = $1
+      GROUP BY u.id, u.name
+    `,
+    [userId]
+  );
+
+  const summary = summaryResult.rows[0];
+  if (!summary) {
+    const error = new Error('Profile not found.');
+    error.statusCode = 404;
+    throw error;
+  }
+
+  const progressResult = await query(
+    `
+      SELECT
+        quiz_id,
+        quiz_title,
+        COUNT(id)::int AS attempts_count,
+        ROUND(AVG(percentage)::numeric, 1) AS average_score,
+        MAX(percentage)::numeric AS best_score
+      FROM quiz_attempts
+      WHERE user_id = $1
+      GROUP BY quiz_id, quiz_title
+      ORDER BY average_score DESC, best_score DESC, quiz_title ASC
+    `,
+    [userId]
+  );
+
+  const topics = progressResult.rows.map((row) => ({
+    quizId: row.quiz_id,
+    quizTitle: row.quiz_title,
+    attemptsCount: Number(row.attempts_count),
+    averageScore: Number(row.average_score),
+    bestScore: Number(row.best_score)
+  }));
+
+  const attemptsCount = Number(summary.attempts_count || 0);
+  const averageScore = Number(summary.average_score || 0);
+  const bestScore = Number(summary.best_score || 0);
+  const completedQuizIds = new Set(topics.map((topic) => topic.quizId));
+
+  const badges = [
+    {
+      id: 'first-step',
+      title: 'First Step',
+      earned: attemptsCount >= 1
+    },
+    {
+      id: 'practice-streak',
+      title: 'Practice Streak',
+      earned: attemptsCount >= 3
+    },
+    {
+      id: 'sharp-eye',
+      title: 'Sharp Eye',
+      earned: bestScore >= 90
+    },
+    {
+      id: 'steady-awareness',
+      title: 'Steady Awareness',
+      earned: averageScore >= 75 && attemptsCount >= 2
+    },
+    {
+      id: 'topic-explorer',
+      title: 'Topic Explorer',
+      earned: completedQuizIds.size >= 3
+    },
+    {
+      id: 'full-coverage',
+      title: 'Full Coverage',
+      earned: ['url-basics', 'message-red-flags', 'after-clicking'].every((quizId) => completedQuizIds.has(quizId))
+    }
+  ];
+
+  return {
+    userId: summary.id,
+    name: summary.name,
+    attemptsCount,
+    averageScore,
+    bestScore,
+    lastAttemptAt: summary.last_attempt_at,
+    topics,
+    badges
+  };
+}
+
 module.exports = {
   authenticateUser,
   appendMessage,
+  createQuizAttempt,
   createPasswordResetToken,
   createChat,
   createSession,
   createUser,
   deleteChat,
   destroySession,
+  getQuizAttemptById,
+  getPublicQuizProfile,
+  getQuizLeaderboard,
   getUserBySessionToken,
   listChatsForUser,
   listMessagesForChat,
+  listQuizAttemptsForUser,
   resetPasswordWithToken,
   updateChatTitle
 };

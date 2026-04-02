@@ -85,6 +85,23 @@ function storeAuth(token, user, rememberMe = true) {
     storage.setItem(authUserKey, user?.name || '');
 }
 
+function getSafeReturnTo() {
+    const params = new URLSearchParams(window.location.search);
+    const returnTo = params.get('returnTo') || '';
+    const allowedPages = new Set([
+        'assistant.html',
+        'quiz.html',
+        'index.html',
+        '/'
+    ]);
+
+    if (allowedPages.has(returnTo)) {
+        return returnTo;
+    }
+
+    return 'assistant.html';
+}
+
 function wirePasswordToggle(buttonId, inputId, iconId) {
     const button = document.getElementById(buttonId);
     const input = document.getElementById(inputId);
@@ -117,7 +134,7 @@ if (loginForm) {
             });
 
             storeAuth(data.token, data.user, rememberMe);
-            window.location.href = 'assistant.html';
+            window.location.href = getSafeReturnTo();
         } catch (error) {
             showAlert(error.message || 'Could not sign in.');
         }
@@ -270,7 +287,7 @@ if (signupForm) {
             });
 
             storeAuth(data.token, data.user, true);
-            window.location.href = 'assistant.html';
+            window.location.href = getSafeReturnTo();
         } catch (error) {
             showAlert(error.message || 'Could not create account.');
         }
