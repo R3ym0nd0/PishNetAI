@@ -89,7 +89,7 @@ function storeAuth(token, user, rememberMe = true) {
 
     const storage = rememberMe ? localStorage : sessionStorage;
     storage.setItem(authTokenKey, token);
-    storage.setItem(authUserKey, user?.name || '');
+    storage.setItem(authUserKey, JSON.stringify(user || null));
 }
 
 function getSafeReturnTo() {

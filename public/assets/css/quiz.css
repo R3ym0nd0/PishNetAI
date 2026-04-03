@@ -2348,14 +2348,48 @@ body.quiz-signed-in #quizHistoryPanel .quiz-history-list {
 .quiz-profile-head h3 {
     margin: 4px 0 4px;
     color: var(--lcc-blue-dark);
-    font-size: 1.42rem;
-    line-height: 1.3;
+    font-size: 1.58rem;
+    line-height: 1.24;
 }
 
 .quiz-profile-subtext {
     margin: 0;
     color: var(--text-soft);
-    font-size: 0.92rem;
+    font-size: 1rem;
+}
+
+@media (min-width: 1025px) {
+    .quiz-profile-head {
+        gap: 20px;
+    }
+
+    .quiz-profile-head-copy {
+        gap: 8px;
+    }
+
+    .quiz-profile-avatar {
+        width: 72px;
+        height: 72px;
+        border-radius: 20px;
+    }
+
+    .quiz-profile-avatar svg {
+        width: 34px;
+        height: 34px;
+    }
+
+    .quiz-profile-head .quiz-dashboard-kicker {
+        font-size: 0.9rem;
+        letter-spacing: 0.18em;
+    }
+
+    .quiz-profile-head h3 {
+        font-size: 1.9rem;
+    }
+
+    .quiz-profile-subtext {
+        font-size: 1.12rem;
+    }
 }
 
 .quiz-profile-summary {

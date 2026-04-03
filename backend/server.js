@@ -445,6 +445,11 @@ app.get(['/signup', '/signup.html'], (req, res) => {
   return sendStaticFile(res, filePath, 'signup.html not found');
 });
 
+app.get(['/terms', '/terms.html'], (req, res) => {
+  const filePath = path.join(publicDir, 'terms.html');
+  return sendStaticFile(res, filePath, 'terms.html not found');
+});
+
 app.get(['/reset-password', '/reset-password.html'], (req, res) => {
   const filePath = path.join(publicDir, 'reset-password.html');
   return sendStaticFile(res, filePath, 'reset-password.html not found');
