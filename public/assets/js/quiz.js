@@ -308,6 +308,13 @@ const quizSidebarAuthActions = document.getElementById('quizSidebarAuthActions')
 const quizSidebarNavLinks = [...document.querySelectorAll('[data-quiz-nav-link]')];
 const quizMobileTopbar = document.getElementById('quizMobileTopbar');
 const quizMobileTopbarLabel = document.getElementById('quizMobileTopbarLabel');
+const quizBadgesPanel = document.getElementById('quizBadgesPanel');
+const quizBadgesGuestPrompt = document.getElementById('quizBadgesGuestPrompt');
+const quizBadgesList = document.getElementById('quizBadgesList');
+const quizBadgesEmpty = document.getElementById('quizBadgesEmpty');
+const quizBadgeUnlockedCount = document.getElementById('quizBadgeUnlockedCount');
+const quizBadgeHardCount = document.getElementById('quizBadgeHardCount');
+const quizBadgeTotalCount = document.getElementById('quizBadgeTotalCount');
 const quizProfilePanel = document.getElementById('quizProfilePanel');
 const quizProfileGrid = document.querySelector('#quizProfilePanel .quiz-profile-grid');
 const quizLogoutConfirmOverlay = document.getElementById('quizLogoutConfirmOverlay');
@@ -318,12 +325,21 @@ const quizProfileEmail = document.getElementById('quizProfileEmail');
 const quizProfileAttempts = document.getElementById('quizProfileAttempts');
 const quizProfileAverage = document.getElementById('quizProfileAverage');
 const quizProfileBest = document.getElementById('quizProfileBest');
-const quizProfileBadgeCount = document.getElementById('quizProfileBadgeCount');
+const quizProfileRank = document.getElementById('quizProfileRank');
+const quizProfileRankProgressFill = document.getElementById('quizProfileRankProgressFill');
+const quizProfileRankProgressText = document.getElementById('quizProfileRankProgressText');
+const quizProfileCompletedSets = document.getElementById('quizProfileCompletedSets');
+const quizProfileNoteInput = document.getElementById('quizProfileNoteInput');
+const quizProfileNoteCount = document.getElementById('quizProfileNoteCount');
+const quizProfileNoteStatus = document.getElementById('quizProfileNoteStatus');
+const quizProfileNoteDisplay = document.getElementById('quizProfileNoteDisplay');
+const quizProfileNoteEditor = document.getElementById('quizProfileNoteEditor');
+const quizProfileNoteText = document.getElementById('quizProfileNoteText');
+const quizProfileNoteEditBtn = document.getElementById('quizProfileNoteEditBtn');
+const quizProfileNoteSaveBtn = document.getElementById('quizProfileNoteSaveBtn');
 const quizProfileBadgeList = document.getElementById('quizProfileBadgeList');
 const quizProfileBadgeEmpty = document.getElementById('quizProfileBadgeEmpty');
-const quizProfileProgressBadge = document.getElementById('quizProfileProgressBadge');
-const quizProfileProgressList = document.getElementById('quizProfileProgressList');
-const quizProfileProgressEmpty = document.getElementById('quizProfileProgressEmpty');
+const quizProfileUnlockedBadgeCount = document.getElementById('quizProfileUnlockedBadgeCount');
 const quizHistoryPanelSection = document.getElementById('quizHistoryPanel');
 const quizHistoryGuestPrompt = document.getElementById('quizHistoryGuestPrompt');
 const quizHistoryList = document.getElementById('quizHistoryList');
@@ -376,9 +392,24 @@ let signedInQuizAttempts = [];
 let currentQuizPage = 1;
 let lockedQuizSidebarScrollY = 0;
 let quizSidebarTouchStartY = 0;
-let isQuizHistoryExpanded = false;
-const quizCardsPerPage = 6;
+const guestQuizCardsPreviewCount = 6;
+const maxAdaptiveQuizCardsPerPage = 9;
 const totalQuizPages = 10;
+
+function getQuizCardsPerPage() {
+    const viewportWidth = window.innerWidth || document.documentElement.clientWidth || 0;
+    const viewportHeight = window.innerHeight || document.documentElement.clientHeight || 0;
+
+    if (viewportWidth <= 640) {
+        return 6;
+    }
+
+    if (viewportWidth <= 1024) {
+        return viewportHeight >= 980 ? 8 : 6;
+    }
+
+    return viewportHeight >= 920 ? 9 : 6;
+}
 
 function escapeHtml(value) {
     return String(value ?? '')
@@ -438,6 +469,63 @@ function getStoredUser() {
         return JSON.parse(rawUser);
     } catch {
         return { name: rawUser };
+    }
+}
+
+function setStoredUser(user) {
+    if (!user) return;
+
+    [localStorage, sessionStorage].forEach((storage) => {
+        const existingRaw = storage.getItem(authUserKey);
+        if (!existingRaw) return;
+
+        try {
+            const existingUser = JSON.parse(existingRaw);
+            storage.setItem(authUserKey, JSON.stringify({
+                ...existingUser,
+                ...user
+            }));
+        } catch {
+            storage.setItem(authUserKey, JSON.stringify(user));
+        }
+    });
+}
+
+function syncQuizProfileNoteUi(note = '', statusText = 'Keep it short and clear.', forceEdit = false) {
+    const normalizedNote = String(note || '').slice(0, 120);
+    const showSavedView = Boolean(normalizedNote) && !forceEdit;
+
+    if (quizProfileNoteInput) {
+        quizProfileNoteInput.value = normalizedNote;
+        quizProfileNoteInput.disabled = !isLoggedIn();
+    }
+
+    if (quizProfileNoteCount) {
+        quizProfileNoteCount.textContent = `${normalizedNote.length} / 120`;
+    }
+
+    if (quizProfileNoteStatus) {
+        quizProfileNoteStatus.textContent = statusText;
+    }
+
+    if (quizProfileNoteText) {
+        quizProfileNoteText.textContent = normalizedNote;
+    }
+
+    if (quizProfileNoteDisplay) {
+        quizProfileNoteDisplay.hidden = !showSavedView;
+    }
+
+    if (quizProfileNoteEditor) {
+        quizProfileNoteEditor.hidden = showSavedView;
+    }
+
+    if (quizProfileNoteSaveBtn) {
+        quizProfileNoteSaveBtn.disabled = !isLoggedIn();
+    }
+
+    if (quizProfileNoteEditBtn) {
+        quizProfileNoteEditBtn.hidden = !isLoggedIn();
     }
 }
 
@@ -541,11 +629,15 @@ function getQuizUnlockState(quizId, attempts = []) {
 }
 
 function updateQuizUnlockStates(attempts = []) {
+    const completedQuizIds = new Set(attempts.map((attempt) => attempt.quizId));
+
     quizStartButtons.forEach((button) => {
         const quizId = button.dataset.quiz;
         const card = button.closest('[data-quiz-card]');
         const note = document.getElementById(`quizUnlockNote-${quizId}`);
+        const completedChip = document.getElementById(`quizCompletedChip-${quizId}`);
         const state = getQuizUnlockState(quizId, attempts);
+        const isCompleted = completedQuizIds.has(quizId);
 
         button.dataset.lockedAction = state.action || 'start';
         button.textContent = state.cta;
@@ -553,11 +645,16 @@ function updateQuizUnlockStates(attempts = []) {
 
         if (card) {
             card.classList.toggle('is-locked', state.locked);
+            card.classList.toggle('is-completed', isCompleted);
         }
 
         if (note) {
             note.hidden = !state.locked;
             note.textContent = state.reason;
+        }
+
+        if (completedChip) {
+            completedChip.hidden = !isCompleted;
         }
     });
 }
@@ -772,36 +869,34 @@ function setQuizAppView(view = 'quiz-library') {
     const quizLibraryOnly = view === 'quiz-library';
     const leaderboardOnly = view === 'leaderboard';
     const profileOnly = view === 'profile';
+    const badgesOnly = view === 'badges';
     const historyOnly = view === 'history';
     const currentQuizOnly = view === 'current-quiz';
 
     if (quizProfilePanel) quizProfilePanel.hidden = !profileOnly;
+    if (quizBadgesPanel) quizBadgesPanel.hidden = !badgesOnly;
     if (quizHistoryPanelSection) quizHistoryPanelSection.hidden = !historyOnly;
     if (quizLeaderboardPanel) quizLeaderboardPanel.hidden = !leaderboardOnly;
     if (quizzesSection) quizzesSection.hidden = !quizLibraryOnly;
     if (quizWorkspace) quizWorkspace.hidden = !currentQuizOnly || !currentQuizId;
 
-    if (quizHistoryList) {
-        quizHistoryList.classList.toggle('is-expanded', historyOnly && isQuizHistoryExpanded);
-    }
-    if (quizHistoryPanelSection) {
-        quizHistoryPanelSection.classList.toggle('is-expanded', historyOnly && isQuizHistoryExpanded);
-    }
-    if (quizHistoryToggleBtn) {
-        quizHistoryToggleBtn.textContent = historyOnly && isQuizHistoryExpanded ? 'Show Less' : 'Read More';
-    }
     if (quizHistoryGuestPrompt) quizHistoryGuestPrompt.hidden = !historyOnly || signedIn;
+    if (quizBadgesGuestPrompt) quizBadgesGuestPrompt.hidden = !badgesOnly || signedIn;
     if (quizProfileGuestPrompt) quizProfileGuestPrompt.hidden = !profileOnly || signedIn;
     if (quizHistoryList) quizHistoryList.hidden = historyOnly && !signedIn;
     if (quizHistoryEmpty) quizHistoryEmpty.hidden = historyOnly && !signedIn ? true : quizHistoryEmpty.hidden;
-    if (quizHistoryToggleBtn) quizHistoryToggleBtn.hidden = !historyOnly || !signedIn || quizHistoryToggleBtn.hidden;
+    if (quizHistoryToggleBtn) quizHistoryToggleBtn.hidden = true;
     if (quizHistoryPanelSection) {
         quizHistoryPanelSection.classList.toggle('is-guest-locked', historyOnly && !signedIn);
+    }
+    if (quizBadgesPanel) {
+        quizBadgesPanel.classList.toggle('is-guest-locked', badgesOnly && !signedIn);
     }
     if (quizProfilePanel) {
         quizProfilePanel.classList.toggle('is-guest-locked', profileOnly && !signedIn);
     }
     if (quizProfileGrid) quizProfileGrid.hidden = profileOnly && !signedIn;
+    if (quizBadgesList) quizBadgesList.hidden = badgesOnly && !signedIn;
 }
 
 function scrollToQuizSection(targetId, behavior = 'smooth') {
@@ -812,6 +907,8 @@ function scrollToQuizSection(targetId, behavior = 'smooth') {
     if (isLoggedIn()) {
         if (targetId === 'quizLeaderboardPanel') {
             setQuizAppView('leaderboard');
+        } else if (targetId === 'quizBadgesPanel') {
+            setQuizAppView('badges');
         } else if (targetId === 'quizProfilePanel') {
             setQuizAppView('profile');
         } else if (targetId === 'quizHistoryPanel') {
@@ -824,6 +921,8 @@ function scrollToQuizSection(targetId, behavior = 'smooth') {
     } else {
         if (targetId === 'quizLeaderboardPanel') {
             setQuizAppView('leaderboard');
+        } else if (targetId === 'quizBadgesPanel') {
+            setQuizAppView('badges');
         } else if (targetId === 'quizProfilePanel') {
             setQuizAppView('profile');
         } else if (targetId === 'quizHistoryPanel') {
@@ -878,6 +977,7 @@ function applyQuizPageState() {
         if (quizMobileTopbarLabel) quizMobileTopbarLabel.textContent = fullLabel;
         if (quizProfileName) quizProfileName.textContent = fullLabel;
         if (quizProfileEmail) quizProfileEmail.textContent = secondaryLabel;
+        syncQuizProfileNoteUi(user?.profileNote || '');
         if (quizSidebar) quizSidebar.hidden = false;
         if (quizMobileTopbar) quizMobileTopbar.hidden = false;
         if (quizSidebarAuthActions) quizSidebarAuthActions.hidden = true;
@@ -898,6 +998,9 @@ function applyQuizPageState() {
         if (quizSidebarName) quizSidebarName.textContent = 'Guest User';
         if (quizSidebarEmail) quizSidebarEmail.textContent = 'Sign in to save progress';
         if (quizMobileTopbarLabel) quizMobileTopbarLabel.textContent = 'Guest mode';
+        if (quizProfileName) quizProfileName.textContent = 'Guest User';
+        if (quizProfileEmail) quizProfileEmail.textContent = 'Sign in to save progress';
+        syncQuizProfileNoteUi('', 'Sign in to save a short profile note.');
         if (quizSidebar) quizSidebar.hidden = false;
         if (quizMobileTopbar) quizMobileTopbar.hidden = false;
         if (quizSidebarAuthActions) quizSidebarAuthActions.hidden = false;
@@ -982,6 +1085,31 @@ async function saveSignedInAttempt(result) {
     return response?.attempt || null;
 }
 
+async function saveQuizProfileNote() {
+    if (!isLoggedIn() || !quizProfileNoteInput) return;
+
+    const profileNote = quizProfileNoteInput.value.trim().slice(0, 120);
+    syncQuizProfileNoteUi(profileNote, 'Saving note...', true);
+    if (quizProfileNoteSaveBtn) quizProfileNoteSaveBtn.disabled = true;
+
+    try {
+        const response = await apiFetch('/api/auth/profile-note', {
+            method: 'PATCH',
+            body: JSON.stringify({ profileNote })
+        });
+
+        if (response?.user) {
+            setStoredUser(response.user);
+        }
+
+        syncQuizProfileNoteUi(profileNote, profileNote ? 'Profile note saved.' : 'Profile note cleared.');
+    } catch (error) {
+        syncQuizProfileNoteUi(profileNote, error.message || 'Could not save profile note.', true);
+    } finally {
+        if (quizProfileNoteSaveBtn) quizProfileNoteSaveBtn.disabled = !isLoggedIn();
+    }
+}
+
 function buildQuizAttemptReviewData(quiz, answerRecords = []) {
     return quiz.questions.map((question, questionIndex) => {
         const answerRecord = answerRecords.find((entry) => entry.questionIndex === questionIndex) || {};
@@ -1012,16 +1140,90 @@ function populateSignedInDashboard(attempts = []) {
     populateQuizProfile(attempts);
 }
 
+function getQuizRankMeta(attemptsCount = 0, averageScore = 0, completedSetsCount = 0) {
+    const totalQuizCount = Object.keys(quizzes).length;
+    const rankTiers = [
+        {
+            label: 'Newcomer',
+            requirements: []
+        },
+        {
+            label: 'Aware User',
+            requirements: [
+                { label: 'attempts', current: attemptsCount, target: 3 },
+                { label: 'average score', current: averageScore, target: 70 }
+            ]
+        },
+        {
+            label: 'Threat Spotter',
+            requirements: [
+                { label: 'completed sets', current: completedSetsCount, target: 4 },
+                { label: 'average score', current: averageScore, target: 80 }
+            ]
+        },
+        {
+            label: 'Awareness Expert',
+            requirements: [
+                { label: 'attempts', current: attemptsCount, target: 6 },
+                { label: 'average score', current: averageScore, target: 88 }
+            ]
+        },
+        {
+            label: 'PhishNet Guardian',
+            requirements: [
+                { label: 'completed sets', current: completedSetsCount, target: totalQuizCount }
+            ]
+        }
+    ];
+
+    let currentTierIndex = 0;
+    for (let index = rankTiers.length - 1; index >= 0; index -= 1) {
+        const tier = rankTiers[index];
+        const earned = tier.requirements.every((requirement) => requirement.current >= requirement.target);
+        if (earned) {
+            currentTierIndex = index;
+            break;
+        }
+    }
+
+    const currentTier = rankTiers[currentTierIndex];
+    const nextTier = rankTiers[currentTierIndex + 1] || null;
+    const progressValue = nextTier
+        ? Math.round(
+            nextTier.requirements.reduce((total, requirement) => total + Math.min(requirement.current / requirement.target, 1), 0)
+            / nextTier.requirements.length
+            * 100
+        )
+        : 100;
+
+    const progressText = !nextTier
+        ? 'This user reached the highest awareness rank in the quiz system.'
+        : `Working toward ${nextTier.label}.`;
+
+    return {
+        currentTier,
+        nextTier,
+        progressValue,
+        progressText
+    };
+}
+
 function populateQuizProfile(attempts = []) {
     if (quizProfileAttempts) {
         quizProfileAttempts.textContent = String(attempts.length);
     }
     renderQuizBadges(attempts);
+    renderQuizProfileBadges(attempts);
 
     if (!attempts.length) {
         if (quizProfileAverage) quizProfileAverage.textContent = '--';
         if (quizProfileBest) quizProfileBest.textContent = '--';
-        renderQuizTopicProgress([]);
+        if (quizProfileRank) quizProfileRank.textContent = 'Newcomer';
+        if (quizProfileRankProgressFill) quizProfileRankProgressFill.style.width = '0%';
+        if (quizProfileRankProgressText) {
+            quizProfileRankProgressText.textContent = 'Complete a few signed-in quiz attempts to begin your awareness rank progress.';
+        }
+        if (quizProfileCompletedSets) quizProfileCompletedSets.textContent = `0/${Object.keys(quizzes).length}`;
         return;
     }
 
@@ -1031,10 +1233,72 @@ function populateQuizProfile(attempts = []) {
     const bestScore = attempts.reduce((best, attempt) => (
         Number(attempt.percentage || 0) > best ? Number(attempt.percentage || 0) : best
     ), 0);
-
+    const completedQuizIds = new Set(attempts.map((attempt) => attempt.quizId));
     if (quizProfileAverage) quizProfileAverage.textContent = `${averageScore}%`;
     if (quizProfileBest) quizProfileBest.textContent = `${bestScore}%`;
-    renderQuizTopicProgress(attempts);
+    if (quizProfileCompletedSets) {
+        quizProfileCompletedSets.textContent = `${completedQuizIds.size}/${Object.keys(quizzes).length}`;
+    }
+    const rankMeta = getQuizRankMeta(attempts.length, averageScore, completedQuizIds.size);
+
+    if (quizProfileRank) {
+        quizProfileRank.textContent = rankMeta.currentTier.label;
+    }
+
+    if (quizProfileRankProgressFill) {
+        quizProfileRankProgressFill.style.width = `${rankMeta.progressValue}%`;
+    }
+
+    if (quizProfileRankProgressText) {
+        if (!rankMeta.nextTier) {
+            quizProfileRankProgressText.textContent = 'You reached the highest awareness rank in the quiz system.';
+        } else {
+            const requirementCopy = rankMeta.nextTier.requirements
+                .map((requirement) => {
+                    if (requirement.label === 'average score') return `${requirement.target}% average`;
+                    if (requirement.label === 'completed sets') return `${requirement.target} completed sets`;
+                    return `${requirement.target} ${requirement.label}`;
+                })
+                .join(' and ');
+
+            quizProfileRankProgressText.textContent = `Work toward ${rankMeta.nextTier.label} by reaching ${requirementCopy}.`;
+        }
+    }
+}
+
+function renderQuizProfileBadges(attempts = []) {
+    if (!quizProfileBadgeList) return;
+
+    const unlockedBadges = getQuizBadgeDefinitions(attempts).filter((badge) => badge.earned);
+
+    if (quizProfileUnlockedBadgeCount) {
+        quizProfileUnlockedBadgeCount.textContent = `${unlockedBadges.length} unlocked`;
+    }
+
+    quizProfileBadgeList.querySelectorAll('.quiz-profile-badge').forEach((item) => item.remove());
+
+    if (!unlockedBadges.length) {
+        if (quizProfileBadgeEmpty) quizProfileBadgeEmpty.hidden = false;
+        return;
+    }
+
+    if (quizProfileBadgeEmpty) quizProfileBadgeEmpty.hidden = true;
+
+    unlockedBadges.forEach((badge) => {
+        const item = document.createElement('article');
+        item.className = 'quiz-profile-badge is-earned';
+        item.innerHTML = `
+            <div class="quiz-profile-badge-top">
+                <div class="quiz-profile-badge-icon" aria-hidden="true">${badge.icon}</div>
+                <div class="quiz-profile-badge-main">
+                    <strong>${badge.title}</strong>
+                    <span>${badge.difficulty}</span>
+                </div>
+            </div>
+            <p class="quiz-profile-badge-note">${badge.detail}</p>
+        `;
+        quizProfileBadgeList.appendChild(item);
+    });
 }
 
 function getQuizBadgeDefinitions(attempts = []) {
@@ -1045,6 +1309,11 @@ function getQuizBadgeDefinitions(attempts = []) {
         Number(attempt.percentage || 0) > best ? Number(attempt.percentage || 0) : best
     ), 0);
     const uniqueTopics = new Set(attempts.map((attempt) => attempt.quizId)).size;
+    const advancedCompleted = attempts.some((attempt) => attempt.quizId === 'phishing-scenarios');
+    const masteryCompleted = attempts.some((attempt) => attempt.quizId === 'best-practices');
+    const strongAttempts = attempts.filter((attempt) => Number(attempt.percentage || 0) >= 85).length;
+    const needsReviewCleared = attempts.filter((attempt) => Number(attempt.percentage || 0) >= 75).length;
+    const allQuizIds = Object.keys(quizzes);
 
     return [
         {
@@ -1052,6 +1321,7 @@ function getQuizBadgeDefinitions(attempts = []) {
             title: 'First Step',
             detail: 'Complete your first signed-in quiz attempt.',
             earned: attempts.length >= 1,
+            difficulty: 'Starter',
             icon: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2 3 7v6c0 5 3.84 9.74 9 11 5.16-1.26 9-6 9-11V7l-9-5Zm-1 14-4-4 1.41-1.41L11 13.17l5.59-5.58L18 9l-7 7Z"/></svg>'
         },
         {
@@ -1059,13 +1329,23 @@ function getQuizBadgeDefinitions(attempts = []) {
             title: 'Practice Streak',
             detail: 'Save at least 3 quiz attempts.',
             earned: attempts.length >= 3,
+            difficulty: 'Starter',
             icon: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8Z"/></svg>'
+        },
+        {
+            id: 'steady-learner',
+            title: 'Steady Learner',
+            detail: 'Save at least 5 quiz attempts.',
+            earned: attempts.length >= 5,
+            difficulty: 'Starter',
+            icon: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M5 4h14v2H5V4Zm0 7h10v2H5v-2Zm0 7h14v2H5v-2Zm12-8h2v8h-2v-8Z"/></svg>'
         },
         {
             id: 'sharp-eye',
             title: 'Sharp Eye',
             detail: 'Reach a best score of 90% or higher.',
             earned: bestScore >= 90,
+            difficulty: 'Core',
             icon: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 5c-7 0-10 7-10 7s3 7 10 7 10-7 10-7-3-7-10-7Zm0 11a4 4 0 1 1 0-8 4 4 0 0 1 0 8Zm0-2.2A1.8 1.8 0 1 0 12 10a1.8 1.8 0 0 0 0 3.6Z"/></svg>'
         },
         {
@@ -1073,6 +1353,7 @@ function getQuizBadgeDefinitions(attempts = []) {
             title: 'Steady Awareness',
             detail: 'Maintain an average score of 75% or higher.',
             earned: averageScore >= 75 && attempts.length >= 2,
+            difficulty: 'Core',
             icon: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 17h3v4H3v-4Zm5-7h3v11H8V10Zm5 3h3v8h-3v-8Zm5-10h3v18h-3V3Z"/></svg>'
         },
         {
@@ -1080,6 +1361,7 @@ function getQuizBadgeDefinitions(attempts = []) {
             title: 'Topic Explorer',
             detail: 'Try at least 3 different quiz sets.',
             earned: uniqueTopics >= 3,
+            difficulty: 'Core',
             icon: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2 4 5v6c0 5.55 3.84 10.74 8 12 4.16-1.26 8-6.45 8-12V5l-8-3Zm1 14h-2v-2h2v2Zm0-4h-2V7h2v5Z"/></svg>'
         },
         {
@@ -1087,7 +1369,56 @@ function getQuizBadgeDefinitions(attempts = []) {
             title: 'Full Coverage',
             detail: 'Complete the full core quiz path.',
             earned: coreQuizIds.every((quizId) => attempts.some((attempt) => attempt.quizId === quizId)),
+            difficulty: 'Core',
             icon: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5a2 2 0 0 0-2 2v14l4-4h12a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2Zm-8 9-3-3 1.41-1.41L11 9.17l4.59-4.58L17 6l-6 6Z"/></svg>'
+        },
+        {
+            id: 'strong-finisher',
+            title: 'Strong Finisher',
+            detail: 'Earn at least 3 strong quiz results of 85% or higher.',
+            earned: strongAttempts >= 3,
+            difficulty: 'Advanced',
+            icon: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2 9.5 7.2 4 8l4 3.9-.94 5.5L12 14.9l4.94 2.5-.94-5.5 4-3.9-5.5-.8L12 2Z"/></svg>'
+        },
+        {
+            id: 'review-crusher',
+            title: 'Review Crusher',
+            detail: 'Build 5 saved attempts scoring 75% or higher.',
+            earned: needsReviewCleared >= 5,
+            difficulty: 'Advanced',
+            icon: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 5H5v14h14V5Zm-8 11-4-4 1.4-1.4 2.6 2.58 4.6-4.59L17 10l-6 6Z"/></svg>'
+        },
+        {
+            id: 'scenario-survivor',
+            title: 'Scenario Survivor',
+            detail: 'Finish the Phishing Scenarios quiz set.',
+            earned: advancedCompleted,
+            difficulty: 'Advanced',
+            icon: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M11 2h2v3h-2V2Zm6.36 2.64 1.41 1.41-2.12 2.12-1.41-1.41 2.12-2.12ZM4.22 6.05l1.41-1.41 2.12 2.12-1.41 1.41-2.12-2.12ZM12 7a5 5 0 0 0-5 5c0 1.74.89 3.27 2.23 4.17L8 22h8l-1.23-5.83A4.98 4.98 0 0 0 17 12a5 5 0 0 0-5-5Z"/></svg>'
+        },
+        {
+            id: 'mastery-unlocked',
+            title: 'Mastery Unlocked',
+            detail: 'Finish the Best Practices mastery quiz.',
+            earned: masteryCompleted,
+            difficulty: 'Hard',
+            icon: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 1 4 5v6c0 5.55 3.84 10.74 8 12 4.16-1.26 8-6.45 8-12V5l-8-4Zm3.54 8.46-4.25 4.25-2.12-2.12-1.41 1.41 3.53 3.54 5.66-5.66-1.41-1.42Z"/></svg>'
+        },
+        {
+            id: 'guardian-grade',
+            title: 'Guardian Grade',
+            detail: 'Maintain an average score of 88% or higher across at least 6 attempts.',
+            earned: averageScore >= 88 && attempts.length >= 6,
+            difficulty: 'Hard',
+            icon: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2 4 5v6c0 5.25 3.44 10.14 8 11.76 4.56-1.62 8-6.51 8-11.76V5l-8-3Zm-1 15-3.5-3.5 1.41-1.41L11 14.17l4.59-4.58L17 11l-6 6Z"/></svg>'
+        },
+        {
+            id: 'phishnet-complete',
+            title: 'PhishNet Complete',
+            detail: 'Save at least one completed attempt for every quiz set in the library.',
+            earned: allQuizIds.every((quizId) => attempts.some((attempt) => attempt.quizId === quizId)),
+            difficulty: 'Hard',
+            icon: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2 2 7l10 5 8.16-4.08A3 3 0 0 1 21 10.4V17h-2v-5.6l-7 3.5L2 10v7l10 5 6-3v2.2L12 24 0 18V7l12-5Z"/></svg>'
         }
     ];
 }
@@ -1098,8 +1429,15 @@ function getQuizBadgeIconMarkup(badgeId = '') {
         'practice-streak': '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8Z"/></svg>',
         'sharp-eye': '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 5c-7 0-10 7-10 7s3 7 10 7 10-7 10-7-3-7-10-7Zm0 11a4 4 0 1 1 0-8 4 4 0 0 1 0 8Zm0-2.2A1.8 1.8 0 1 0 12 10a1.8 1.8 0 0 0 0 3.6Z"/></svg>',
         'steady-awareness': '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 17h3v4H3v-4Zm5-7h3v11H8V10Zm5 3h3v8h-3v-8Zm5-10h3v18h-3V3Z"/></svg>',
+        'steady-learner': '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M5 4h14v2H5V4Zm0 7h10v2H5v-2Zm0 7h14v2H5v-2Zm12-8h2v8h-2v-8Z"/></svg>',
         'topic-explorer': '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2 4 5v6c0 5.55 3.84 10.74 8 12 4.16-1.26 8-6.45 8-12V5l-8-3Zm1 14h-2v-2h2v2Zm0-4h-2V7h2v5Z"/></svg>',
-        'full-coverage': '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5a2 2 0 0 0-2 2v14l4-4h12a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2Zm-8 9-3-3 1.41-1.41L11 9.17l4.59-4.58L17 6l-6 6Z"/></svg>'
+        'full-coverage': '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5a2 2 0 0 0-2 2v14l4-4h12a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2Zm-8 9-3-3 1.41-1.41L11 9.17l4.59-4.58L17 6l-6 6Z"/></svg>',
+        'strong-finisher': '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2 9.5 7.2 4 8l4 3.9-.94 5.5L12 14.9l4.94 2.5-.94-5.5 4-3.9-5.5-.8L12 2Z"/></svg>',
+        'review-crusher': '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 5H5v14h14V5Zm-8 11-4-4 1.4-1.4 2.6 2.58 4.6-4.59L17 10l-6 6Z"/></svg>',
+        'scenario-survivor': '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M11 2h2v3h-2V2Zm6.36 2.64 1.41 1.41-2.12 2.12-1.41-1.41 2.12-2.12ZM4.22 6.05l1.41-1.41 2.12 2.12-1.41 1.41-2.12-2.12ZM12 7a5 5 0 0 0-5 5c0 1.74.89 3.27 2.23 4.17L8 22h8l-1.23-5.83A4.98 4.98 0 0 0 17 12a5 5 0 0 0-5-5Z"/></svg>',
+        'mastery-unlocked': '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 1 4 5v6c0 5.55 3.84 10.74 8 12 4.16-1.26 8-6.45 8-12V5l-8-4Zm3.54 8.46-4.25 4.25-2.12-2.12-1.41 1.41 3.53 3.54 5.66-5.66-1.41-1.42Z"/></svg>',
+        'guardian-grade': '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2 4 5v6c0 5.25 3.44 10.14 8 11.76 4.56-1.62 8-6.51 8-11.76V5l-8-3Zm-1 15-3.5-3.5 1.41-1.41L11 14.17l4.59-4.58L17 11l-6 6Z"/></svg>',
+        'phishnet-complete': '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2 2 7l10 5 8.16-4.08A3 3 0 0 1 21 10.4V17h-2v-5.6l-7 3.5L2 10v7l10 5 6-3v2.2L12 24 0 18V7l12-5Z"/></svg>'
     };
 
     return iconMap[badgeId] || '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2 4 5v6c0 5.55 3.84 10.74 8 12 4.16-1.26 8-6.45 8-12V5l-8-3Z"/></svg>';
@@ -1108,7 +1446,7 @@ function getQuizBadgeIconMarkup(badgeId = '') {
 function createPlaceholderQuizCards() {
     if (!quizGrid) return;
 
-    const desiredCardCount = totalQuizPages * quizCardsPerPage;
+    const desiredCardCount = totalQuizPages * maxAdaptiveQuizCardsPerPage;
     const placeholdersNeeded = Math.max(0, desiredCardCount - quizCards.length);
 
     for (let index = 0; index < placeholdersNeeded; index += 1) {
@@ -1136,10 +1474,11 @@ function createPlaceholderQuizCards() {
 function renderQuizPagination() {
     if (!quizPagination || !quizCards.length) return;
     const quizLibraryToolbar = document.getElementById('quizLibraryToolbar');
+    const cardsPerPage = getQuizCardsPerPage();
 
     if (!isLoggedIn()) {
         quizCards.forEach((card, index) => {
-            card.hidden = index >= quizCardsPerPage;
+            card.hidden = index >= guestQuizCardsPreviewCount;
         });
         quizPagination.innerHTML = '';
         quizPagination.hidden = true;
@@ -1150,11 +1489,11 @@ function renderQuizPagination() {
     quizPagination.hidden = false;
     if (quizLibraryToolbar) quizLibraryToolbar.hidden = false;
 
-    const totalPages = Math.max(totalQuizPages, Math.ceil(quizCards.length / quizCardsPerPage));
+    const totalPages = Math.max(totalQuizPages, Math.ceil(quizCards.length / cardsPerPage));
     currentQuizPage = Math.min(Math.max(currentQuizPage, 1), totalPages);
 
     quizCards.forEach((card, index) => {
-        const pageNumber = Math.floor(index / quizCardsPerPage) + 1;
+        const pageNumber = Math.floor(index / cardsPerPage) + 1;
         card.hidden = pageNumber !== currentQuizPage;
     });
 
@@ -1179,21 +1518,22 @@ function renderQuizPagination() {
 }
 
 function renderQuizBadges(attempts = []) {
-    if (!quizProfileBadgeList) return;
+    if (!quizBadgesList) return;
 
     const badges = getQuizBadgeDefinitions(attempts);
     const unlockedCount = badges.filter((badge) => badge.earned).length;
+    const hardCount = badges.filter((badge) => badge.difficulty === 'Hard' && badge.earned).length;
 
-    if (quizProfileBadgeCount) {
-        quizProfileBadgeCount.textContent = `${unlockedCount} unlocked`;
-    }
+    if (quizBadgeUnlockedCount) quizBadgeUnlockedCount.textContent = String(unlockedCount);
+    if (quizBadgeHardCount) quizBadgeHardCount.textContent = String(hardCount);
+    if (quizBadgeTotalCount) quizBadgeTotalCount.textContent = String(badges.length);
 
-    quizProfileBadgeList.querySelectorAll('.quiz-profile-badge').forEach((item) => item.remove());
+    quizBadgesList.querySelectorAll('.quiz-profile-badge').forEach((item) => item.remove());
 
     if (!badges.some((badge) => badge.earned)) {
-        if (quizProfileBadgeEmpty) quizProfileBadgeEmpty.hidden = false;
-    } else if (quizProfileBadgeEmpty) {
-        quizProfileBadgeEmpty.hidden = true;
+        if (quizBadgesEmpty) quizBadgesEmpty.hidden = false;
+    } else if (quizBadgesEmpty) {
+        quizBadgesEmpty.hidden = true;
     }
 
     badges.forEach((badge) => {
@@ -1204,12 +1544,12 @@ function renderQuizBadges(attempts = []) {
                 <div class="quiz-profile-badge-icon" aria-hidden="true">${badge.icon}</div>
                 <div class="quiz-profile-badge-main">
                     <strong>${badge.title}</strong>
-                    <span>${badge.earned ? 'Unlocked' : 'Locked'}</span>
+                    <span>${badge.earned ? 'Unlocked' : 'Locked'} · ${badge.difficulty}</span>
                 </div>
             </div>
             <p class="quiz-profile-badge-note">${badge.detail}</p>
         `;
-        quizProfileBadgeList.appendChild(item);
+        quizBadgesList.appendChild(item);
     });
 }
 
@@ -1232,8 +1572,6 @@ function renderQuizHistory(attempts, options = {}) {
         if (emptyElement) emptyElement.hidden = false;
         listElement.querySelectorAll('.quiz-history-item').forEach((item) => item.remove());
         if (listElement === quizHistoryList) {
-            isQuizHistoryExpanded = false;
-            listElement.classList.remove('is-expanded');
             if (quizHistoryToggleBtn) quizHistoryToggleBtn.hidden = true;
         }
         return;
@@ -1283,17 +1621,7 @@ function renderQuizHistory(attempts, options = {}) {
         });
 
     if (listElement === quizHistoryList && quizHistoryToggleBtn) {
-        const shouldShowToggle = attempts.length > 4;
-        quizHistoryToggleBtn.hidden = !shouldShowToggle;
-        if (!shouldShowToggle) {
-            isQuizHistoryExpanded = false;
-            listElement.classList.remove('is-expanded');
-            quizHistoryPanelSection?.classList.remove('is-expanded');
-        } else {
-            listElement.classList.toggle('is-expanded', isQuizHistoryExpanded);
-            quizHistoryPanelSection?.classList.toggle('is-expanded', isQuizHistoryExpanded);
-        }
-        quizHistoryToggleBtn.textContent = isQuizHistoryExpanded ? 'Show Less' : 'Read More';
+        quizHistoryToggleBtn.hidden = true;
     }
 }
 
@@ -1404,59 +1732,6 @@ function renderQuizAttemptReview(attempt) {
     `;
 }
 
-function renderQuizTopicProgress(attempts = []) {
-    if (!quizProfileProgressList) return;
-
-    const topics = Object.entries(quizzes).map(([quizId, quiz]) => {
-        const matchingAttempts = attempts.filter((attempt) => attempt.quizId === quizId);
-        const averageScore = matchingAttempts.length
-            ? Math.round(matchingAttempts.reduce((total, attempt) => total + Number(attempt.percentage || 0), 0) / matchingAttempts.length)
-            : null;
-
-        return {
-            quizId,
-            title: quiz.title,
-            attemptsCount: matchingAttempts.length,
-            averageScore
-        };
-    });
-
-    if (quizProfileProgressBadge) {
-        const activeTopics = topics.filter((topic) => topic.attemptsCount > 0).length;
-        quizProfileProgressBadge.textContent = `${activeTopics} topic${activeTopics === 1 ? '' : 's'}`;
-    }
-
-    if (!topics.some((topic) => topic.attemptsCount > 0)) {
-        if (quizProfileProgressEmpty) quizProfileProgressEmpty.hidden = false;
-        quizProfileProgressList.querySelectorAll('.quiz-profile-progress-item').forEach((item) => item.remove());
-        return;
-    }
-
-    if (quizProfileProgressEmpty) quizProfileProgressEmpty.hidden = true;
-    quizProfileProgressList.querySelectorAll('.quiz-profile-progress-item').forEach((item) => item.remove());
-
-    topics
-        .filter((topic) => topic.attemptsCount > 0)
-        .sort((a, b) => (b.averageScore || 0) - (a.averageScore || 0))
-        .forEach((topic) => {
-            const item = document.createElement('article');
-            item.className = 'quiz-profile-progress-item';
-            item.innerHTML = `
-                <div class="quiz-profile-progress-top">
-                    <div class="quiz-profile-progress-main">
-                        <strong>${topic.title}</strong>
-                        <span>${topic.attemptsCount} attempt${topic.attemptsCount === 1 ? '' : 's'} completed</span>
-                    </div>
-                    <span class="quiz-profile-progress-score">${topic.averageScore}%</span>
-                </div>
-                <div class="quiz-profile-progress-bar" aria-hidden="true">
-                    <span style="width: ${topic.averageScore}%"></span>
-                </div>
-            `;
-            quizProfileProgressList.appendChild(item);
-        });
-}
-
 function renderQuizLeaderboard(entries, currentUserId, minimumAttempts = 2) {
     if (!quizLeaderboardList) return;
 
@@ -1564,22 +1839,41 @@ function renderPublicQuizProfile(profile) {
     const badges = Array.isArray(profile.badges) ? profile.badges : [];
     const unlockedBadges = badges.filter((badge) => badge.earned);
     const topics = Array.isArray(profile.topics) ? profile.topics : [];
+    const completedSetsCount = topics.length;
+    const rankMeta = getQuizRankMeta(profile.attemptsCount || 0, Math.round(profile.averageScore || 0), completedSetsCount);
+    const note = String(profile.profileNote || '').trim();
+    const shouldCollapseBadges = unlockedBadges.length > 6;
 
     quizPublicProfileBody.innerHTML = `
         <div class="quiz-public-profile-grid">
             <div class="quiz-public-profile-summary">
                 <section class="quiz-public-profile-hero">
-                    <div class="quiz-public-profile-head">
-                        <div class="quiz-public-profile-avatar" aria-hidden="true">
-                            <svg viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M12 12c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5Zm0 2c-3.33 0-10 1.67-10 5v3h20v-3c0-3.33-6.67-5-10-5Z"/>
-                            </svg>
+                    <div class="quiz-public-profile-top">
+                        <div class="quiz-public-profile-head">
+                            <div class="quiz-public-profile-avatar" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M12 12c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5Zm0 2c-3.33 0-10 1.67-10 5v3h20v-3c0-3.33-6.67-5-10-5Z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="quiz-dashboard-kicker">Public Profile</p>
+                                <h4>${escapeHtml(profile.name)}</h4>
+                                <p class="quiz-public-profile-subtext">Last saved attempt: ${escapeHtml(lastAttempt)}</p>
+                            </div>
                         </div>
-                        <div>
-                            <p class="quiz-dashboard-kicker">Public Stats</p>
-                            <h4>${escapeHtml(profile.name)}</h4>
-                            <p class="quiz-public-profile-subtext">Last saved attempt: ${escapeHtml(lastAttempt)}</p>
+                        <span class="quiz-public-profile-rank-chip">${escapeHtml(rankMeta.currentTier.label)}</span>
+                    </div>
+
+                    <div class="quiz-public-profile-rank-meter">
+                        <div class="quiz-public-profile-rank-meter-bar" aria-hidden="true">
+                            <span style="width: ${Math.max(0, Math.min(100, rankMeta.progressValue))}%"></span>
                         </div>
+                        <p class="quiz-public-profile-rank-copy">${escapeHtml(rankMeta.progressText)}</p>
+                    </div>
+
+                    <div class="quiz-public-profile-note">
+                        <span class="quiz-public-profile-note-label">About</span>
+                        <p>${escapeHtml(note || 'This user has not added a public profile note yet.')}</p>
                     </div>
 
                     <div class="quiz-public-profile-stat-grid">
@@ -1596,8 +1890,8 @@ function renderPublicQuizProfile(profile) {
                             <strong>${escapeHtml(Math.round(profile.bestScore || 0))}%</strong>
                         </div>
                         <div class="quiz-public-profile-stat">
-                            <span>Completed Topics</span>
-                            <strong>${escapeHtml(topics.length)}</strong>
+                            <span>Completed Sets</span>
+                            <strong>${escapeHtml(`${completedSetsCount}/${Object.keys(quizzes).length}`)}</strong>
                         </div>
                     </div>
                 </section>
@@ -1610,7 +1904,7 @@ function renderPublicQuizProfile(profile) {
                         </div>
                         <span class="quiz-history-badge">${unlockedBadges.length} unlocked</span>
                     </div>
-                    <div class="quiz-public-profile-badges">
+                    <div class="quiz-public-profile-badges ${shouldCollapseBadges ? 'is-collapsed' : ''}" id="quizPublicProfileBadges">
                         ${unlockedBadges.length ? unlockedBadges.map((badge) => `
                             <article
                                 class="quiz-public-profile-badge ${badge.earned ? 'is-earned' : ''}"
@@ -1626,41 +1920,23 @@ function renderPublicQuizProfile(profile) {
                             </div>
                         `}
                     </div>
+                    ${shouldCollapseBadges ? `
+                        <div class="quiz-public-profile-badge-actions">
+                            <button type="button" class="quiz-history-toggle-btn" id="quizPublicProfileBadgesToggleBtn">See More</button>
+                        </div>
+                    ` : ''}
                 </section>
             </div>
-
-            <section class="quiz-public-profile-card">
-                <div class="quiz-history-heading">
-                    <div>
-                        <p class="quiz-dashboard-kicker">Topic Progress</p>
-                        <h3>Performance by Quiz Set</h3>
-                    </div>
-                    <span class="quiz-history-badge">${topics.length} topic${topics.length === 1 ? '' : 's'}</span>
-                </div>
-                <div class="quiz-public-profile-progress">
-                    ${topics.length ? topics.map((topic) => `
-                        <article class="quiz-profile-progress-item">
-                            <div class="quiz-profile-progress-top">
-                                <div class="quiz-profile-progress-main">
-                                    <strong>${escapeHtml(topic.quizTitle)}</strong>
-                                    <span>${escapeHtml(topic.attemptsCount)} attempt${topic.attemptsCount === 1 ? '' : 's'} completed</span>
-                                </div>
-                                <span class="quiz-profile-progress-score">${escapeHtml(Math.round(topic.averageScore || 0))}%</span>
-                            </div>
-                            <div class="quiz-profile-progress-bar" aria-hidden="true">
-                                <span style="width: ${Math.max(0, Math.min(100, Math.round(topic.averageScore || 0)))}%"></span>
-                            </div>
-                        </article>
-                    `).join('') : `
-                        <div class="quiz-history-empty">
-                            <strong>No topic progress yet</strong>
-                            <p>This user does not have enough saved quiz data to show here yet.</p>
-                        </div>
-                    `}
-                </div>
-            </section>
         </div>
     `;
+
+    const badgesToggleBtn = document.getElementById('quizPublicProfileBadgesToggleBtn');
+    const badgesWrap = document.getElementById('quizPublicProfileBadges');
+
+    badgesToggleBtn?.addEventListener('click', () => {
+        const isExpanded = badgesWrap?.classList.toggle('is-expanded');
+        badgesToggleBtn.textContent = isExpanded ? 'Show Less' : 'See More';
+    });
 }
 
 function getScoreSummary(percentage) {
@@ -1900,13 +2176,6 @@ quizSidebarProfileBtn?.addEventListener('click', () => {
     quizProfilePanel?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 });
 
-quizHistoryToggleBtn?.addEventListener('click', () => {
-    isQuizHistoryExpanded = !isQuizHistoryExpanded;
-    quizHistoryList?.classList.toggle('is-expanded', isQuizHistoryExpanded);
-    quizHistoryPanelSection?.classList.toggle('is-expanded', isQuizHistoryExpanded);
-    quizHistoryToggleBtn.textContent = isQuizHistoryExpanded ? 'Show Less' : 'Read More';
-});
-
 quizSidebarLogoutBtn?.addEventListener('click', () => {
     openQuizLogoutConfirm();
 });
@@ -1921,6 +2190,25 @@ quizSidebarBackBtn?.addEventListener('touchend', handleQuizSidebarCloseControl, 
 
 quizSidebarOverlay?.addEventListener('click', () => {
     closeQuizSidebarDrawer();
+});
+
+quizProfileNoteInput?.addEventListener('input', () => {
+    const note = quizProfileNoteInput.value.slice(0, 120);
+    if (quizProfileNoteInput.value !== note) {
+        quizProfileNoteInput.value = note;
+    }
+
+    syncQuizProfileNoteUi(note, isLoggedIn() ? 'Save your note when you are ready.' : 'Sign in to save a short profile note.', true);
+});
+
+quizProfileNoteSaveBtn?.addEventListener('click', () => {
+    saveQuizProfileNote();
+});
+
+quizProfileNoteEditBtn?.addEventListener('click', () => {
+    const note = quizProfileNoteInput?.value || quizProfileNoteText?.textContent || '';
+    syncQuizProfileNoteUi(note, 'Edit your note anytime.', true);
+    quizProfileNoteInput?.focus();
 });
 
 document.querySelector('.quiz-sidebar-header')?.addEventListener('click', (event) => {
@@ -1986,6 +2274,8 @@ window.addEventListener('resize', () => {
     if (!shouldUseQuizSidebarDrawer()) {
         closeQuizSidebarDrawer();
     }
+
+    renderQuizPagination();
 });
 
 bindQuizSidebarNavigation();

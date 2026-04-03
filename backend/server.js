@@ -32,7 +32,8 @@ const {
   listMessagesForChat,
   listQuizAttemptsForUser,
   resetPasswordWithToken,
-  updateChatTitle
+  updateChatTitle,
+  updateUserProfileNote
 } = require('./services/appDataStore');
 
 const app = express();
@@ -485,6 +486,32 @@ app.get('/api/auth/me', async (req, res) => {
   }
 
   return res.json({ ok: true, user });
+});
+
+app.patch('/api/auth/profile-note', async (req, res) => {
+  const user = await requireAuthenticatedUser(req, res);
+  if (!user) return;
+
+  try {
+    const nextNote = String(req.body?.profileNote || '').trim();
+    if (nextNote.length > 120) {
+      return res.status(400).json({
+        ok: false,
+        error: 'Profile note must stay within 120 characters.'
+      });
+    }
+
+    const updatedUser = await updateUserProfileNote(user.id, nextNote);
+    return res.json({
+      ok: true,
+      user: updatedUser
+    });
+  } catch (error) {
+    return res.status(error.statusCode || 500).json({
+      ok: false,
+      error: error.message || 'Could not save profile note right now.'
+    });
+  }
 });
 
 app.post('/api/auth/logout', async (req, res) => {

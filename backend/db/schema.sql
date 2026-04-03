@@ -4,6 +4,7 @@ CREATE TABLE IF NOT EXISTS users (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     name TEXT NOT NULL,
     email TEXT NOT NULL UNIQUE,
+    profile_note TEXT NOT NULL DEFAULT '',
     password_hash TEXT NOT NULL,
     password_salt TEXT NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
@@ -53,6 +54,9 @@ CREATE TABLE IF NOT EXISTS quiz_attempts (
 
 ALTER TABLE quiz_attempts
 ADD COLUMN IF NOT EXISTS review_data JSONB NOT NULL DEFAULT '[]'::jsonb;
+
+ALTER TABLE users
+ADD COLUMN IF NOT EXISTS profile_note TEXT NOT NULL DEFAULT '';
 
 CREATE INDEX IF NOT EXISTS idx_sessions_user_id ON sessions(user_id);
 CREATE INDEX IF NOT EXISTS idx_password_reset_tokens_user_id ON password_reset_tokens(user_id);

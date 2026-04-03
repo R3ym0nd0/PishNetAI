@@ -10,6 +10,7 @@ function sanitizeUser(row) {
     id: row.id,
     name: row.name,
     email: row.email,
+    profileNote: row.profile_note || '',
     createdAt: row.created_at
   };
 }
@@ -48,7 +49,7 @@ async function createUser({ name, email, password }) {
       `
         INSERT INTO users (name, email, password_hash, password_salt)
         VALUES ($1, $2, $3, $4)
-        RETURNING id, name, email, created_at
+        RETURNING id, name, email, profile_note, created_at
       `,
       [String(name || '').trim(), normalizedEmail, passwordData.passwordHash, passwordData.passwordSalt]
     );
@@ -67,8 +68,8 @@ async function createUser({ name, email, password }) {
 
 async function authenticateUser({ email, password }) {
   const result = await query(
-    `
-      SELECT id, name, email, password_hash, password_salt, created_at
+      `
+      SELECT id, name, email, profile_note, password_hash, password_salt, created_at
       FROM users
       WHERE email = $1
       LIMIT 1
@@ -119,7 +120,7 @@ async function getUserBySessionToken(token) {
 
     const userResult = await client.query(
       `
-        SELECT id, name, email, created_at
+        SELECT id, name, email, profile_note, created_at
         FROM users
         WHERE id = $1
         LIMIT 1
@@ -251,6 +252,28 @@ async function resetPasswordWithToken(token, password) {
   });
 
   return { ok: true };
+}
+
+async function updateUserProfileNote(userId, profileNote) {
+  const trimmedNote = String(profileNote || '').trim().slice(0, 120);
+
+  const result = await query(
+    `
+      UPDATE users
+      SET profile_note = $2
+      WHERE id = $1
+      RETURNING id, name, email, profile_note, created_at
+    `,
+    [userId, trimmedNote]
+  );
+
+  if (!result.rows[0]) {
+    const error = new Error('User not found.');
+    error.statusCode = 404;
+    throw error;
+  }
+
+  return sanitizeUser(result.rows[0]);
 }
 
 async function createChat(userId, firstMessage = '') {
@@ -570,6 +593,7 @@ async function getPublicQuizProfile(userId) {
       SELECT
         u.id,
         u.name,
+        u.profile_note,
         COUNT(qa.id)::int AS attempts_count,
         ROUND(AVG(qa.percentage)::numeric, 1) AS average_score,
         MAX(qa.percentage)::numeric AS best_score,
@@ -617,6 +641,23 @@ async function getPublicQuizProfile(userId) {
   const averageScore = Number(summary.average_score || 0);
   const bestScore = Number(summary.best_score || 0);
   const completedQuizIds = new Set(topics.map((topic) => topic.quizId));
+  const allQuizIds = ['url-basics', 'message-red-flags', 'after-clicking', 'phishing-scenarios', 'best-practices'];
+  const coreQuizIds = ['url-basics', 'message-red-flags', 'after-clicking'];
+  const reviewSafeAttemptsResult = await query(
+    `
+      SELECT percentage
+      FROM quiz_attempts
+      WHERE user_id = $1
+    `,
+    [userId]
+  );
+  const allAttempts = reviewSafeAttemptsResult.rows.map((row) => ({
+    percentage: Number(row.percentage || 0)
+  }));
+  const strongAttemptsCount = allAttempts.filter((attempt) => attempt.percentage >= 85).length;
+  const needsReviewCleared = allAttempts.filter((attempt) => attempt.percentage >= 75).length;
+  const advancedCompleted = completedQuizIds.has('phishing-scenarios');
+  const masteryCompleted = completedQuizIds.has('best-practices');
 
   const badges = [
     {
@@ -628,6 +669,11 @@ async function getPublicQuizProfile(userId) {
       id: 'practice-streak',
       title: 'Practice Streak',
       earned: attemptsCount >= 3
+    },
+    {
+      id: 'steady-learner',
+      title: 'Steady Learner',
+      earned: attemptsCount >= 5
     },
     {
       id: 'sharp-eye',
@@ -647,13 +693,44 @@ async function getPublicQuizProfile(userId) {
     {
       id: 'full-coverage',
       title: 'Full Coverage',
-      earned: ['url-basics', 'message-red-flags', 'after-clicking'].every((quizId) => completedQuizIds.has(quizId))
+      earned: coreQuizIds.every((quizId) => completedQuizIds.has(quizId))
+    },
+    {
+      id: 'strong-finisher',
+      title: 'Strong Finisher',
+      earned: strongAttemptsCount >= 3
+    },
+    {
+      id: 'review-crusher',
+      title: 'Review Crusher',
+      earned: needsReviewCleared >= 5
+    },
+    {
+      id: 'scenario-survivor',
+      title: 'Scenario Survivor',
+      earned: advancedCompleted
+    },
+    {
+      id: 'mastery-unlocked',
+      title: 'Mastery Unlocked',
+      earned: masteryCompleted
+    },
+    {
+      id: 'guardian-grade',
+      title: 'Guardian Grade',
+      earned: averageScore >= 88 && attemptsCount >= 6
+    },
+    {
+      id: 'phishnet-complete',
+      title: 'PhishNet Complete',
+      earned: allQuizIds.every((quizId) => completedQuizIds.has(quizId))
     }
   ];
 
   return {
     userId: summary.id,
     name: summary.name,
+    profileNote: summary.profile_note || '',
     attemptsCount,
     averageScore,
     bestScore,
@@ -681,5 +758,6 @@ module.exports = {
   listMessagesForChat,
   listQuizAttemptsForUser,
   resetPasswordWithToken,
-  updateChatTitle
+  updateChatTitle,
+  updateUserProfileNote
 };
