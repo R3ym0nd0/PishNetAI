@@ -5,6 +5,7 @@
     { "source": "/quiz", "destination": "/quiz.html" },
     { "source": "/login", "destination": "/login.html" },
     { "source": "/signup", "destination": "/signup.html" },
+    { "source": "/terms", "destination": "/terms.html" },
     { "source": "/reset-password", "destination": "/reset-password.html" }
   ],
   "headers": [
