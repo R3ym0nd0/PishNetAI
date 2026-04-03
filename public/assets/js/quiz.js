@@ -294,7 +294,6 @@ const quizzes = {
 };
 
 const quizStartButtons = document.querySelectorAll('.quiz-start-btn[data-quiz]');
-const quizHeroPanel = document.querySelector('.quiz-hero-panel');
 const quizSidebar = document.getElementById('quizSidebar');
 const quizSidebarOverlay = document.getElementById('quizSidebarOverlay');
 const quizSidebarToggle = document.getElementById('quizSidebarToggle');
@@ -302,24 +301,15 @@ const quizSidebarBackBtn = document.querySelector('.quiz-sidebar-back-btn');
 const quizSidebarStartBtn = document.getElementById('quizSidebarStartBtn');
 const quizSidebarLogoutBtn = document.getElementById('quizSidebarLogoutBtn');
 const quizSidebarProfileBtn = document.getElementById('quizSidebarProfileBtn');
+const quizSidebarLabel = document.getElementById('quizSidebarLabel');
 const quizSidebarName = document.getElementById('quizSidebarName');
 const quizSidebarEmail = document.getElementById('quizSidebarEmail');
+const quizSidebarAuthActions = document.getElementById('quizSidebarAuthActions');
 const quizSidebarNavLinks = [...document.querySelectorAll('[data-quiz-nav-link]')];
 const quizMobileTopbar = document.getElementById('quizMobileTopbar');
 const quizMobileTopbarLabel = document.getElementById('quizMobileTopbarLabel');
-const quizHookPanel = document.getElementById('quizHookPanel');
-const quizHeroEyebrow = document.getElementById('quizHeroEyebrow');
-const quizHeroTitle = document.getElementById('quizHeroTitle');
-const quizHeroDescription = document.getElementById('quizHeroDescription');
-const quizHeroPrimaryAction = document.getElementById('quizHeroPrimaryAction');
-const quizHeroSecondaryAction = document.getElementById('quizHeroSecondaryAction');
-const quizHeroStatValue1 = document.getElementById('quizHeroStatValue1');
-const quizHeroStatLabel1 = document.getElementById('quizHeroStatLabel1');
-const quizHeroStatValue2 = document.getElementById('quizHeroStatValue2');
-const quizHeroStatLabel2 = document.getElementById('quizHeroStatLabel2');
-const quizHeroStatValue3 = document.getElementById('quizHeroStatValue3');
-const quizHeroStatLabel3 = document.getElementById('quizHeroStatLabel3');
 const quizProfilePanel = document.getElementById('quizProfilePanel');
+const quizProfileGrid = document.querySelector('#quizProfilePanel .quiz-profile-grid');
 const quizLogoutConfirmOverlay = document.getElementById('quizLogoutConfirmOverlay');
 const quizLogoutCancelBtn = document.getElementById('quizLogoutCancelBtn');
 const quizLogoutConfirmBtn = document.getElementById('quizLogoutConfirmBtn');
@@ -335,19 +325,14 @@ const quizProfileProgressBadge = document.getElementById('quizProfileProgressBad
 const quizProfileProgressList = document.getElementById('quizProfileProgressList');
 const quizProfileProgressEmpty = document.getElementById('quizProfileProgressEmpty');
 const quizHistoryPanelSection = document.getElementById('quizHistoryPanel');
-const quizHistoryReviewBadge = document.getElementById('quizHistoryReviewBadge');
-const quizHistoryReviewList = document.getElementById('quizHistoryReviewList');
-const quizHistoryReviewEmpty = document.getElementById('quizHistoryReviewEmpty');
-const quizHistoryOtherBadge = document.getElementById('quizHistoryOtherBadge');
-const quizHistoryOtherList = document.getElementById('quizHistoryOtherList');
-const quizHistoryOtherEmpty = document.getElementById('quizHistoryOtherEmpty');
-const quizHistoryArchiveAttempts = document.getElementById('quizHistoryArchiveAttempts');
-const quizHistoryArchiveBest = document.getElementById('quizHistoryArchiveBest');
-const quizHistoryArchiveReview = document.getElementById('quizHistoryArchiveReview');
+const quizHistoryGuestPrompt = document.getElementById('quizHistoryGuestPrompt');
+const quizHistoryList = document.getElementById('quizHistoryList');
+const quizHistoryEmpty = document.getElementById('quizHistoryEmpty');
+const quizHistoryToggleBtn = document.getElementById('quizHistoryToggleBtn');
 const quizLeaderboardPanel = document.getElementById('quizLeaderboardPanel');
 const quizLeaderboardList = document.getElementById('quizLeaderboardList');
 const quizLeaderboardEmpty = document.getElementById('quizLeaderboardEmpty');
-const guestLeaderboardPreview = document.getElementById('guestLeaderboardPreview');
+const quizProfileGuestPrompt = document.getElementById('quizProfileGuestPrompt');
 const quizPublicProfileOverlay = document.getElementById('quizPublicProfileOverlay');
 const quizPublicProfileClose = document.getElementById('quizPublicProfileClose');
 const quizPublicProfileBody = document.getElementById('quizPublicProfileBody');
@@ -391,6 +376,7 @@ let signedInQuizAttempts = [];
 let currentQuizPage = 1;
 let lockedQuizSidebarScrollY = 0;
 let quizSidebarTouchStartY = 0;
+let isQuizHistoryExpanded = false;
 const quizCardsPerPage = 6;
 const totalQuizPages = 10;
 
@@ -401,14 +387,6 @@ function escapeHtml(value) {
         .replace(/>/g, '&gt;')
         .replace(/"/g, '&quot;')
         .replace(/'/g, '&#39;');
-}
-
-if (quizHeroPanel) {
-    window.addEventListener('load', () => {
-        setTimeout(() => {
-            quizHeroPanel.classList.add('is-animated');
-        }, 80);
-    });
 }
 
 createPlaceholderQuizCards();
@@ -674,6 +652,7 @@ function shouldUseQuizSidebarDrawer() {
 function syncQuizSidebarToggleState(isOpen) {
     if (quizSidebarToggle) {
         quizSidebarToggle.setAttribute('aria-expanded', String(isOpen));
+        quizSidebarToggle.setAttribute('aria-label', isOpen ? 'Close quiz navigation' : 'Open quiz navigation');
     }
 }
 
@@ -767,7 +746,7 @@ function closeQuizSidebarDrawer() {
 }
 
 function openQuizSidebarDrawer() {
-    if (!isLoggedIn() || !shouldUseQuizSidebarDrawer()) return;
+    if (!shouldUseQuizSidebarDrawer()) return;
     lockQuizSidebarBackgroundScroll();
     document.body.classList.add('quiz-sidebar-open');
     syncQuizSidebarToggleState(true);
@@ -782,9 +761,14 @@ function toggleQuizSidebarDrawer() {
     openQuizSidebarDrawer();
 }
 
-function setSignedInQuizView(view = 'quiz-library') {
-    if (!isLoggedIn()) return;
+function handleQuizSidebarCloseControl(event) {
+    event.preventDefault();
+    event.stopPropagation();
+    closeQuizSidebarDrawer();
+}
 
+function setQuizAppView(view = 'quiz-library') {
+    const signedIn = isLoggedIn();
     const quizLibraryOnly = view === 'quiz-library';
     const leaderboardOnly = view === 'leaderboard';
     const profileOnly = view === 'profile';
@@ -796,6 +780,28 @@ function setSignedInQuizView(view = 'quiz-library') {
     if (quizLeaderboardPanel) quizLeaderboardPanel.hidden = !leaderboardOnly;
     if (quizzesSection) quizzesSection.hidden = !quizLibraryOnly;
     if (quizWorkspace) quizWorkspace.hidden = !currentQuizOnly || !currentQuizId;
+
+    if (quizHistoryList) {
+        quizHistoryList.classList.toggle('is-expanded', historyOnly && isQuizHistoryExpanded);
+    }
+    if (quizHistoryPanelSection) {
+        quizHistoryPanelSection.classList.toggle('is-expanded', historyOnly && isQuizHistoryExpanded);
+    }
+    if (quizHistoryToggleBtn) {
+        quizHistoryToggleBtn.textContent = historyOnly && isQuizHistoryExpanded ? 'Show Less' : 'Read More';
+    }
+    if (quizHistoryGuestPrompt) quizHistoryGuestPrompt.hidden = !historyOnly || signedIn;
+    if (quizProfileGuestPrompt) quizProfileGuestPrompt.hidden = !profileOnly || signedIn;
+    if (quizHistoryList) quizHistoryList.hidden = historyOnly && !signedIn;
+    if (quizHistoryEmpty) quizHistoryEmpty.hidden = historyOnly && !signedIn ? true : quizHistoryEmpty.hidden;
+    if (quizHistoryToggleBtn) quizHistoryToggleBtn.hidden = !historyOnly || !signedIn || quizHistoryToggleBtn.hidden;
+    if (quizHistoryPanelSection) {
+        quizHistoryPanelSection.classList.toggle('is-guest-locked', historyOnly && !signedIn);
+    }
+    if (quizProfilePanel) {
+        quizProfilePanel.classList.toggle('is-guest-locked', profileOnly && !signedIn);
+    }
+    if (quizProfileGrid) quizProfileGrid.hidden = profileOnly && !signedIn;
 }
 
 function scrollToQuizSection(targetId, behavior = 'smooth') {
@@ -805,15 +811,27 @@ function scrollToQuizSection(targetId, behavior = 'smooth') {
 
     if (isLoggedIn()) {
         if (targetId === 'quizLeaderboardPanel') {
-            setSignedInQuizView('leaderboard');
+            setQuizAppView('leaderboard');
         } else if (targetId === 'quizProfilePanel') {
-            setSignedInQuizView('profile');
+            setQuizAppView('profile');
         } else if (targetId === 'quizHistoryPanel') {
-            setSignedInQuizView('history');
+            setQuizAppView('history');
         } else if (targetId === 'quizWorkspace') {
-            setSignedInQuizView('current-quiz');
+            setQuizAppView('current-quiz');
         } else {
-            setSignedInQuizView('quiz-library');
+            setQuizAppView('quiz-library');
+        }
+    } else {
+        if (targetId === 'quizLeaderboardPanel') {
+            setQuizAppView('leaderboard');
+        } else if (targetId === 'quizProfilePanel') {
+            setQuizAppView('profile');
+        } else if (targetId === 'quizHistoryPanel') {
+            setQuizAppView('history');
+        } else if (targetId === 'quizWorkspace') {
+            setQuizAppView('current-quiz');
+        } else {
+            setQuizAppView('quiz-library');
         }
     }
 
@@ -851,13 +869,10 @@ function applyQuizPageState() {
     const fullLabel = user?.name || user?.username || firstName;
     const secondaryLabel = user?.email || 'Quiz account';
 
-    document.body.classList.toggle('quiz-signed-in', signedIn);
-
-    if (!quizHeroTitle || !quizHeroDescription || !quizHeroPrimaryAction || !quizHeroSecondaryAction) {
-        return;
-    }
+    document.body.classList.add('quiz-signed-in');
 
     if (signedIn) {
+        if (quizSidebarLabel) quizSidebarLabel.textContent = 'Signed in as';
         if (quizSidebarName) quizSidebarName.textContent = fullLabel;
         if (quizSidebarEmail) quizSidebarEmail.textContent = secondaryLabel;
         if (quizMobileTopbarLabel) quizMobileTopbarLabel.textContent = fullLabel;
@@ -865,20 +880,9 @@ function applyQuizPageState() {
         if (quizProfileEmail) quizProfileEmail.textContent = secondaryLabel;
         if (quizSidebar) quizSidebar.hidden = false;
         if (quizMobileTopbar) quizMobileTopbar.hidden = false;
-        if (quizHeroEyebrow) quizHeroEyebrow.textContent = '';
-        quizHeroTitle.textContent = 'Continue building your phishing awareness';
-        quizHeroDescription.textContent = 'Pick up where you left off, answer more quiz sets, and build a stronger awareness history with every attempt.';
-        quizHeroPrimaryAction.textContent = 'Go to Quiz Sets';
-        quizHeroPrimaryAction.setAttribute('href', '#quizzes');
-        quizHeroSecondaryAction.textContent = 'Start a Quiz';
-        quizHeroSecondaryAction.setAttribute('href', '#quizzes');
-
-        if (quizHeroStatValue1) quizHeroStatValue1.textContent = '5';
-        if (quizHeroStatLabel1) quizHeroStatLabel1.textContent = 'Ready Quiz Sets';
-        if (quizHeroStatValue2) quizHeroStatValue2.textContent = 'Saved';
-        if (quizHeroStatLabel2) quizHeroStatLabel2.textContent = 'Attempt History';
-        if (quizHeroStatValue3) quizHeroStatValue3.textContent = 'Live';
-        if (quizHeroStatLabel3) quizHeroStatLabel3.textContent = 'Progress Tracking';
+        if (quizSidebarAuthActions) quizSidebarAuthActions.hidden = true;
+        if (quizSidebarLogoutBtn) quizSidebarLogoutBtn.hidden = false;
+        if (quizSidebarProfileBtn) quizSidebarProfileBtn.disabled = false;
 
         if (quizSectionTitle) quizSectionTitle.textContent = 'Available Quizzes';
         if (quizSectionDescription) {
@@ -886,95 +890,48 @@ function applyQuizPageState() {
         }
 
         loadSignedInQuizData();
-        setSignedInQuizView('quiz-library');
-        if (quizHookPanel) quizHookPanel.hidden = true;
+        setQuizAppView('quiz-library');
         updateQuizUnlockStates();
         renderQuizPagination();
     } else {
-        if (quizSidebar) quizSidebar.hidden = true;
-        if (quizMobileTopbar) quizMobileTopbar.hidden = true;
+        if (quizSidebarLabel) quizSidebarLabel.textContent = 'Guest access';
+        if (quizSidebarName) quizSidebarName.textContent = 'Guest User';
+        if (quizSidebarEmail) quizSidebarEmail.textContent = 'Sign in to save progress';
+        if (quizMobileTopbarLabel) quizMobileTopbarLabel.textContent = 'Guest mode';
+        if (quizSidebar) quizSidebar.hidden = false;
+        if (quizMobileTopbar) quizMobileTopbar.hidden = false;
+        if (quizSidebarAuthActions) quizSidebarAuthActions.hidden = false;
+        if (quizSidebarLogoutBtn) quizSidebarLogoutBtn.hidden = true;
+        if (quizSidebarProfileBtn) quizSidebarProfileBtn.disabled = false;
         closeQuizSidebarDrawer();
-        if (quizHeroEyebrow) quizHeroEyebrow.textContent = '';
-        quizHeroTitle.textContent = 'Test Your Phishing Awareness';
-        quizHeroDescription.textContent = 'Challenge yourself with short quiz sets that help students recognize suspicious links, message red flags, and safer online decisions.';
-        quizHeroPrimaryAction.textContent = 'Sign In to Track Progress';
-        quizHeroPrimaryAction.setAttribute('href', 'login.html?returnTo=quiz.html');
-        quizHeroSecondaryAction.textContent = 'Try as Guest';
-        quizHeroSecondaryAction.setAttribute('href', '#quizzes');
-
-        if (quizHeroStatValue1) quizHeroStatValue1.textContent = '50+';
-        if (quizHeroStatLabel1) quizHeroStatLabel1.textContent = 'Awareness Questions';
-        if (quizHeroStatValue2) quizHeroStatValue2.textContent = '5';
-        if (quizHeroStatLabel2) quizHeroStatLabel2.textContent = 'Core Quiz Sets';
-        if (quizHeroStatValue3) quizHeroStatValue3.textContent = 'Free';
-        if (quizHeroStatLabel3) quizHeroStatLabel3.textContent = 'Guest Access';
 
         if (quizSectionTitle) quizSectionTitle.textContent = 'Available Quizzes';
         if (quizSectionDescription) {
             quizSectionDescription.textContent = 'Choose a quiz set and strengthen your phishing awareness one topic at a time.';
         }
 
-        if (quizProfilePanel) quizProfilePanel.hidden = true;
-        if (quizHistoryPanelSection) quizHistoryPanelSection.hidden = true;
-        if (quizLeaderboardPanel) quizLeaderboardPanel.hidden = true;
-        if (quizzesSection) quizzesSection.hidden = false;
-        if (quizHookPanel) quizHookPanel.hidden = false;
-        loadGuestLeaderboardPreview();
+        signedInQuizAttempts = [];
+        renderQuizHistory([], {
+            listElement: quizHistoryList,
+            emptyElement: quizHistoryEmpty,
+            limit: 100
+        });
+        populateQuizProfile([]);
+        loadPublicQuizLeaderboard();
+        setQuizAppView('quiz-library');
         updateQuizUnlockStates();
         renderQuizPagination();
     }
+
 }
 
-function formatLeaderboardPreviewScore(entry) {
-    const numeric = Number(entry?.averageScore);
-    if (Number.isNaN(numeric)) return '--';
-    return `${numeric % 1 === 0 ? numeric.toFixed(0) : numeric.toFixed(1)}%`;
-}
-
-function renderGuestLeaderboardPreview(entries = []) {
-    if (!guestLeaderboardPreview) return;
-
-    guestLeaderboardPreview.innerHTML = '';
-
-    if (!entries.length) {
-        const empty = document.createElement('div');
-        empty.className = 'quiz-history-empty';
-        empty.innerHTML = '<strong>No rankings yet</strong><p>Be one of the first students to save quiz scores and appear on the awareness leaderboard.</p>';
-        guestLeaderboardPreview.appendChild(empty);
-        return;
-    }
-
-    entries.slice(0, 3).forEach((entry) => {
-        const row = document.createElement('div');
-        row.className = 'leaderboard-row';
-
-        const rank = document.createElement('span');
-        rank.className = 'leaderboard-rank';
-        rank.textContent = `#${entry.rank}`;
-
-        const name = document.createElement('span');
-        name.className = 'leaderboard-name';
-        name.textContent = entry.name || 'Anonymous';
-
-        const score = document.createElement('span');
-        score.className = 'leaderboard-score';
-        score.textContent = formatLeaderboardPreviewScore(entry);
-
-        row.append(rank, name, score);
-
-        guestLeaderboardPreview.appendChild(row);
-    });
-}
-
-async function loadGuestLeaderboardPreview() {
-    if (isLoggedIn() || !guestLeaderboardPreview) return;
-
+async function loadPublicQuizLeaderboard() {
     try {
         const data = await apiFetch('/api/quiz/public-leaderboard');
-        renderGuestLeaderboardPreview(Array.isArray(data?.leaderboard) ? data.leaderboard : []);
+        renderQuizLeaderboard(Array.isArray(data?.leaderboard) ? data.leaderboard : [], '', 2);
     } catch (error) {
-        console.warn('Guest leaderboard preview fallback:', error.message || error);
-        renderGuestLeaderboardPreview([]);
+        console.warn('Public quiz leaderboard fallback:', error.message || error);
+        renderQuizLeaderboard([], '', 2);
     }
 }
 
@@ -988,8 +945,11 @@ async function loadSignedInQuizData() {
         ]);
 
         signedInQuizAttempts = Array.isArray(attemptData?.attempts) ? attemptData.attempts : [];
-        renderGroupedQuizHistory(signedInQuizAttempts);
-        populateQuizHistoryArchive(signedInQuizAttempts);
+        renderQuizHistory(signedInQuizAttempts, {
+            listElement: quizHistoryList,
+            emptyElement: quizHistoryEmpty,
+            limit: 100
+        });
         populateQuizProfile(signedInQuizAttempts);
         updateQuizUnlockStates(signedInQuizAttempts);
         renderQuizLeaderboard(
@@ -1000,8 +960,11 @@ async function loadSignedInQuizData() {
     } catch (error) {
         console.warn('Quiz dashboard data fallback:', error.message || error);
         signedInQuizAttempts = [];
-        renderGroupedQuizHistory([]);
-        populateQuizHistoryArchive([]);
+        renderQuizHistory([], {
+            listElement: quizHistoryList,
+            emptyElement: quizHistoryEmpty,
+            limit: 100
+        });
         populateQuizProfile([]);
         updateQuizUnlockStates([]);
         renderQuizLeaderboard([], '', 2);
@@ -1041,40 +1004,12 @@ function buildQuizAttemptReviewData(quiz, answerRecords = []) {
 }
 
 function populateSignedInDashboard(attempts = []) {
-    renderGroupedQuizHistory(attempts);
-    populateQuizHistoryArchive(attempts);
+    renderQuizHistory(attempts, {
+        listElement: quizHistoryList,
+        emptyElement: quizHistoryEmpty,
+        limit: 100
+    });
     populateQuizProfile(attempts);
-}
-
-function renderGroupedQuizHistory(attempts = []) {
-    const reviewAttempts = attempts.filter((attempt) => Number(attempt.percentage || 0) < 75);
-    const otherAttempts = attempts.filter((attempt) => Number(attempt.percentage || 0) >= 75);
-
-    renderQuizHistory(reviewAttempts, {
-        badgeElement: quizHistoryReviewBadge,
-        listElement: quizHistoryReviewList,
-        emptyElement: quizHistoryReviewEmpty,
-        limit: 100
-    });
-
-    renderQuizHistory(otherAttempts, {
-        badgeElement: quizHistoryOtherBadge,
-        listElement: quizHistoryOtherList,
-        emptyElement: quizHistoryOtherEmpty,
-        limit: 100
-    });
-}
-
-function populateQuizHistoryArchive(attempts = []) {
-    const attemptsCount = attempts.length;
-    const bestScore = attemptsCount
-        ? attempts.reduce((best, attempt) => Math.max(best, Number(attempt.percentage || 0)), 0)
-        : null;
-    const reviewCount = attempts.filter((attempt) => Number(attempt.percentage || 0) < 75).length;
-
-    if (quizHistoryArchiveAttempts) quizHistoryArchiveAttempts.textContent = String(attemptsCount);
-    if (quizHistoryArchiveBest) quizHistoryArchiveBest.textContent = bestScore === null ? '--' : `${Math.round(bestScore)}%`;
-    if (quizHistoryArchiveReview) quizHistoryArchiveReview.textContent = String(reviewCount);
 }
 
 function populateQuizProfile(attempts = []) {
@@ -1200,6 +1135,7 @@ function createPlaceholderQuizCards() {
 
 function renderQuizPagination() {
     if (!quizPagination || !quizCards.length) return;
+    const quizLibraryToolbar = document.getElementById('quizLibraryToolbar');
 
     if (!isLoggedIn()) {
         quizCards.forEach((card, index) => {
@@ -1207,10 +1143,12 @@ function renderQuizPagination() {
         });
         quizPagination.innerHTML = '';
         quizPagination.hidden = true;
+        if (quizLibraryToolbar) quizLibraryToolbar.hidden = true;
         return;
     }
 
     quizPagination.hidden = false;
+    if (quizLibraryToolbar) quizLibraryToolbar.hidden = false;
 
     const totalPages = Math.max(totalQuizPages, Math.ceil(quizCards.length / quizCardsPerPage));
     currentQuizPage = Math.min(Math.max(currentQuizPage, 1), totalPages);
@@ -1278,8 +1216,8 @@ function renderQuizBadges(attempts = []) {
 function renderQuizHistory(attempts, options = {}) {
     const {
         badgeElement = null,
-        listElement = quizHistoryOtherList,
-        emptyElement = quizHistoryOtherEmpty,
+        listElement = quizHistoryList,
+        emptyElement = quizHistoryEmpty,
         limit = 6,
         compact = false
     } = options;
@@ -1293,6 +1231,11 @@ function renderQuizHistory(attempts, options = {}) {
     if (!attempts.length) {
         if (emptyElement) emptyElement.hidden = false;
         listElement.querySelectorAll('.quiz-history-item').forEach((item) => item.remove());
+        if (listElement === quizHistoryList) {
+            isQuizHistoryExpanded = false;
+            listElement.classList.remove('is-expanded');
+            if (quizHistoryToggleBtn) quizHistoryToggleBtn.hidden = true;
+        }
         return;
     }
 
@@ -1336,8 +1279,22 @@ function renderQuizHistory(attempts, options = {}) {
                 openQuizAttemptReview(attempt.id);
             }
         });
-        listElement.appendChild(item);
-    });
+            listElement.appendChild(item);
+        });
+
+    if (listElement === quizHistoryList && quizHistoryToggleBtn) {
+        const shouldShowToggle = attempts.length > 4;
+        quizHistoryToggleBtn.hidden = !shouldShowToggle;
+        if (!shouldShowToggle) {
+            isQuizHistoryExpanded = false;
+            listElement.classList.remove('is-expanded');
+            quizHistoryPanelSection?.classList.remove('is-expanded');
+        } else {
+            listElement.classList.toggle('is-expanded', isQuizHistoryExpanded);
+            quizHistoryPanelSection?.classList.toggle('is-expanded', isQuizHistoryExpanded);
+        }
+        quizHistoryToggleBtn.textContent = isQuizHistoryExpanded ? 'Show Less' : 'Read More';
+    }
 }
 
 async function openQuizAttemptReview(attemptId) {
@@ -1396,11 +1353,15 @@ function renderQuizAttemptReview(attempt) {
 
     quizAttemptReviewBody.innerHTML = `
         <div class="quiz-attempt-review-summary">
-            <div class="quiz-attempt-review-score">${escapeHtml(Math.round(attempt.percentage))}%</div>
+            <div class="quiz-attempt-review-score">
+                <span class="quiz-attempt-review-score-label">Score</span>
+                <strong>${escapeHtml(Math.round(attempt.percentage))}%</strong>
+            </div>
             <div class="quiz-attempt-review-copy">
                 <p class="quiz-dashboard-kicker">Saved Result</p>
                 <h4>${escapeHtml(attempt.quizTitle)}</h4>
-                <p>${escapeHtml(`${attempt.score}/${attempt.totalQuestions} correct - ${new Date(attempt.createdAt).toLocaleDateString()}`)}</p>
+                <p>${escapeHtml(`${attempt.score}/${attempt.totalQuestions} correct`)}</p>
+                <span class="quiz-attempt-review-date">${escapeHtml(new Date(attempt.createdAt).toLocaleDateString())}</span>
             </div>
         </div>
         <div class="quiz-attempt-review-list">
@@ -1413,17 +1374,30 @@ function renderQuizAttemptReview(attempt) {
                         </div>
                         <span class="quiz-attempt-review-status">${item.isCorrect ? 'Correct' : 'Review Needed'}</span>
                     </div>
-                    <div class="quiz-attempt-review-options">
-                        ${(Array.isArray(item.options) ? item.options : []).map((option, optionIndex) => `
-                            <div class="quiz-attempt-review-option ${optionIndex === item.correctIndex ? 'is-answer' : ''} ${optionIndex === item.selectedIndex ? 'is-selected' : ''}">
-                                <span>${escapeHtml(option)}</span>
-                                <small>
-                                    ${optionIndex === item.correctIndex ? 'Correct answer' : optionIndex === item.selectedIndex ? 'Your answer' : ''}
-                                </small>
-                            </div>
-                        `).join('')}
+                    <div class="quiz-attempt-review-answer-grid">
+                        <div class="quiz-attempt-review-answer-card is-selected">
+                            <span class="quiz-attempt-review-answer-label">Your Answer</span>
+                            <strong>${escapeHtml(
+                                Array.isArray(item.options) && Number.isInteger(item.selectedIndex)
+                                    ? item.options[item.selectedIndex] || 'No answer selected'
+                                    : 'No answer selected'
+                            )}</strong>
+                        </div>
+                        <div class="quiz-attempt-review-answer-card is-correct">
+                            <span class="quiz-attempt-review-answer-label">Correct Answer</span>
+                            <strong>${escapeHtml(
+                                Array.isArray(item.options) && Number.isInteger(item.correctIndex)
+                                    ? item.options[item.correctIndex] || 'Correct answer unavailable'
+                                    : 'Correct answer unavailable'
+                            )}</strong>
+                        </div>
                     </div>
-                    <p class="quiz-attempt-review-explanation">${escapeHtml(item.explanation || '')}</p>
+                    ${item.explanation ? `
+                        <div class="quiz-attempt-review-explanation">
+                            <span class="quiz-attempt-review-answer-label">Why</span>
+                            <p>${escapeHtml(item.explanation)}</p>
+                        </div>
+                    ` : ''}
                 </article>
             `).join('')}
         </div>
@@ -1711,10 +1685,6 @@ function updateWorkspaceVisibility(showResults = false) {
     quizWorkspace.hidden = false;
     quizQuestionCard.hidden = showResults;
     quizResultCard.hidden = !showResults;
-
-    if (!isLoggedIn()) {
-        document.body.classList.add('guest-quiz-open');
-    }
 }
 
 function scrollToWorkspace() {
@@ -1853,9 +1823,7 @@ function startQuiz(quizId) {
     score = 0;
     answers = [];
 
-    if (isLoggedIn()) {
-        setSignedInQuizView('current-quiz');
-    }
+    setQuizAppView('current-quiz');
 
     renderQuestion();
     scrollToWorkspace();
@@ -1868,17 +1836,13 @@ function resetQuizWorkspace() {
     score = 0;
     answers = [];
 
-    document.body.classList.remove('guest-quiz-open');
-
     if (quizWorkspace) quizWorkspace.hidden = true;
     if (quizFeedback) {
         quizFeedback.hidden = true;
         quizFeedback.innerHTML = '';
     }
 
-    if (isLoggedIn()) {
-        setSignedInQuizView('quiz-library');
-    }
+    setQuizAppView('quiz-library');
 }
 
 quizStartButtons.forEach((button) => {
@@ -1931,10 +1895,16 @@ quizSidebarStartBtn?.addEventListener('click', () => {
 });
 
 quizSidebarProfileBtn?.addEventListener('click', () => {
-    if (!isLoggedIn()) return;
-    setSignedInQuizView('profile');
+    setQuizAppView('profile');
     closeQuizSidebarDrawer();
     quizProfilePanel?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+});
+
+quizHistoryToggleBtn?.addEventListener('click', () => {
+    isQuizHistoryExpanded = !isQuizHistoryExpanded;
+    quizHistoryList?.classList.toggle('is-expanded', isQuizHistoryExpanded);
+    quizHistoryPanelSection?.classList.toggle('is-expanded', isQuizHistoryExpanded);
+    quizHistoryToggleBtn.textContent = isQuizHistoryExpanded ? 'Show Less' : 'Read More';
 });
 
 quizSidebarLogoutBtn?.addEventListener('click', () => {
@@ -1945,14 +1915,18 @@ quizSidebarToggle?.addEventListener('click', () => {
     toggleQuizSidebarDrawer();
 });
 
-quizSidebarBackBtn?.addEventListener('click', (event) => {
-    if (!shouldUseQuizSidebarDrawer()) return;
-    event.preventDefault();
-    closeQuizSidebarDrawer();
-});
+quizSidebarBackBtn?.addEventListener('click', handleQuizSidebarCloseControl);
+quizSidebarBackBtn?.addEventListener('pointerup', handleQuizSidebarCloseControl);
+quizSidebarBackBtn?.addEventListener('touchend', handleQuizSidebarCloseControl, { passive: false });
 
 quizSidebarOverlay?.addEventListener('click', () => {
     closeQuizSidebarDrawer();
+});
+
+document.querySelector('.quiz-sidebar-header')?.addEventListener('click', (event) => {
+    const closeButton = event.target instanceof Element ? event.target.closest('.quiz-sidebar-back-btn') : null;
+    if (!closeButton) return;
+    handleQuizSidebarCloseControl(event);
 });
 
 quizPublicProfileClose?.addEventListener('click', () => {
