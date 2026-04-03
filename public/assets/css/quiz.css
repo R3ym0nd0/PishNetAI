@@ -81,6 +81,7 @@ h6,
     display: grid;
     gap: 28px;
     min-width: 0;
+    position: relative;
 }
 
 .quiz-sidebar {
@@ -3438,6 +3439,10 @@ body.quiz-signed-in .quiz-library-toolbar {
     font-weight: 700;
     letter-spacing: 0.01em;
     white-space: nowrap;
+}
+
+.quiz-complete-chip[hidden] {
+    display: none !important;
 }
 
 .quiz-complete-chip svg {

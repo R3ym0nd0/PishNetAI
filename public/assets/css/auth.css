@@ -219,6 +219,34 @@ body.login-page {
     box-shadow: 0 16px 32px rgba(0,51,102,0.28);
 }
 
+.btn-primary:disabled {
+    cursor: wait;
+}
+
+.btn-primary.is-loading {
+    color: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 14px 30px rgba(0,51,102,0.24);
+}
+
+.btn-primary.is-loading::before {
+    content: "";
+    width: 16px;
+    height: 16px;
+    margin-right: 10px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.28);
+    border-top-color: #ffffff;
+    display: inline-block;
+    vertical-align: -3px;
+    animation: authButtonSpin 0.7s linear infinite;
+}
+
+@keyframes authButtonSpin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
 /* DIVIDER */
 .auth-divider {
     display: flex;

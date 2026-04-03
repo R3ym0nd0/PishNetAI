@@ -23,6 +23,7 @@ const {
   createSession,
   createUser,
   deleteChat,
+  getPublicSiteStats,
   getQuizAttemptById,
   getPublicQuizProfile,
   destroySession,
@@ -538,6 +539,13 @@ app.patch('/api/auth/profile-note', async (req, res) => {
       error: error.message || 'Could not save profile note right now.'
     });
   }
+});
+
+app.get('/api/public/stats', async (_req, res) => {
+  return res.json({
+    ok: true,
+    stats: await getPublicSiteStats()
+  });
 });
 
 app.post('/api/auth/logout', async (req, res) => {

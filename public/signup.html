@@ -173,21 +173,27 @@
             <div class="footer-bottom">
                 <div class="footer-contact">
                     <p class="footer-about">
-                        PhishNet AI helps students identify suspicious links and understand common phishing patterns. If you have questions or want to contribute, reach out.
+                        PhishNet AI helps students identify suspicious links and understand common phishing patterns. If you have a question, suggestion, or idea for the project, send a short message here.
                     </p>
 
-                    <form id="newsletterForm" class="newsletter-form" onsubmit="event.preventDefault();">
-                        <input type="email" placeholder="Your email (optional)">
-                        <button type="submit">Subscribe</button>
+                    <form class="newsletter-form feedback-form" onsubmit="event.preventDefault();">
+                        <input type="text" maxlength="180" placeholder="Share a short question or feedback" aria-label="Your feedback message">
+                        <button type="submit">Send Feedback</button>
                     </form>
                 </div>
 
                 <div class="footer-links">
-                    <a href="https://github.com/R3ym0nd0/PishNetAI" target="_blank" rel="noreferrer">
-                        GitHub
+                    <a href="https://github.com/R3ym0nd0/PishNetAI" target="_blank" rel="noreferrer" aria-label="GitHub">
+                        <span class="footer-icon github-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M12 .5C5.65.5.5 5.65.5 12a11.5 11.5 0 0 0 7.86 10.92c.58.1.79-.25.79-.56v-2.02c-3.2.7-3.88-1.54-3.88-1.54-.52-1.33-1.28-1.68-1.28-1.68-1.04-.71.08-.69.08-.69 1.16.08 1.77 1.2 1.77 1.2 1.02 1.76 2.69 1.25 3.35.96.1-.74.4-1.25.73-1.54-2.55-.29-5.23-1.27-5.23-5.68 0-1.26.45-2.3 1.19-3.11-.12-.29-.52-1.46.11-3.04 0 0 .97-.31 3.18 1.19a10.9 10.9 0 0 1 5.8 0c2.21-1.5 3.18-1.19 3.18-1.19.63 1.58.23 2.75.11 3.04.74.81 1.19 1.85 1.19 3.11 0 4.42-2.69 5.38-5.26 5.67.41.35.78 1.03.78 2.08v3.09c0 .31.21.67.8.56A11.5 11.5 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5Z"/>
+                            </svg>
+                        </span>
+                        <span>GitHub</span>
                     </a>
-                    <a href="https://laconcepcioncollege.com/" target="_blank" rel="noreferrer">
-                        LCC Campus
+                    <a href="https://laconcepcioncollege.com/" target="_blank" rel="noreferrer" aria-label="School Portal">
+                        <span class="footer-icon campus-icon" aria-hidden="true"></span>
+                        <span>LCC Campus</span>
                     </a>
                 </div>
             </div>

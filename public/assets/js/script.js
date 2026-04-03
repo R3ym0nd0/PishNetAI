@@ -23,6 +23,9 @@ const AI_HISTORY_LIMIT = 12;
 const aiConversationHistory = [];
 const authTokenKey = 'phish_ai_token';
 const activeChatKey = 'phish_ai_active_chat';
+const heroStatUsers = document.getElementById('heroStatUsers');
+const heroStatAttempts = document.getElementById('heroStatAttempts');
+const heroStatChats = document.getElementById('heroStatChats');
 let resultStatusBadge = resultSection?.querySelector('.status-badge');
 let resultGrade = resultSection?.querySelector('.result-grade');
 let resultSite = resultSection?.querySelector('.result-site');
@@ -332,6 +335,7 @@ function scrollToHashTarget(hashValue = window.location.hash) {
 
 window.addEventListener('load', () => {
     scrollToHashTarget();
+    loadHeroStats();
 });
 
 window.addEventListener('hashchange', () => {
@@ -517,6 +521,77 @@ function getApiBase() {
     if (hostname === 'localhost' || hostname === '127.0.0.1') return origin;
     if (DEPLOY_FRONTEND_ORIGINS.has(origin)) return RENDER_API_BASE;
     return origin;
+}
+
+function formatCompactNumber(value) {
+    const numericValue = Number(value) || 0;
+    return new Intl.NumberFormat('en-US', {
+        notation: numericValue >= 1000 ? 'compact' : 'standard',
+        maximumFractionDigits: 1
+    }).format(numericValue);
+}
+
+function animateCountUp(element, targetValue, duration = 950) {
+    if (!element) return;
+
+    const finalValue = Math.max(0, Number(targetValue) || 0);
+    const startTime = performance.now();
+
+    if (finalValue === 0) {
+        element.textContent = '0';
+        return;
+    }
+
+    const tick = (now) => {
+        const progress = Math.min((now - startTime) / duration, 1);
+        const easedProgress = 1 - Math.pow(1 - progress, 3);
+        const currentValue = Math.round(finalValue * easedProgress);
+        element.textContent = formatCompactNumber(currentValue);
+
+        if (progress < 1) {
+            window.requestAnimationFrame(tick);
+        } else {
+            element.textContent = formatCompactNumber(finalValue);
+        }
+    };
+
+    window.requestAnimationFrame(tick);
+}
+
+function applyHeroStats(stats = {}) {
+    if (heroStatUsers) {
+        animateCountUp(heroStatUsers, stats.usersCount);
+    }
+
+    if (heroStatAttempts) {
+        animateCountUp(heroStatAttempts, stats.quizAttemptsCount);
+    }
+
+    if (heroStatChats) {
+        animateCountUp(heroStatChats, stats.chatsCount);
+    }
+}
+
+async function loadHeroStats() {
+    if (!heroStatUsers && !heroStatAttempts && !heroStatChats) return;
+
+    try {
+        const response = await fetch(`${getApiBase()}/api/public/stats`);
+        const data = await response.json();
+
+        if (!response.ok || !data.ok) {
+            throw new Error(data.error || 'Could not load public stats.');
+        }
+
+        applyHeroStats(data.stats);
+    } catch (error) {
+        console.error('Failed to load hero stats', error);
+        applyHeroStats({
+            usersCount: 0,
+            quizAttemptsCount: 0,
+            chatsCount: 0
+        });
+    }
 }
 
 function getGradeFromRiskScore(riskScore) {
@@ -927,11 +1002,11 @@ function disableFocusTrap(){
     focusTrapHandler = null;
 }
 
-// === Newsletter Form ===
+// === Footer Feedback Form ===
 (function(){
-    const form = document.getElementById('newsletterForm');
-    const input = document.getElementById('newsletterEmail');
-    if (!form || !input) return;
+    const form = document.getElementById('feedbackForm');
+    const messageInput = document.getElementById('feedbackMessage');
+    if (!form || !messageInput) return;
 
     const feedback = document.createElement('div');
     feedback.className = 'newsletter-feedback';
@@ -939,36 +1014,40 @@ function disableFocusTrap(){
 
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
-        const email = input.value.trim();
-        if (!email) { feedback.textContent = 'Please provide an email address.'; feedback.classList.remove('success'); feedback.classList.add('error'); return; }
+        const message = messageInput.value.trim();
+        if (!message) { feedback.textContent = 'Please enter a short question or feedback message.'; feedback.classList.remove('success'); feedback.classList.add('error'); return; }
 
         const btn = form.querySelector('button[type="submit"]');
         if (btn) btn.disabled = true;
         feedback.textContent = 'Sending...';
         feedback.classList.remove('error','success');
 
-        const FORMSPREE_ENDPOINT = 'https://formspree.io/f/YOUR_FORM_ID';
+        const FORMSPREE_ENDPOINT = 'https://formspree.io/f/maqlpnbv';
 
         try {
             const res = await fetch(FORMSPREE_ENDPOINT, {
                 method: 'POST',
                 headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email })
+                body: JSON.stringify({
+                    message,
+                    source: 'PhishNet AI main page feedback form'
+                })
             });
 
             if (res.ok) {
                 feedback.textContent = 'Thanks — you are subscribed (or will be shortly).';
                 feedback.classList.remove('error'); feedback.classList.add('success');
-                input.value = '';
-                const saved = JSON.parse(localStorage.getItem('newsletter_emails') || '[]');
-                saved.push({ email, at: Date.now(), sent: true });
-                localStorage.setItem('newsletter_emails', JSON.stringify(saved));
+                feedback.textContent = 'Thanks. Your feedback has been sent.';
+                messageInput.value = '';
+                const saved = JSON.parse(localStorage.getItem('phishnet_feedback') || '[]');
+                saved.push({ message, at: Date.now(), sent: true });
+                localStorage.setItem('phishnet_feedback', JSON.stringify(saved));
             } else throw new Error('Network response not OK');
         } catch (err) {
-            const saved = JSON.parse(localStorage.getItem('newsletter_emails') || '[]');
-            saved.push({ email, at: Date.now(), sent: false });
-            localStorage.setItem('newsletter_emails', JSON.stringify(saved));
-            feedback.textContent = 'Saved';
+            const saved = JSON.parse(localStorage.getItem('phishnet_feedback') || '[]');
+            saved.push({ message, at: Date.now(), sent: false });
+            localStorage.setItem('phishnet_feedback', JSON.stringify(saved));
+            feedback.textContent = 'Saved locally for now.';
             feedback.classList.remove('success'); feedback.classList.add('error');
         } finally {
             if (btn) btn.disabled = false;

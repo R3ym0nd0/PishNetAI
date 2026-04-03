@@ -568,6 +568,21 @@ function closeQuizLogoutConfirm() {
     }
 }
 
+function getCompletedQuizIds(attempts = []) {
+    const completedQuizIds = new Set();
+
+    attempts.forEach((attempt) => {
+        const quizId = String(attempt?.quizId || '').trim();
+        const percentage = Number(attempt?.percentage || 0);
+
+        if (quizId && percentage >= 75) {
+            completedQuizIds.add(quizId);
+        }
+    });
+
+    return completedQuizIds;
+}
+
 function getQuizUnlockState(quizId, attempts = []) {
     const rule = advancedQuizRules[quizId];
     if (!rule) {
@@ -592,7 +607,7 @@ function getQuizUnlockState(quizId, attempts = []) {
     const averageScore = attemptsCount
         ? Math.round(attempts.reduce((total, attempt) => total + Number(attempt.percentage || 0), 0) / attemptsCount)
         : 0;
-    const completedQuizIds = new Set(attempts.map((attempt) => attempt.quizId));
+    const completedQuizIds = getCompletedQuizIds(attempts);
     const requiredQuizIds = Array.isArray(rule.requiresQuizIds) ? rule.requiresQuizIds : [];
     const missingQuizTitles = requiredQuizIds
         .filter((requiredQuizId) => !completedQuizIds.has(requiredQuizId))
@@ -629,7 +644,7 @@ function getQuizUnlockState(quizId, attempts = []) {
 }
 
 function updateQuizUnlockStates(attempts = []) {
-    const completedQuizIds = new Set(attempts.map((attempt) => attempt.quizId));
+    const completedQuizIds = getCompletedQuizIds(attempts);
 
     quizStartButtons.forEach((button) => {
         const quizId = button.dataset.quiz;
@@ -660,7 +675,7 @@ function updateQuizUnlockStates(attempts = []) {
 }
 
 function getRecommendedQuizId(attempts = []) {
-    const completedQuizIds = new Set(attempts.map((attempt) => attempt.quizId));
+    const completedQuizIds = getCompletedQuizIds(attempts);
 
     for (const quizId of coreQuizIds) {
         if (!completedQuizIds.has(quizId)) {
@@ -1234,7 +1249,7 @@ function populateQuizProfile(attempts = []) {
     const bestScore = attempts.reduce((best, attempt) => (
         Number(attempt.percentage || 0) > best ? Number(attempt.percentage || 0) : best
     ), 0);
-    const completedQuizIds = new Set(attempts.map((attempt) => attempt.quizId));
+    const completedQuizIds = getCompletedQuizIds(attempts);
     if (quizProfileAverage) quizProfileAverage.textContent = `${averageScore}%`;
     if (quizProfileBest) quizProfileBest.textContent = `${bestScore}%`;
     if (quizProfileCompletedSets) {
@@ -1310,8 +1325,9 @@ function getQuizBadgeDefinitions(attempts = []) {
         Number(attempt.percentage || 0) > best ? Number(attempt.percentage || 0) : best
     ), 0);
     const uniqueTopics = new Set(attempts.map((attempt) => attempt.quizId)).size;
-    const advancedCompleted = attempts.some((attempt) => attempt.quizId === 'phishing-scenarios');
-    const masteryCompleted = attempts.some((attempt) => attempt.quizId === 'best-practices');
+    const completedQuizIds = getCompletedQuizIds(attempts);
+    const advancedCompleted = completedQuizIds.has('phishing-scenarios');
+    const masteryCompleted = completedQuizIds.has('best-practices');
     const strongAttempts = attempts.filter((attempt) => Number(attempt.percentage || 0) >= 85).length;
     const needsReviewCleared = attempts.filter((attempt) => Number(attempt.percentage || 0) >= 75).length;
     const allQuizIds = Object.keys(quizzes);
@@ -1369,7 +1385,7 @@ function getQuizBadgeDefinitions(attempts = []) {
             id: 'full-coverage',
             title: 'Full Coverage',
             detail: 'Complete the full core quiz path.',
-            earned: coreQuizIds.every((quizId) => attempts.some((attempt) => attempt.quizId === quizId)),
+            earned: coreQuizIds.every((quizId) => completedQuizIds.has(quizId)),
             difficulty: 'Core',
             icon: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 3H5a2 2 0 0 0-2 2v14l4-4h12a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2Zm-8 9-3-3 1.41-1.41L11 9.17l4.59-4.58L17 6l-6 6Z"/></svg>'
         },
@@ -1417,7 +1433,7 @@ function getQuizBadgeDefinitions(attempts = []) {
             id: 'phishnet-complete',
             title: 'PhishNet Complete',
             detail: 'Save at least one completed attempt for every quiz set in the library.',
-            earned: allQuizIds.every((quizId) => attempts.some((attempt) => attempt.quizId === quizId)),
+            earned: allQuizIds.every((quizId) => completedQuizIds.has(quizId)),
             difficulty: 'Hard',
             icon: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2 2 7l10 5 8.16-4.08A3 3 0 0 1 21 10.4V17h-2v-5.6l-7 3.5L2 10v7l10 5 6-3v2.2L12 24 0 18V7l12-5Z"/></svg>'
         }

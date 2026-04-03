@@ -740,6 +740,25 @@ async function getPublicQuizProfile(userId) {
   };
 }
 
+async function getPublicSiteStats() {
+  const result = await query(
+    `
+      SELECT
+        (SELECT COUNT(*)::int FROM users) AS users_count,
+        (SELECT COUNT(*)::int FROM quiz_attempts) AS quiz_attempts_count,
+        (SELECT COUNT(*)::int FROM chats) AS chats_count
+    `
+  );
+
+  const row = result.rows[0] || {};
+
+  return {
+    usersCount: Number(row.users_count || 0),
+    quizAttemptsCount: Number(row.quiz_attempts_count || 0),
+    chatsCount: Number(row.chats_count || 0)
+  };
+}
+
 module.exports = {
   authenticateUser,
   appendMessage,
@@ -750,6 +769,7 @@ module.exports = {
   createUser,
   deleteChat,
   destroySession,
+  getPublicSiteStats,
   getQuizAttemptById,
   getPublicQuizProfile,
   getQuizLeaderboard,

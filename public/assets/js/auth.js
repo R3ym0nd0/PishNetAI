@@ -180,6 +180,21 @@ function validateSignupPayload({ name, email, password }) {
     return '';
 }
 
+function setFormSubmitting(form, isSubmitting, loadingLabel = 'Processing...') {
+    if (!form) return;
+
+    const submitBtn = form.querySelector('button[type="submit"]');
+    if (!submitBtn) return;
+
+    if (!submitBtn.dataset.defaultLabel) {
+        submitBtn.dataset.defaultLabel = submitBtn.textContent.trim();
+    }
+
+    submitBtn.disabled = isSubmitting;
+    submitBtn.classList.toggle('is-loading', isSubmitting);
+    submitBtn.textContent = isSubmitting ? loadingLabel : submitBtn.dataset.defaultLabel;
+}
+
 if (loginForm) {
     hideAlert();
     wirePasswordToggle('togglePw', 'loginPassword', 'togglePwIcon');
@@ -188,6 +203,7 @@ if (loginForm) {
     loginForm.addEventListener('submit', async (event) => {
         event.preventDefault();
         hideAlert();
+        setFormSubmitting(loginForm, true, 'Signing In...');
 
         const email = document.getElementById('loginEmail')?.value.trim();
         const password = document.getElementById('loginPassword')?.value || '';
@@ -203,6 +219,7 @@ if (loginForm) {
             window.location.href = getSafeReturnTo();
         } catch (error) {
             showAlert(error.message || 'Could not sign in.');
+            setFormSubmitting(loginForm, false);
         }
     });
 }
@@ -212,6 +229,7 @@ if (forgotPasswordForm || resetPasswordForm) {
     hideSuccess();
     wirePasswordToggle('toggleResetPw', 'resetPassword', 'toggleResetPwIcon');
     wirePasswordToggle('toggleResetConfirmPw', 'resetConfirmPassword', 'toggleResetConfirmPwIcon');
+    wireEnterToNextField(resetPasswordForm, ['resetPassword', 'resetConfirmPassword']);
 
     const params = new URLSearchParams(window.location.search);
     const token = params.get('token') || '';
@@ -238,6 +256,7 @@ if (forgotPasswordForm || resetPasswordForm) {
             event.preventDefault();
             hideAlert();
             hideSuccess();
+            setFormSubmitting(forgotPasswordForm, true, 'Preparing Link...');
 
             const email = document.getElementById('forgotEmail')?.value.trim();
 
@@ -262,6 +281,8 @@ if (forgotPasswordForm || resetPasswordForm) {
                 }
             } catch (error) {
                 showAlert(error.message || 'Could not prepare a reset link.');
+            } finally {
+                setFormSubmitting(forgotPasswordForm, false);
             }
         });
     }
@@ -271,6 +292,7 @@ if (forgotPasswordForm || resetPasswordForm) {
             event.preventDefault();
             hideAlert();
             hideSuccess();
+            setFormSubmitting(resetPasswordForm, true, 'Resetting Password...');
 
             const tokenValue = document.getElementById('resetToken')?.value.trim();
             const password = document.getElementById('resetPassword')?.value || '';
@@ -278,11 +300,13 @@ if (forgotPasswordForm || resetPasswordForm) {
 
             if (!tokenValue) {
                 showAlert('Missing reset token. Please open a valid reset link.');
+                setFormSubmitting(resetPasswordForm, false);
                 return;
             }
 
             if (password !== confirmPassword) {
                 showAlert('Passwords do not match.');
+                setFormSubmitting(resetPasswordForm, false);
                 return;
             }
 
@@ -299,6 +323,7 @@ if (forgotPasswordForm || resetPasswordForm) {
                 }, 1200);
             } catch (error) {
                 showAlert(error.message || 'Could not reset password.');
+                setFormSubmitting(resetPasswordForm, false);
             }
         });
     }
@@ -330,6 +355,7 @@ if (signupForm) {
     signupForm.addEventListener('submit', async (event) => {
         event.preventDefault();
         hideAlert();
+        setFormSubmitting(signupForm, true, 'Creating Account...');
 
         const name = document.getElementById('signupName')?.value.trim();
         const email = document.getElementById('signupEmail')?.value.trim();
@@ -340,16 +366,19 @@ if (signupForm) {
         const signupError = validateSignupPayload({ name, email, password });
         if (signupError) {
             showAlert(signupError);
+            setFormSubmitting(signupForm, false);
             return;
         }
 
         if (password !== confirmPassword) {
             showAlert('Passwords do not match.');
+            setFormSubmitting(signupForm, false);
             return;
         }
 
         if (!acceptedTerms) {
             showAlert('Please agree to the Terms & Conditions first.');
+            setFormSubmitting(signupForm, false);
             return;
         }
 
@@ -363,6 +392,7 @@ if (signupForm) {
             window.location.href = getSafeReturnTo();
         } catch (error) {
             showAlert(error.message || 'Could not create account.');
+            setFormSubmitting(signupForm, false);
         }
     });
 }
