@@ -1067,6 +1067,11 @@ body.quiz-signed-in #quizHistoryPanel {
     display: none !important;
 }
 
+.quiz-badges-panel.is-guest-locked .quiz-badges-shell,
+.quiz-profile-panel.is-guest-locked .quiz-profile-grid {
+    display: none !important;
+}
+
 .quiz-history-head {
     display: flex;
     gap: 16px;
@@ -2366,6 +2371,12 @@ body.quiz-signed-in #quizHistoryPanel .quiz-history-list {
     max-height: none;
     overflow: visible;
     padding-right: 0;
+}
+
+.quiz-profile-badge-list .quiz-history-empty,
+.quiz-badges-list .quiz-history-empty {
+    grid-column: 1 / -1;
+    width: 100%;
 }
 
 .quiz-profile-badge {
