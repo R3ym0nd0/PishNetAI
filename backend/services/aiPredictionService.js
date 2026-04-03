@@ -20,7 +20,7 @@ async function predictPhishingRisk(modelFeatures) {
   } catch (error) {
     const details = error.response?.data?.error || error.message;
     const serviceError = new Error(`AI service unavailable: ${details}`);
-    serviceError.statusCode = 503;
+    serviceError.statusCode = error.response?.status || 503;
     throw serviceError;
   }
 }

@@ -1223,6 +1223,27 @@ html {
     line-height: 1.38;
 }
 
+@media (min-width: 1024px) {
+    .hero-stats {
+        width: min(100%, 580px);
+        gap: 10px;
+    }
+
+    .hero-stat-card {
+        padding: 13px 13px;
+        border-radius: 16px;
+        gap: 4px;
+    }
+
+    .hero-stat-value {
+        font-size: 1.14rem;
+    }
+
+    .hero-stat-label {
+        font-size: 0.76rem;
+    }
+}
+
 
 .hero-button {
     display: inline-flex;
@@ -4071,9 +4092,12 @@ html {
 
     .tutorial-flow {
         display: grid;
-        padding: 20px;
-        border-radius: 24px;
+        padding: 0;
+        border-radius: 0;
         gap: 14px;
+        background: transparent;
+        border: 0;
+        box-shadow: none;
     }
 
     .tutorial-step {
@@ -4094,6 +4118,7 @@ html {
     }
 
     .tutorial-flow-kicker {
+        align-self: center;
         padding: 7px 10px;
         font-size: 0.7rem;
         letter-spacing: 0.06em;
@@ -4972,9 +4997,12 @@ html {
     }
 
     .tutorial-flow {
-        padding: 16px;
-        border-radius: 20px;
+        padding: 0;
+        border-radius: 0;
         gap: 12px;
+        background: transparent;
+        border: 0;
+        box-shadow: none;
     }
 
     .tutorial-flow-head h3 {

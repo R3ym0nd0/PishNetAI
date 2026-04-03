@@ -11,6 +11,30 @@ const {
   getRiskLevel
 } = require('../utils/riskScoring');
 
+function clampProbability(value) {
+  return Math.min(Math.max(Number(value) || 0, 0), 1);
+}
+
+function buildFallbackPredictionPayload(behaviorAssessment, features) {
+  const trustedLegitimateDomain = Boolean(features.knownLegitimateDomain);
+  const baseProbability = clampProbability(behaviorAssessment.score / 100);
+  let phishingProbability = baseProbability;
+
+  if (behaviorAssessment.hardFlag) {
+    phishingProbability = Math.max(baseProbability, 0.88);
+  } else if (trustedLegitimateDomain) {
+    phishingProbability = Math.min(baseProbability, 0.18);
+  } else if (behaviorAssessment.score >= 60) {
+    phishingProbability = Math.max(baseProbability, 0.72);
+  }
+
+  return {
+    prediction: phishingProbability >= 0.7 ? 1 : 0,
+    confidence: clampProbability(Math.max(0.55, Math.min(0.9, 0.45 + (behaviorAssessment.score / 100) * 0.45))),
+    phishing_probability: phishingProbability
+  };
+}
+
 async function fetchWebsite(url) {
   try {
     return await axios.get(url, {
@@ -165,16 +189,34 @@ function buildPageOverview(features) {
 async function scanUrl(url) {
   const response = await fetchWebsite(url);
   const { features, modelFeatures } = await extractFeatures({ inputUrl: url, response });
-  const predictionPayload = await predictPhishingRisk(modelFeatures);
+  const behaviorAssessment = buildBehaviorAssessment(features);
+  let predictionPayload;
+  let aiFallback = null;
+
+  try {
+    predictionPayload = await predictPhishingRisk(modelFeatures);
+  } catch (error) {
+    aiFallback = {
+      used: true,
+      statusCode: error.statusCode || 503,
+      message: error.message || 'AI prediction service unavailable.'
+    };
+    predictionPayload = buildFallbackPredictionPayload(behaviorAssessment, features);
+  }
+
   const numericPrediction = Number(predictionPayload.prediction) === 1 ? 1 : 0;
   const confidence = Number(predictionPayload.confidence) || 0;
   const phishingProbability = Number(predictionPayload.phishing_probability);
   const modelRiskScore = buildRiskScore(
     Number.isFinite(phishingProbability) ? phishingProbability : confidence
   );
-  const behaviorAssessment = buildBehaviorAssessment(features);
   const riskScore = buildFinalRiskScore(modelRiskScore, behaviorAssessment, features);
   const prediction = buildFinalPrediction(modelRiskScore, behaviorAssessment, riskScore);
+
+  const indicators = buildIndicators(features, riskScore, behaviorAssessment.reasons);
+  if (aiFallback?.used) {
+    indicators.push('Scanner note: The AI prediction service was temporarily unavailable, so this result used the rule-based scan fallback.');
+  }
 
   return {
     prediction,
@@ -188,11 +230,12 @@ async function scanUrl(url) {
     grade: getGradeFromRiskScore(riskScore),
     riskLevel: getRiskLevel(riskScore),
     riskClass: getRiskClass(riskScore),
-    indicators: buildIndicators(features, riskScore, behaviorAssessment.reasons),
+    indicators,
     summary: buildSummary(prediction, features, riskScore, behaviorAssessment, modelRiskScore),
     pageOverview: buildPageOverview(features),
     recommendation: buildRecommendation(prediction, riskScore),
     heuristicReasons: behaviorAssessment.reasons,
+    aiFallback,
     features,
     modelFeatures,
     url: features.finalUrl
