@@ -403,27 +403,27 @@ app.get('/logo.png', (req, res) => {
   return sendStaticFile(res, filePath, 'logo.png not found');
 });
 
-app.get('/assistant.html', (req, res) => {
+app.get(['/assistant', '/assistant.html'], (req, res) => {
   const filePath = path.join(publicDir, 'assistant.html');
   return sendStaticFile(res, filePath, 'assistant.html not found');
 });
 
-app.get('/login.html', (req, res) => {
+app.get(['/login', '/login.html'], (req, res) => {
   const filePath = path.join(publicDir, 'login.html');
   return sendStaticFile(res, filePath, 'login.html not found');
 });
 
-app.get('/signup.html', (req, res) => {
+app.get(['/signup', '/signup.html'], (req, res) => {
   const filePath = path.join(publicDir, 'signup.html');
   return sendStaticFile(res, filePath, 'signup.html not found');
 });
 
-app.get('/reset-password.html', (req, res) => {
+app.get(['/reset-password', '/reset-password.html'], (req, res) => {
   const filePath = path.join(publicDir, 'reset-password.html');
   return sendStaticFile(res, filePath, 'reset-password.html not found');
 });
 
-app.get('/quiz.html', (req, res) => {
+app.get(['/quiz', '/quiz.html'], (req, res) => {
   const filePath = path.join(publicDir, 'quiz.html');
   return sendStaticFile(res, filePath, 'quiz.html not found');
 });
@@ -513,7 +513,7 @@ app.post('/api/auth/forgot-password', async (req, res) => {
     return res.json({
       ok: true,
       message: 'If an account with that email exists, a password reset link has been prepared.',
-      resetUrl: resetEntry ? `${baseUrl}/reset-password.html?token=${resetEntry.token}` : null
+      resetUrl: resetEntry ? `${baseUrl}/reset-password?token=${resetEntry.token}` : null
     });
   } catch (error) {
     return res.status(error.statusCode || 500).json({

@@ -25,14 +25,37 @@
             </button>
 
             <div class="nav-links" id="navLinks">
-                <a href="#home">Home</a>
-                <a href="#scanner">Scanner</a>
-                <a href="#tutorial">Tutorial</a>
-                <a href="#guide">Guide</a>
-                <a href="/quiz">Quiz</a>
-                <button id="aiToggle" class="nav-assistant" aria-controls="aiWidget" aria-expanded="false" title="Open AI Assistant">AI Assistant</button>
+                <div class="nav-drawer-head">
+                    <div class="nav-drawer-brand">
+                        <img src="assets/images/logo.png" alt="PhishNet AI logo" class="nav-drawer-logo">
+                        <div class="nav-drawer-copy">
+                            <strong>PhishNet AI</strong>
+                            <span>Kaypian Campus</span>
+                        </div>
+                    </div>
+                    <button type="button" class="nav-drawer-close" id="navDrawerClose" aria-label="Close navigation">
+                        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                            <path d="M18.3 5.71 12 12l6.3 6.29-1.41 1.41L10.59 13.41 4.29 19.7 2.88 18.29 9.17 12 2.88 5.71 4.29 4.29l6.3 6.3 6.29-6.3z"/>
+                        </svg>
+                    </button>
+                </div>
+
+                <div class="nav-drawer-group">
+                    <span class="nav-drawer-group-label">Explore</span>
+                    <a href="#home">Home</a>
+                    <a href="#scanner">Scanner</a>
+                    <a href="#tutorial">Tutorial</a>
+                    <a href="#guide">Guide</a>
+                </div>
+
+                <div class="nav-drawer-group">
+                    <span class="nav-drawer-group-label">Tools</span>
+                    <a href="/quiz">Quiz</a>
+                    <a href="/assistant" class="nav-assistant" title="Open AI Assistant">AI Assistant</a>
+                </div>
             </div>
         </nav>
+        <div class="nav-drawer-overlay" id="navDrawerOverlay"></div>
 
         <header class="hero" id="home">
             <div class="hero-inner">
@@ -164,92 +187,36 @@
             </section>
 
             <section class="info-grid" id="guide">
-                <aside class="panel score-guide">
+                <aside class="panel checks-panel">
                     <div class="section-heading">
-                        <h2>How to read the URL rating</h2>
+                        <h2>What PhishNet AI checks</h2>
+                        <p class="section-text">Instead of a long rating chart, here are the main signals the scanner reviews before showing a result.</p>
                     </div>
 
-                    <div class="score-groups">
-                        <section class="score-group safe-group">
-                            <p class="score-group-label">Safe</p>
-                            <div class="score-band-list">
-                                <article class="score-band">
-                                    <span class="score-band-grade">A+</span>
-                                    <div>
-                                        <h3>Highest trust level</h3>
-                                        <p>The website appears very safe based on the current scan.</p>
-                                    </div>
-                                </article>
-                                <article class="score-band">
-                                    <span class="score-band-grade">A</span>
-                                    <div>
-                                        <h3>Very safe</h3>
-                                        <p>Low warning signs were found, but users should still stay alert.</p>
-                                    </div>
-                                </article>
-                                <article class="score-band">
-                                    <span class="score-band-grade">B+</span>
-                                    <div>
-                                        <h3>Mostly safe</h3>
-                                        <p>Only minor concerns were detected in the scan.</p>
-                                    </div>
-                                </article>
-                                <article class="score-band">
-                                    <span class="score-band-grade">B</span>
-                                    <div>
-                                        <h3>Proceed carefully</h3>
-                                        <p>The link looks acceptable, but extra caution is still recommended.</p>
-                                    </div>
-                                </article>
-                            </div>
-                        </section>
+                    <div class="checks-grid">
+                        <article class="check-card">
+                            <span class="check-card-kicker">Domain</span>
+                            <h3>Link structure</h3>
+                            <p>We look for unusual domain patterns, suspicious wording, shortened URLs, and misleading address structures.</p>
+                        </article>
 
-                        <section class="score-group caution-group">
-                            <p class="score-group-label">Caution</p>
-                            <div class="score-band-list">
-                                <article class="score-band">
-                                    <span class="score-band-grade">C+</span>
-                                    <div>
-                                        <h3>Verify first</h3>
-                                        <p>Moderate warning signs were detected and the link should be checked first.</p>
-                                    </div>
-                                </article>
-                                <article class="score-band">
-                                    <span class="score-band-grade">C</span>
-                                    <div>
-                                        <h3>Suspicious</h3>
-                                        <p>The page looks risky enough that users should not continue without confirmation.</p>
-                                    </div>
-                                </article>
-                            </div>
-                        </section>
+                        <article class="check-card">
+                            <span class="check-card-kicker">Security</span>
+                            <h3>Trust signals</h3>
+                            <p>HTTPS, SSL status, and other website trust indicators are reviewed before the final result is shown.</p>
+                        </article>
 
-                        <section class="score-group danger-group">
-                            <p class="score-group-label">Danger</p>
-                            <div class="score-band-list">
-                                <article class="score-band">
-                                    <span class="score-band-grade">D+</span>
-                                    <div>
-                                        <h3>High risk</h3>
-                                        <p>Strong warning signs are present and the link should be avoided.</p>
-                                    </div>
-                                </article>
-                                <article class="score-band">
-                                    <span class="score-band-grade">D</span>
-                                    <div>
-                                        <h3>Very high risk</h3>
-                                        <p>The scan suggests the page is likely unsafe or deceptive.</p>
-                                    </div>
-                                </article>
-                                <article class="score-band">
-                                    <span class="score-band-grade">F</span>
-                                    <div>
-                                        <h3>Avoid immediately</h3>
-                                        <p>The page is flagged as confirmed or near-confirmed phishing risk.</p>
-                                    </div>
-                                </article>
-                            </div>
-                        </section>
+                        <article class="check-card">
+                            <span class="check-card-kicker">Content</span>
+                            <h3>Page behavior</h3>
+                            <p>The scanner checks for phishing-style prompts, deceptive patterns, and risky page cues that push users to act fast.</p>
+                        </article>
+
+                        <article class="check-card">
+                            <span class="check-card-kicker">Decision</span>
+                            <h3>Final guidance</h3>
+                            <p>You get a short summary, key indicators, and a recommendation so the result is easier to understand at a glance.</p>
+                        </article>
                     </div>
                 </aside>
 

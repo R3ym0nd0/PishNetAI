@@ -551,27 +551,29 @@ button {
 /* ===== Sidebar Back Button (Mobile) ===== */
 .sidebar-back-btn {
     display: none;
-    width: 36px;
-    height: 36px;
-    background: none;
-    border: none;
-    color: var(--text-secondary);
+    width: 42px;
+    height: 42px;
+    background: rgba(247, 250, 255, 0.96);
+    border: 1px solid rgba(0, 51, 102, 0.1);
+    color: var(--accent-color);
     cursor: pointer;
-    border-radius: var(--border-radius-sm);
+    border-radius: 12px;
     align-items: center;
     justify-content: center;
-    transition: all var(--transition-speed) ease;
+    transition: background var(--transition-speed) ease, color var(--transition-speed) ease, border-color var(--transition-speed) ease, transform var(--transition-speed) ease;
     flex-shrink: 0;
 }
 
 .sidebar-back-btn:hover {
-    background-color: var(--bg-hover);
+    background: rgba(240, 246, 252, 0.98);
+    border-color: rgba(0, 51, 102, 0.16);
     color: var(--accent-color);
+    transform: translateY(-1px);
 }
 
 .sidebar-back-btn svg {
-    width: 22px;
-    height: 22px;
+    width: 18px;
+    height: 18px;
 }
 
 /* ===== Mobile Overlay ===== */

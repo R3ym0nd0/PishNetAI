@@ -9,6 +9,8 @@ const resultsPanel = document.getElementById("results");
 const mainNav = document.querySelector(".main-nav");
 const navToggle = document.querySelector(".nav-toggle");
 const navLinks = document.querySelectorAll(".nav-links a, .nav-links .nav-assistant");
+const navDrawerOverlay = document.getElementById('navDrawerOverlay');
+const navDrawerClose = document.getElementById('navDrawerClose');
 
 let aiToggle = document.getElementById('aiToggle');
 const aiWidget = document.getElementById('aiWidget');
@@ -198,6 +200,16 @@ if (mainNav && navToggle) {
     navToggle.addEventListener("click", () => {
         const isOpen = mainNav.classList.toggle("nav-open");
         navToggle.setAttribute("aria-expanded", String(isOpen));
+    });
+
+    navDrawerOverlay?.addEventListener('click', () => {
+        mainNav.classList.remove('nav-open');
+        navToggle.setAttribute('aria-expanded', 'false');
+    });
+
+    navDrawerClose?.addEventListener('click', () => {
+        mainNav.classList.remove('nav-open');
+        navToggle.setAttribute('aria-expanded', 'false');
     });
 
     navLinks.forEach((link) => {
@@ -756,31 +768,6 @@ if (aiClose) {
 }
 
 // === Restore AI Toggle if hidden ===
-function restoreAiToggleIfNeeded(){
-    const navLinksEl = document.querySelector('.nav-links');
-    if (!navLinksEl) return;
-
-    if (!aiToggle) {
-        const btn = document.createElement('button');
-        btn.id = 'aiToggle';
-        btn.className = 'nav-assistant';
-        btn.type = 'button';
-        btn.title = 'Open AI Assistant';
-        btn.setAttribute('aria-controls','aiWidget');
-        btn.setAttribute('aria-expanded','false');
-        btn.textContent = 'AI Assistant';
-        navLinksEl.appendChild(btn);
-        aiToggle = btn;
-        addAiToggleListener();
-    } else {
-        aiToggle.style.display = '';
-        aiToggle.setAttribute('aria-expanded','false');
-    }
-}
-const observer = new MutationObserver(()=> restoreAiToggleIfNeeded());
-observer.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['style','class','hidden'] });
-restoreAiToggleIfNeeded();
-
 // === AI Fab Click ===
 if (aiFab) {
     aiFab.addEventListener('click', () => {
