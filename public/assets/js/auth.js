@@ -15,6 +15,10 @@ const authAlert = document.getElementById('authAlert');
 const authAlertMsg = document.getElementById('authAlertMsg');
 const authSuccess = document.getElementById('authSuccess');
 const authSuccessMsg = document.getElementById('authSuccessMsg');
+const SIGNUP_NAME_MAX = 48;
+const SIGNUP_EMAIL_MAX = 120;
+const SIGNUP_PASSWORD_MAX = 64;
+const strongPasswordRule = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,64}$/;
 
 function getApiBase() {
     const { origin, hostname } = window.location;
@@ -120,9 +124,66 @@ function wirePasswordToggle(buttonId, inputId, iconId) {
     });
 }
 
+function wireEnterToNextField(form, fieldIds = []) {
+    if (!form || !fieldIds.length) return;
+
+    const fields = fieldIds
+        .map((id) => document.getElementById(id))
+        .filter(Boolean);
+
+    fields.forEach((field, index) => {
+        field.addEventListener('keydown', (event) => {
+            if (event.key !== 'Enter') return;
+            if (field.tagName === 'TEXTAREA' && event.shiftKey) return;
+
+            event.preventDefault();
+
+            const nextField = fields[index + 1];
+            if (nextField) {
+                nextField.focus();
+                if (typeof nextField.select === 'function' && nextField.tagName === 'INPUT') {
+                    nextField.select();
+                }
+                return;
+            }
+
+            form.requestSubmit();
+        });
+    });
+}
+
+function validateSignupPayload({ name, email, password }) {
+    const trimmedName = String(name || '').trim();
+    const trimmedEmail = String(email || '').trim();
+    const rawPassword = String(password || '');
+
+    if (trimmedName.length < 2) {
+        return 'Please enter your full name.';
+    }
+
+    if (trimmedName.length > SIGNUP_NAME_MAX) {
+        return `Full name must stay within ${SIGNUP_NAME_MAX} characters.`;
+    }
+
+    if (!trimmedEmail || !trimmedEmail.includes('@')) {
+        return 'Please enter a valid email address.';
+    }
+
+    if (trimmedEmail.length > SIGNUP_EMAIL_MAX) {
+        return `Email must stay within ${SIGNUP_EMAIL_MAX} characters.`;
+    }
+
+    if (!strongPasswordRule.test(rawPassword)) {
+        return 'Password must be 8 to 64 characters and include uppercase, lowercase, number, and special character.';
+    }
+
+    return '';
+}
+
 if (loginForm) {
     hideAlert();
     wirePasswordToggle('togglePw', 'loginPassword', 'togglePwIcon');
+    wireEnterToNextField(loginForm, ['loginEmail', 'loginPassword']);
 
     loginForm.addEventListener('submit', async (event) => {
         event.preventDefault();
@@ -264,6 +325,7 @@ if (signupForm) {
     hideAlert();
     wirePasswordToggle('toggleSignupPw', 'signupPassword', 'toggleSignupPwIcon');
     wirePasswordToggle('toggleConfirmPw', 'signupConfirmPassword', 'toggleConfirmPwIcon');
+    wireEnterToNextField(signupForm, ['signupName', 'signupEmail', 'signupPassword', 'signupConfirmPassword']);
 
     signupForm.addEventListener('submit', async (event) => {
         event.preventDefault();
@@ -274,6 +336,12 @@ if (signupForm) {
         const password = document.getElementById('signupPassword')?.value || '';
         const confirmPassword = document.getElementById('signupConfirmPassword')?.value || '';
         const acceptedTerms = document.getElementById('signupTerms')?.checked;
+
+        const signupError = validateSignupPayload({ name, email, password });
+        if (signupError) {
+            showAlert(signupError);
+            return;
+        }
 
         if (password !== confirmPassword) {
             showAlert('Passwords do not match.');

@@ -362,13 +362,20 @@ async function maybeUpdateChatTitle(user, chatId, userMessage, assistantReply) {
   }
 }
 
-function validateAuthPayload({ name, email, password, requireName = false }) {
+function validateAuthPayload({ name, email, password, requireName = false, requireStrongPassword = false }) {
   const trimmedName = String(name || '').trim();
   const trimmedEmail = String(email || '').trim().toLowerCase();
   const rawPassword = String(password || '');
+  const strongPasswordRule = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,64}$/;
 
   if (requireName && trimmedName.length < 2) {
     const error = new Error('Please enter your full name.');
+    error.statusCode = 400;
+    throw error;
+  }
+
+  if (requireName && trimmedName.length > 48) {
+    const error = new Error('Full name must stay within 48 characters.');
     error.statusCode = 400;
     throw error;
   }
@@ -379,8 +386,26 @@ function validateAuthPayload({ name, email, password, requireName = false }) {
     throw error;
   }
 
+  if (trimmedEmail.length > 120) {
+    const error = new Error('Email must stay within 120 characters.');
+    error.statusCode = 400;
+    throw error;
+  }
+
   if (rawPassword.length < 6) {
     const error = new Error('Password must be at least 6 characters long.');
+    error.statusCode = 400;
+    throw error;
+  }
+
+  if (rawPassword.length > 64) {
+    const error = new Error('Password must stay within 64 characters.');
+    error.statusCode = 400;
+    throw error;
+  }
+
+  if (requireStrongPassword && !strongPasswordRule.test(rawPassword)) {
+    const error = new Error('Password must be 8 to 64 characters and include uppercase, lowercase, number, and special character.');
     error.statusCode = 400;
     throw error;
   }
@@ -441,7 +466,8 @@ app.post('/api/auth/signup', async (req, res) => {
   try {
     const { name, email, password } = validateAuthPayload({
       ...req.body,
-      requireName: true
+      requireName: true,
+      requireStrongPassword: true
     });
 
     const user = await createUser({ name, email, password });
@@ -535,12 +561,15 @@ app.post('/api/auth/forgot-password', async (req, res) => {
     }
 
     const resetEntry = await createPasswordResetToken(email);
-    const baseUrl = `${req.protocol}://${req.get('host')}`;
+    const requestOrigin = typeof req.headers.origin === 'string' ? req.headers.origin.trim() : '';
+    const frontendOrigin = allowedOrigins.has(requestOrigin)
+      ? requestOrigin
+      : (process.env.FRONTEND_ORIGIN || `${req.protocol}://${req.get('host')}`);
 
     return res.json({
       ok: true,
       message: 'If an account with that email exists, a password reset link has been prepared.',
-      resetUrl: resetEntry ? `${baseUrl}/reset-password?token=${resetEntry.token}` : null
+      resetUrl: resetEntry ? `${frontendOrigin.replace(/\/+$/, '')}/reset-password?token=${resetEntry.token}` : null
     });
   } catch (error) {
     return res.status(error.statusCode || 500).json({
@@ -554,6 +583,7 @@ app.post('/api/auth/reset-password', async (req, res) => {
   try {
     const token = String(req.body?.token || '').trim();
     const password = String(req.body?.password || '');
+    const strongPasswordRule = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{8,64}$/;
 
     if (!token) {
       return res.status(400).json({
@@ -562,10 +592,10 @@ app.post('/api/auth/reset-password', async (req, res) => {
       });
     }
 
-    if (password.length < 6) {
+    if (!strongPasswordRule.test(password)) {
       return res.status(400).json({
         ok: false,
-        error: 'Password must be at least 6 characters long.'
+        error: 'Password must be 8 to 64 characters and include uppercase, lowercase, number, and special character.'
       });
     }
 

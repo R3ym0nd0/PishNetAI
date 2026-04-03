@@ -247,6 +247,25 @@ button {
     min-width: 0;
 }
 
+.chat-item-empty {
+    align-items: flex-start;
+    cursor: default;
+}
+
+.chat-item-empty:hover {
+    background-color: transparent;
+    color: var(--text-secondary);
+    border-color: transparent;
+    box-shadow: none;
+}
+
+.chat-item-empty span {
+    white-space: normal;
+    overflow: visible;
+    text-overflow: unset;
+    line-height: 1.55;
+}
+
 .chat-item-actions {
     position: relative;
     margin-left: auto;
@@ -337,6 +356,10 @@ button {
     font-size: 0.82rem;
     line-height: 1.5;
     border: 1px solid rgba(0, 51, 102, 0.08);
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .profile-card {
@@ -348,6 +371,7 @@ button {
     background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
     border: 1px solid rgba(0, 51, 102, 0.08);
     box-shadow: 0 2px 8px rgba(0, 51, 102, 0.05);
+    min-width: 0;
 }
 
 .profile-card[hidden] {
@@ -380,12 +404,20 @@ button {
     color: var(--accent-color);
     font-size: 0.92rem;
     line-height: 1.3;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .profile-copy span {
     color: var(--text-secondary);
     font-size: 0.78rem;
     line-height: 1.4;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .auth-actions {

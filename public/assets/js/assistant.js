@@ -220,7 +220,7 @@ function getShortDisplayTitle(title, maxLength = 44) {
 function renderGuestHistoryState() {
     if (!chatList) return;
     chatList.innerHTML = `
-        <li class="chat-item">
+        <li class="chat-item chat-item-empty">
             <span>Sign in to save your chats and revisit them later.</span>
         </li>
     `;
@@ -281,7 +281,7 @@ function renderChatList() {
 
     if (!chatSummaries.length) {
         chatList.innerHTML = `
-            <li class="chat-item">
+            <li class="chat-item chat-item-empty">
                 <span>No saved chats yet. Start a new conversation.</span>
             </li>
         `;

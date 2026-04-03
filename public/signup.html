@@ -25,19 +25,42 @@
             </div>
         </div>
 
-        <button type="button" class="nav-toggle" aria-label="Open navigation menu">
+        <button type="button" class="nav-toggle" aria-label="Open navigation menu" aria-expanded="false" aria-controls="navLinks">
             <span></span><span></span><span></span>
         </button>
 
         <div class="nav-links" id="navLinks">
-            <a href="/#home">Home</a>
-            <a href="/#scanner">Scanner</a>
-            <a href="/#tutorial">Tutorial</a>
-            <a href="/#guide">Guide</a>
-            <a href="/quiz">Quiz</a>
-            <a href="/assistant" class="nav-assistant" id="aiToggle">AI Assistant</a>
+            <div class="nav-drawer-head">
+                <div class="nav-drawer-brand">
+                    <img src="assets/images/logo.png" alt="PhishNet AI logo" class="nav-drawer-logo">
+                    <div class="nav-drawer-copy">
+                        <strong>PhishNet AI</strong>
+                        <span>Kaypian Campus</span>
+                    </div>
+                </div>
+                <button type="button" class="nav-drawer-close" id="navDrawerClose" aria-label="Close navigation">
+                    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                        <path d="M18.3 5.71 12 12l6.3 6.29-1.41 1.41L10.59 13.41 4.29 19.7 2.88 18.29 9.17 12 2.88 5.71 4.29 4.29l6.3 6.3 6.29-6.3z"/>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="nav-drawer-group">
+                <span class="nav-drawer-group-label">Explore</span>
+                <a href="/#home">Home</a>
+                <a href="/#scanner">Scanner</a>
+                <a href="/#tutorial">Tutorial</a>
+                <a href="/#guide">Guide</a>
+            </div>
+
+            <div class="nav-drawer-group">
+                <span class="nav-drawer-group-label">Tools</span>
+                <a href="/quiz">Quiz</a>
+                <a href="/assistant" class="nav-assistant" id="aiToggle">AI Assistant</a>
+            </div>
         </div>
     </nav>
+    <div class="nav-drawer-overlay" id="navDrawerOverlay"></div>
 
     <!-- MAIN CONTENT -->
     <main class="auth-container">
@@ -64,7 +87,7 @@
                             <label for="signupName">Full Name</label>
                             <div class="field-wrap">
                                 <i class="fa-solid fa-user"></i>
-                                <input id="signupName" type="text" placeholder="Enter your full name" required>
+                                <input id="signupName" type="text" placeholder="Enter your full name" maxlength="48" required>
                             </div>
                         </div>
 
@@ -72,7 +95,7 @@
                             <label for="signupEmail">Email address</label>
                             <div class="field-wrap">
                                 <i class="fa-regular fa-envelope"></i>
-                                <input id="signupEmail" type="email" placeholder="you@example.com" required>
+                                <input id="signupEmail" type="email" placeholder="you@example.com" maxlength="120" required>
                             </div>
                         </div>
 
@@ -80,7 +103,7 @@
                             <label for="signupPassword">Password</label>
                             <div class="field-wrap">
                                 <i class="fa-solid fa-lock"></i>
-                                <input id="signupPassword" type="password" placeholder="Create a password" required>
+                                <input id="signupPassword" type="password" placeholder="Create a password" maxlength="64" required>
                                 <button type="button" class="toggle-pw" id="toggleSignupPw">
                                     <i class="fa-regular fa-eye" id="toggleSignupPwIcon"></i>
                                 </button>
@@ -91,7 +114,7 @@
                             <label for="signupConfirmPassword">Confirm Password</label>
                             <div class="field-wrap">
                                 <i class="fa-solid fa-lock"></i>
-                                <input id="signupConfirmPassword" type="password" placeholder="Confirm your password" required>
+                                <input id="signupConfirmPassword" type="password" placeholder="Confirm your password" maxlength="64" required>
                                 <button type="button" class="toggle-pw" id="toggleConfirmPw">
                                     <i class="fa-regular fa-eye" id="toggleConfirmPwIcon"></i>
                                 </button>

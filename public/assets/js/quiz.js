@@ -966,15 +966,16 @@ function applyQuizPageState() {
         user?.email?.split?.('@')?.[0] ||
         'Student';
     const fullLabel = user?.name || user?.username || firstName;
+    const compactLabel = firstName || fullLabel;
     const secondaryLabel = user?.email || 'Quiz account';
 
     document.body.classList.add('quiz-signed-in');
 
     if (signedIn) {
         if (quizSidebarLabel) quizSidebarLabel.textContent = 'Signed in as';
-        if (quizSidebarName) quizSidebarName.textContent = fullLabel;
+        if (quizSidebarName) quizSidebarName.textContent = compactLabel;
         if (quizSidebarEmail) quizSidebarEmail.textContent = secondaryLabel;
-        if (quizMobileTopbarLabel) quizMobileTopbarLabel.textContent = fullLabel;
+        if (quizMobileTopbarLabel) quizMobileTopbarLabel.textContent = compactLabel;
         if (quizProfileName) quizProfileName.textContent = fullLabel;
         if (quizProfileEmail) quizProfileEmail.textContent = secondaryLabel;
         syncQuizProfileNoteUi(user?.profileNote || '');
