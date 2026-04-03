@@ -92,17 +92,19 @@ function getSafeReturnTo() {
     const params = new URLSearchParams(window.location.search);
     const returnTo = params.get('returnTo') || '';
     const allowedPages = new Set([
+        '/assistant',
+        '/quiz',
+        '/',
         'assistant.html',
         'quiz.html',
-        'index.html',
-        '/'
+        'index.html'
     ]);
 
     if (allowedPages.has(returnTo)) {
         return returnTo;
     }
 
-    return 'assistant.html';
+    return '/assistant';
 }
 
 function wirePasswordToggle(buttonId, inputId, iconId) {
@@ -232,7 +234,7 @@ if (forgotPasswordForm || resetPasswordForm) {
                 showSuccess(data.message || 'Password updated successfully.');
                 resetPasswordForm.reset();
                 setTimeout(() => {
-                    window.location.href = 'login.html';
+                    window.location.href = '/login';
                 }, 1200);
             } catch (error) {
                 showAlert(error.message || 'Could not reset password.');

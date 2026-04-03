@@ -1,6 +1,11 @@
 {
   "rewrites": [
     { "source": "/", "destination": "/public/index.html" },
+    { "source": "/assistant", "destination": "/public/assistant.html" },
+    { "source": "/quiz", "destination": "/public/quiz.html" },
+    { "source": "/login", "destination": "/public/login.html" },
+    { "source": "/signup", "destination": "/public/signup.html" },
+    { "source": "/reset-password", "destination": "/public/reset-password.html" },
     { "source": "/assistant.html", "destination": "/public/assistant.html" },
     { "source": "/quiz.html", "destination": "/public/quiz.html" },
     { "source": "/login.html", "destination": "/public/login.html" },

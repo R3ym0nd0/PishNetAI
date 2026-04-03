@@ -254,12 +254,13 @@ function syncActiveNavWithPage() {
         .filter(Boolean);
 
     if (!pageSections.length) {
-        const currentPath = window.location.pathname.split('/').pop() || 'index.html';
+        const rawPath = window.location.pathname.split('/').pop() || '';
+        const currentPath = rawPath.replace(/\.html$/, '') || '/';
         navLinks.forEach((link) => {
             if (!(link instanceof HTMLAnchorElement)) return;
 
             const href = link.getAttribute('href') || '';
-            const normalizedHref = href.replace('../', '');
+            const normalizedHref = href.replace('../', '').replace(/\.html$/, '') || '/';
             const isCurrentPage = normalizedHref === currentPath;
             link.classList.toggle('is-active', isCurrentPage);
         });

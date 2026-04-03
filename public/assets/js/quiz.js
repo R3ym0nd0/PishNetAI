@@ -464,7 +464,7 @@ async function handleQuizLogout() {
     closePublicQuizProfile();
     resetQuizWorkspace();
     applyQuizPageState();
-    window.location.href = 'quiz.html';
+    window.location.href = '/quiz';
 }
 
 function openQuizLogoutConfirm() {
@@ -1850,7 +1850,7 @@ quizStartButtons.forEach((button) => {
         event.preventDefault();
         const action = button.dataset.lockedAction || 'start';
         if (action === 'login') {
-            window.location.href = 'login.html?returnTo=quiz.html';
+            window.location.href = '/login?returnTo=/quiz';
             return;
         }
         if (action === 'locked') {
