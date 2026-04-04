@@ -2319,17 +2319,32 @@ html {
     gap: 18px;
 }
 
+.result-side-stack {
+    display: contents;
+}
+
 @media (min-width: 1024px) {
     .result-body {
         grid-template-columns: minmax(0, 1.14fr) minmax(0, 0.86fr);
         grid-template-areas:
             "info info"
             "risk risk"
-            "indicators overview"
-            "indicators summary"
-            "indicators recommendation";
+            "indicators side";
         gap: 20px;
         align-items: start;
+    }
+
+    .result-side-stack {
+        display: grid;
+        grid-area: side;
+        gap: 20px;
+        align-content: start;
+    }
+
+    .result-side-stack > .result-page-overview,
+    .result-side-stack > .result-summary,
+    .result-side-stack > .result-recommendation {
+        grid-area: auto;
     }
 
     .result-info-grid {
@@ -2344,6 +2359,8 @@ html {
         height: 100%;
         align-self: stretch;
         min-height: 0;
+        max-height: 560px;
+        overflow: hidden;
     }
 
     .result-page-overview,
@@ -2524,7 +2541,9 @@ html {
 
 .result-indicators-list li {
     position: relative;
-    padding: 12px 14px 12px 36px;
+    display: grid;
+    gap: 10px;
+    padding: 12px 14px 12px 18px;
     color: var(--text-primary, #1a202c);
     font-size: 0.9rem;
     line-height: 1.55;
@@ -2532,6 +2551,73 @@ html {
     background: rgba(255, 255, 255, 0.76);
     border: 1px solid rgba(210, 224, 237, 0.8);
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72);
+}
+
+.result-indicator-item {
+    overflow: hidden;
+}
+
+.result-indicator-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: fit-content;
+    max-width: 100%;
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border: 1px solid transparent;
+}
+
+.result-indicator-text {
+    display: block;
+}
+
+.result-indicator-item.is-danger {
+    background: linear-gradient(145deg, rgba(255, 245, 246, 0.98), rgba(255, 236, 240, 0.95));
+    border-color: rgba(242, 180, 193, 0.88);
+}
+
+.result-indicator-badge.is-danger {
+    color: #b42345;
+    background: linear-gradient(145deg, rgba(244, 63, 94, 0.13), rgba(255, 228, 234, 0.7));
+    border-color: rgba(242, 173, 188, 0.9);
+}
+
+.result-indicator-item.is-warning {
+    background: linear-gradient(145deg, rgba(255, 249, 237, 0.98), rgba(255, 242, 214, 0.95));
+    border-color: rgba(241, 211, 147, 0.9);
+}
+
+.result-indicator-badge.is-warning {
+    color: #9a6700;
+    background: linear-gradient(145deg, rgba(245, 158, 11, 0.14), rgba(255, 243, 205, 0.72));
+    border-color: rgba(232, 196, 118, 0.92);
+}
+
+.result-indicator-item.is-safe {
+    background: linear-gradient(145deg, rgba(241, 252, 246, 0.98), rgba(228, 247, 236, 0.95));
+    border-color: rgba(162, 219, 185, 0.9);
+}
+
+.result-indicator-badge.is-safe {
+    color: #13795b;
+    background: linear-gradient(145deg, rgba(22, 163, 74, 0.13), rgba(224, 247, 233, 0.72));
+    border-color: rgba(156, 214, 178, 0.92);
+}
+
+.result-indicator-item.is-info {
+    background: linear-gradient(145deg, rgba(248, 251, 255, 0.98), rgba(236, 244, 251, 0.95));
+    border-color: rgba(196, 216, 233, 0.88);
+}
+
+.result-indicator-badge.is-info {
+    color: #0f4a86;
+    background: linear-gradient(145deg, rgba(13, 77, 134, 0.12), rgba(220, 234, 249, 0.68));
+    border-color: rgba(173, 198, 228, 0.9);
 }
 
 .result-indicators-toggle {
@@ -2561,7 +2647,12 @@ html {
     }
 
     .result-indicators.expanded .result-indicators-list {
-        max-height: 460px;
+        flex: 1 1 auto;
+        min-height: 0;
+        max-height: none;
+        overflow-y: auto;
+        padding-right: 8px;
+        scrollbar-gutter: stable;
     }
     
     .result-page-overview p,
@@ -2573,14 +2664,7 @@ html {
 
 .result-indicators-list li::before {
     content: "";
-    position: absolute;
-    left: 14px;
-    top: 18px;
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
-    background: linear-gradient(135deg, var(--lcc-blue-soft), var(--lcc-gold));
-    box-shadow: 0 0 0 4px rgba(30, 90, 150, 0.12);
+    display: none;
 }
 
 .result-page-overview {
@@ -2707,6 +2791,10 @@ html {
             "indicators indicators"
             "summary recommendation";
         gap: 18px;
+    }
+
+    .result-side-stack {
+        display: contents;
     }
 
     .result-info-grid {
@@ -2919,7 +3007,7 @@ html {
 
     .result-indicators-list li {
         font-size: 0.88rem;
-        padding: 11px 12px 11px 34px;
+        padding: 11px 12px 11px 14px;
     }
 
     .result-info-label {
@@ -3029,16 +3117,9 @@ html {
     }
 
     .result-indicators-list li {
-        padding: 10px 12px 10px 32px;
+        padding: 10px 12px 10px 13px;
         font-size: 0.84rem;
         border-radius: 12px;
-    }
-
-    .result-indicators-list li::before {
-        left: 12px;
-        top: 15px;
-        width: 9px;
-        height: 9px;
     }
 
     .result-indicators-toggle {
@@ -3154,17 +3235,14 @@ html {
     }
 
     .result-indicators-list li {
-        padding: 9px 10px 9px 29px;
+        padding: 9px 10px 9px 12px;
         font-size: 0.8rem;
         line-height: 1.5;
     }
 
-    .result-indicators-list li::before {
-        left: 10px;
-        top: 14px;
-        width: 8px;
-        height: 8px;
-        box-shadow: 0 0 0 3px rgba(30, 90, 150, 0.1);
+    .result-indicator-badge {
+        font-size: 0.64rem;
+        padding: 5px 8px;
     }
 
     .result-summary p,
@@ -4500,6 +4578,10 @@ html {
     .scanner-shell {
         padding: 20px;
         gap: 16px;
+    }
+
+    .result-side-stack {
+        display: contents;
     }
 
     .scanner-title {

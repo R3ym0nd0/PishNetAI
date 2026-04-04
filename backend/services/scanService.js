@@ -79,7 +79,11 @@ function buildIndicators(features, riskScore, heuristicReasons = []) {
   const indicators = [];
 
   if (features.knownLegitimateDomain) {
-    indicators.push('This website matches a domain from the trusted site list.');
+    indicators.push(
+      features.usesHttps
+        ? 'This website matches a domain from the trusted site list.'
+        : 'This website matches a recognized domain, but the current page is not using a secure connection.'
+    );
   }
   indicators.push(features.usesHttps ? 'The site uses a secure connection.' : 'The site does not appear to use a secure connection.');
   indicators.push(features.hasIpAddressInUrl ? 'The link uses a raw IP address instead of a normal website name.' : 'The link uses a normal website name.');

@@ -142,34 +142,36 @@ function ensureResultTemplate() {
                 <ul class="result-indicators-list"></ul>
             </div>
 
-            <div class="result-page-overview">
-                <div class="result-page-overview-header">
-                    <svg class="result-page-overview-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M4 5c0-1.1.9-2 2-2h12c1.1 0 2 .9 2 2v11c0 1.1-.9 2-2 2H6c-1.1 0-2-.9-2-2V5zm2 0v11h12V5H6zm1 14h10v2H7z"/>
-                    </svg>
-                    <span class="result-page-overview-label">Website Snapshot</span>
+            <div class="result-side-stack">
+                <div class="result-page-overview">
+                    <div class="result-page-overview-header">
+                        <svg class="result-page-overview-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M4 5c0-1.1.9-2 2-2h12c1.1 0 2 .9 2 2v11c0 1.1-.9 2-2 2H6c-1.1 0-2-.9-2-2V5zm2 0v11h12V5H6zm1 14h10v2H7z"/>
+                        </svg>
+                        <span class="result-page-overview-label">Website Snapshot</span>
+                    </div>
+                    <p></p>
                 </div>
-                <p></p>
-            </div>
 
-            <div class="result-summary">
-                <div class="result-summary-header">
-                    <svg class="result-summary-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
-                    </svg>
-                    <span class="result-summary-label">Summary</span>
+                <div class="result-summary">
+                    <div class="result-summary-header">
+                        <svg class="result-summary-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/>
+                        </svg>
+                        <span class="result-summary-label">Summary</span>
+                    </div>
+                    <p></p>
                 </div>
-                <p></p>
-            </div>
 
-            <div class="result-recommendation">
-                <div class="result-recommendation-header">
-                    <svg class="result-recommendation-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7zm2.85 11.1l-.85.6V16h-4v-2.3l-.85-.6C7.8 12.16 7 10.63 7 9c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.63-.8 3.16-2.15 4.1z"/>
-                    </svg>
-                    <span class="result-recommendation-label">Recommendation</span>
+                <div class="result-recommendation">
+                    <div class="result-recommendation-header">
+                        <svg class="result-recommendation-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M9 21c0 .55.45 1 1 1h4c.55 0 1-.45 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7zm2.85 11.1l-.85.6V16h-4v-2.3l-.85-.6C7.8 12.16 7 10.63 7 9c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.63-.8 3.16-2.15 4.1z"/>
+                        </svg>
+                        <span class="result-recommendation-label">Recommendation</span>
+                    </div>
+                    <p></p>
                 </div>
-                <p></p>
             </div>
 
             <div class="result-disclaimer">
@@ -640,9 +642,94 @@ function updateIndicators(indicators = []) {
     const existingToggle = resultSection?.querySelector('.result-indicators-toggle');
     if (existingToggle) existingToggle.remove();
 
+    const classifyIndicator = (indicator) => {
+        const text = String(indicator || '').toLowerCase();
+
+        if (
+            text.includes('scanner note:') ||
+            text.includes('overall scan risk score') ||
+            text.includes('page structure found') ||
+            text.includes('other page elements found') ||
+            text.includes('the page contains') ||
+            text.includes('detected ') ||
+            text.includes('estimated domain age') ||
+            text.includes('link structure has') ||
+            text.includes('encoded link characters found') ||
+            text.includes('matches a recognized domain, but the current page is not using a secure connection')
+        ) {
+            return { label: 'Scan Info', tone: 'info' };
+        }
+
+        if (
+            text.includes('matches a domain from the trusted site list') ||
+            text.includes('uses a trusted domain name') ||
+            text.includes('uses a secure connection') ||
+            text.includes('a secure connection is established') ||
+            text.includes('uses a normal website name') ||
+            text.includes('did not redirect') ||
+            text.includes('does not use a known shortened url service') ||
+            text.includes('does not match the higher-risk list') ||
+            text.includes('final website name matches') ||
+            text.includes('were found for this site') ||
+            text.includes('no obvious phishing-related words were found') ||
+            text.includes('does not appear to ask for a password') ||
+            text.includes('no password fields are detected') ||
+            text.includes('forms appear to stay within the same site')
+        ) {
+            return { label: 'Good Sign', tone: 'safe' };
+        }
+
+        if (
+            text.includes('does not appear to use a secure connection') ||
+            text.includes('uses a raw ip address') ||
+            text.includes('send data outside the current site') ||
+            text.includes('different from the one you originally entered') ||
+            text.includes('could not be reached normally') ||
+            text.includes('some expected domain records were not found') ||
+            text.includes('phishing pages were found') ||
+            text.includes('sensitive parameter clue') ||
+            text.includes('higher-risk list') ||
+            text.includes('lookalike-domain') ||
+            text.includes('credential-related form') ||
+            text.includes('submits data to an external domain')
+        ) {
+            return { label: 'Red Flag', tone: 'danger' };
+        }
+
+        if (
+            text.includes('asks for a password') ||
+            text.includes('password in') ||
+            text.includes('credential') ||
+            text.includes('redirected') ||
+            text.includes('shortened url service') ||
+            text.includes('shortened-link') ||
+            text.includes('suspicious link clues') ||
+            text.includes('registrar information') ||
+            text.includes('query parameter') ||
+            text.includes('outside link') ||
+            text.includes('outside script')
+        ) {
+            return { label: 'Caution', tone: 'warning' };
+        }
+
+        return { label: 'Scan Info', tone: 'info' };
+    };
+
     indicators.forEach((indicator) => {
+        const indicatorMeta = classifyIndicator(indicator);
         const item = document.createElement('li');
-        item.textContent = indicator;
+        item.className = `result-indicator-item is-${indicatorMeta.tone}`;
+
+        const badge = document.createElement('span');
+        badge.className = `result-indicator-badge is-${indicatorMeta.tone}`;
+        badge.textContent = indicatorMeta.label;
+
+        const text = document.createElement('span');
+        text.className = 'result-indicator-text';
+        text.textContent = indicator;
+
+        item.appendChild(badge);
+        item.appendChild(text);
         resultIndicatorsList.appendChild(item);
     });
 
