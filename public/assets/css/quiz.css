@@ -4635,7 +4635,15 @@ body.quiz-signed-in .quiz-library-toolbar {
     }
 
     .quiz-badges-summary {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns: 1fr;
+    }
+
+    .quiz-badges-summary-card {
+        grid-template-columns: none;
+        justify-items: center;
+        text-align: center;
+        align-content: center;
+        gap: 6px;
     }
 
     .quiz-library-toolbar {
@@ -4867,6 +4875,19 @@ body.quiz-signed-in .quiz-library-toolbar {
     }
 }
 
+@media (min-width: 769px) and (max-width: 1024px) {
+    .quiz-badges-summary {
+        display: flex;
+        flex-wrap: nowrap;
+        gap: 10px;
+    }
+
+    .quiz-badges-summary-card {
+        flex: 1 1 0;
+        min-width: 0;
+    }
+}
+
 @media (max-width: 768px) {
     body.quiz-signed-in .main-content {
         margin-top: 0;
@@ -5023,7 +5044,26 @@ body.quiz-signed-in .quiz-library-toolbar {
     }
 
     .quiz-public-profile-badges {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .quiz-public-profile-stat-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .quiz-public-profile-stat {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .quiz-public-profile-stat span {
+        text-align: left;
+    }
+
+    .quiz-public-profile-stat strong {
+        text-align: right;
     }
 
     .quiz-profile-head {
@@ -5587,6 +5627,10 @@ body.quiz-signed-in .quiz-library-toolbar {
         grid-template-columns: repeat(3, minmax(0, 1fr));
         gap: 12px;
         margin-top: 10px;
+    }
+
+    .quiz-public-profile-badges.is-collapsed {
+        max-height: 214px;
     }
 
     .quiz-public-profile-progress {
@@ -6174,4 +6218,41 @@ body.quiz-signed-in .quiz-library-toolbar {
     .quiz-hero-panel.is-animated .quiz-hero-stats {
         animation: none;
     }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+    .quiz-badges-summary {
+        display: flex !important;
+        flex-wrap: nowrap;
+        gap: 10px;
+    }
+
+    .quiz-badges-summary-card {
+        flex: 1 1 0;
+        min-width: 0;
+    }
+}
+
+@media (min-width: 641px) and (max-width: 768px) {
+    .quiz-badges-summary {
+        display: flex !important;
+        flex-wrap: nowrap;
+        gap: 10px;
+    }
+
+    .quiz-badges-summary-card {
+        flex: 1 1 0;
+        min-width: 0;
+    }
+}
+
+.quiz-badges-summary {
+    display: flex !important;
+    flex-wrap: nowrap;
+    gap: 10px;
+}
+
+.quiz-badges-summary-card {
+    flex: 1 1 0;
+    min-width: 0;
 }

@@ -40,6 +40,46 @@ function buildPasswordData(password) {
   };
 }
 
+const QUIZ_POINT_VALUES = {
+  'url-basics': 100,
+  'message-red-flags': 110,
+  'after-clicking': 110,
+  'phishing-scenarios': 130,
+  'best-practices': 150
+};
+
+function getCompletedQuizIdsFromAttempts(attempts = []) {
+  const completedQuizIds = new Set();
+
+  attempts.forEach((attempt) => {
+    const quizId = String(attempt?.quizId || '').trim();
+    const percentage = Number(attempt?.percentage || 0);
+
+    if (quizId && percentage >= 75) {
+      completedQuizIds.add(quizId);
+    }
+  });
+
+  return completedQuizIds;
+}
+
+function getEarnedPointsFromCompletedQuizIds(completedQuizIds = new Set()) {
+  return [...completedQuizIds].reduce((total, quizId) => total + Number(QUIZ_POINT_VALUES[quizId] || 0), 0);
+}
+
+function getStrongQuizCountFromAttempts(attempts = [], minimumScore = 85) {
+  const bestByQuizId = new Map();
+
+  attempts.forEach((attempt) => {
+    const quizId = String(attempt?.quizId || '').trim();
+    const percentage = Number(attempt?.percentage || 0);
+    if (!quizId) return;
+    bestByQuizId.set(quizId, Math.max(bestByQuizId.get(quizId) || 0, percentage));
+  });
+
+  return [...bestByQuizId.values()].filter((score) => score >= minimumScore).length;
+}
+
 async function createUser({ name, email, password }) {
   const normalizedEmail = normalizeEmail(email);
   const passwordData = buildPasswordData(password);
@@ -562,29 +602,70 @@ async function getQuizLeaderboard(limit = 10) {
       SELECT
         qa.user_id,
         u.name,
-        COUNT(qa.id)::int AS attempts_count,
-        ROUND(AVG(qa.percentage)::numeric, 1) AS average_score,
-        MAX(qa.percentage)::numeric AS best_score,
-        MAX(qa.created_at) AS last_attempt_at
+        qa.quiz_id,
+        qa.percentage,
+        qa.created_at
       FROM quiz_attempts qa
       INNER JOIN users u ON u.id = qa.user_id
-      GROUP BY qa.user_id, u.name
-      HAVING COUNT(qa.id) >= 2
-      ORDER BY average_score DESC, best_score DESC, last_attempt_at DESC
-      LIMIT $1
-    `,
-    [Math.max(1, Math.min(Number(limit) || 10, 25))]
+      ORDER BY qa.created_at DESC
+    `
   );
 
-  return result.rows.map((row, index) => ({
-    rank: index + 1,
-    userId: row.user_id,
-    name: row.name,
-    attemptsCount: Number(row.attempts_count),
-    averageScore: Number(row.average_score),
-    bestScore: Number(row.best_score),
-    lastAttemptAt: row.last_attempt_at
-  }));
+  const grouped = new Map();
+
+  result.rows.forEach((row) => {
+    const entry = grouped.get(row.user_id) || {
+      userId: row.user_id,
+      name: row.name,
+      attempts: []
+    };
+
+    entry.attempts.push({
+      quizId: row.quiz_id,
+      percentage: Number(row.percentage || 0),
+      createdAt: row.created_at
+    });
+
+    grouped.set(row.user_id, entry);
+  });
+
+  return [...grouped.values()]
+    .filter((entry) => entry.attempts.length >= 2)
+    .map((entry) => {
+      const attemptsCount = entry.attempts.length;
+      const averageScore = attemptsCount
+        ? Number((entry.attempts.reduce((total, attempt) => total + attempt.percentage, 0) / attemptsCount).toFixed(1))
+        : 0;
+      const bestScore = entry.attempts.reduce((best, attempt) => Math.max(best, attempt.percentage), 0);
+      const completedQuizIds = getCompletedQuizIdsFromAttempts(entry.attempts);
+      const completedSetsCount = completedQuizIds.size;
+      const earnedPoints = getEarnedPointsFromCompletedQuizIds(completedQuizIds);
+      const lastAttemptAt = entry.attempts.reduce((latest, attempt) => (
+        String(latest) > String(attempt.createdAt) ? latest : attempt.createdAt
+      ), '');
+
+      return {
+        userId: entry.userId,
+        name: entry.name,
+        attemptsCount,
+        averageScore,
+        bestScore,
+        completedSetsCount,
+        earnedPoints,
+        lastAttemptAt
+      };
+    })
+    .sort((left, right) => {
+      if (left.earnedPoints !== right.earnedPoints) return right.earnedPoints - left.earnedPoints;
+      if (left.averageScore !== right.averageScore) return right.averageScore - left.averageScore;
+      if (left.bestScore !== right.bestScore) return right.bestScore - left.bestScore;
+      return String(right.lastAttemptAt).localeCompare(String(left.lastAttemptAt));
+    })
+    .slice(0, Math.max(1, Math.min(Number(limit) || 10, 25)))
+    .map((entry, index) => ({
+      rank: index + 1,
+      ...entry
+    }));
 }
 
 async function getPublicQuizProfile(userId) {
@@ -637,25 +718,33 @@ async function getPublicQuizProfile(userId) {
     bestScore: Number(row.best_score)
   }));
 
-  const attemptsCount = Number(summary.attempts_count || 0);
-  const averageScore = Number(summary.average_score || 0);
-  const bestScore = Number(summary.best_score || 0);
-  const completedQuizIds = new Set(topics.map((topic) => topic.quizId));
-  const allQuizIds = ['url-basics', 'message-red-flags', 'after-clicking', 'phishing-scenarios', 'best-practices'];
-  const coreQuizIds = ['url-basics', 'message-red-flags', 'after-clicking'];
-  const reviewSafeAttemptsResult = await query(
+  const attemptsResult = await query(
     `
-      SELECT percentage
+      SELECT quiz_id, percentage, created_at
       FROM quiz_attempts
       WHERE user_id = $1
+      ORDER BY created_at DESC
     `,
     [userId]
   );
-  const allAttempts = reviewSafeAttemptsResult.rows.map((row) => ({
-    percentage: Number(row.percentage || 0)
+
+  const allAttempts = attemptsResult.rows.map((row) => ({
+    quizId: row.quiz_id,
+    percentage: Number(row.percentage || 0),
+    createdAt: row.created_at
   }));
-  const strongAttemptsCount = allAttempts.filter((attempt) => attempt.percentage >= 85).length;
-  const needsReviewCleared = allAttempts.filter((attempt) => attempt.percentage >= 75).length;
+
+  const attemptsCount = allAttempts.length;
+  const averageScore = attemptsCount
+    ? Number((allAttempts.reduce((total, attempt) => total + attempt.percentage, 0) / attemptsCount).toFixed(1))
+    : 0;
+  const bestScore = allAttempts.reduce((best, attempt) => Math.max(best, attempt.percentage), 0);
+  const completedQuizIds = getCompletedQuizIdsFromAttempts(allAttempts);
+  const earnedPoints = getEarnedPointsFromCompletedQuizIds(completedQuizIds);
+  const allQuizIds = ['url-basics', 'message-red-flags', 'after-clicking', 'phishing-scenarios', 'best-practices'];
+  const coreQuizIds = ['url-basics', 'message-red-flags', 'after-clicking'];
+  const strongAttemptsCount = getStrongQuizCountFromAttempts(allAttempts, 85);
+  const needsReviewCleared = completedQuizIds.size;
   const advancedCompleted = completedQuizIds.has('phishing-scenarios');
   const masteryCompleted = completedQuizIds.has('best-practices');
 
@@ -663,17 +752,17 @@ async function getPublicQuizProfile(userId) {
     {
       id: 'first-step',
       title: 'First Step',
-      earned: attemptsCount >= 1
+      earned: completedQuizIds.size >= 1
     },
     {
       id: 'practice-streak',
       title: 'Practice Streak',
-      earned: attemptsCount >= 3
+      earned: earnedPoints >= 210
     },
     {
       id: 'steady-learner',
       title: 'Steady Learner',
-      earned: attemptsCount >= 5
+      earned: earnedPoints >= 320
     },
     {
       id: 'sharp-eye',
@@ -683,7 +772,7 @@ async function getPublicQuizProfile(userId) {
     {
       id: 'steady-awareness',
       title: 'Steady Awareness',
-      earned: averageScore >= 75 && attemptsCount >= 2
+      earned: averageScore >= 75 && completedQuizIds.size >= 2
     },
     {
       id: 'topic-explorer',
@@ -718,7 +807,7 @@ async function getPublicQuizProfile(userId) {
     {
       id: 'guardian-grade',
       title: 'Guardian Grade',
-      earned: averageScore >= 88 && attemptsCount >= 6
+      earned: averageScore >= 88 && earnedPoints >= 500
     },
     {
       id: 'phishnet-complete',
@@ -734,6 +823,8 @@ async function getPublicQuizProfile(userId) {
     attemptsCount,
     averageScore,
     bestScore,
+    strongResultsCount: strongAttemptsCount,
+    earnedPoints,
     lastAttemptAt: summary.last_attempt_at,
     topics,
     badges

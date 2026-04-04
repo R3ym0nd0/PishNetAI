@@ -293,6 +293,14 @@ const quizzes = {
     }
 };
 
+const quizPointValues = {
+    'url-basics': 100,
+    'message-red-flags': 110,
+    'after-clicking': 110,
+    'phishing-scenarios': 130,
+    'best-practices': 150
+};
+
 const quizStartButtons = document.querySelectorAll('.quiz-start-btn[data-quiz]');
 const quizSidebar = document.getElementById('quizSidebar');
 const quizSidebarOverlay = document.getElementById('quizSidebarOverlay');
@@ -581,6 +589,23 @@ function getCompletedQuizIds(attempts = []) {
     });
 
     return completedQuizIds;
+}
+
+function getEarnedQuizPoints(attempts = []) {
+    return [...getCompletedQuizIds(attempts)].reduce((total, quizId) => total + Number(quizPointValues[quizId] || 0), 0);
+}
+
+function getStrongQuizCount(attempts = [], minimumScore = 85) {
+    const bestByQuizId = new Map();
+
+    attempts.forEach((attempt) => {
+        const quizId = String(attempt?.quizId || '').trim();
+        const percentage = Number(attempt?.percentage || 0);
+        if (!quizId) return;
+        bestByQuizId.set(quizId, Math.max(bestByQuizId.get(quizId) || 0, percentage));
+    });
+
+    return [...bestByQuizId.values()].filter((score) => score >= minimumScore).length;
 }
 
 function getQuizUnlockState(quizId, attempts = []) {
@@ -953,6 +978,17 @@ function scrollToQuizSection(targetId, behavior = 'smooth') {
     target.scrollIntoView({ behavior, block: 'start' });
 }
 
+function syncQuizViewFromHash(behavior = 'auto') {
+    const hash = String(window.location.hash || '').trim();
+    if (!hash.startsWith('#')) return;
+
+    const targetId = hash.slice(1);
+    const target = document.getElementById(targetId);
+    if (!target) return;
+
+    scrollToQuizSection(targetId, behavior);
+}
+
 function bindQuizSidebarNavigation() {
     if (!quizSidebarNavLinks.length) return;
 
@@ -966,6 +1002,9 @@ function bindQuizSidebarNavigation() {
             if (!target) return;
 
             event.preventDefault();
+            if (window.location.hash !== `#${targetId}`) {
+                history.replaceState(null, '', `#${targetId}`);
+            }
             scrollToQuizSection(targetId);
             closeQuizSidebarDrawer();
         });
@@ -1171,7 +1210,7 @@ function populateSignedInDashboard(attempts = []) {
     populateQuizProfile(attempts);
 }
 
-function getQuizRankMeta(attemptsCount = 0, averageScore = 0, completedSetsCount = 0) {
+function getQuizRankMeta(pointsCount = 0, averageScore = 0, completedSetsCount = 0) {
     const totalQuizCount = Object.keys(quizzes).length;
     const rankTiers = [
         {
@@ -1181,13 +1220,14 @@ function getQuizRankMeta(attemptsCount = 0, averageScore = 0, completedSetsCount
         {
             label: 'Aware User',
             requirements: [
-                { label: 'attempts', current: attemptsCount, target: 3 },
+                { label: 'points', current: pointsCount, target: 100 },
                 { label: 'average score', current: averageScore, target: 70 }
             ]
         },
         {
             label: 'Threat Spotter',
             requirements: [
+                { label: 'points', current: pointsCount, target: 320 },
                 { label: 'completed sets', current: completedSetsCount, target: 4 },
                 { label: 'average score', current: averageScore, target: 80 }
             ]
@@ -1195,7 +1235,7 @@ function getQuizRankMeta(attemptsCount = 0, averageScore = 0, completedSetsCount
         {
             label: 'Awareness Expert',
             requirements: [
-                { label: 'attempts', current: attemptsCount, target: 6 },
+                { label: 'points', current: pointsCount, target: 500 },
                 { label: 'average score', current: averageScore, target: 88 }
             ]
         },
@@ -1240,19 +1280,21 @@ function getQuizRankMeta(attemptsCount = 0, averageScore = 0, completedSetsCount
 }
 
 function populateQuizProfile(attempts = []) {
+    const earnedPoints = getEarnedQuizPoints(attempts);
+
     if (quizProfileAttempts) {
-        quizProfileAttempts.textContent = String(attempts.length);
+        quizProfileAttempts.textContent = String(earnedPoints);
     }
     renderQuizBadges(attempts);
     renderQuizProfileBadges(attempts);
 
     if (!attempts.length) {
         if (quizProfileAverage) quizProfileAverage.textContent = '--';
-        if (quizProfileBest) quizProfileBest.textContent = '--';
+        if (quizProfileBest) quizProfileBest.textContent = '0';
         if (quizProfileRank) quizProfileRank.textContent = 'Newcomer';
         if (quizProfileRankProgressFill) quizProfileRankProgressFill.style.width = '0%';
         if (quizProfileRankProgressText) {
-            quizProfileRankProgressText.textContent = 'Complete a few signed-in quiz attempts to begin your awareness rank progress.';
+            quizProfileRankProgressText.textContent = 'Complete signed-in quiz sets to begin earning awareness points and rank progress.';
         }
         if (quizProfileCompletedSets) quizProfileCompletedSets.textContent = `0/${Object.keys(quizzes).length}`;
         return;
@@ -1261,16 +1303,14 @@ function populateQuizProfile(attempts = []) {
     const averageScore = Math.round(
         attempts.reduce((total, attempt) => total + Number(attempt.percentage || 0), 0) / attempts.length
     );
-    const bestScore = attempts.reduce((best, attempt) => (
-        Number(attempt.percentage || 0) > best ? Number(attempt.percentage || 0) : best
-    ), 0);
+    const strongResults = getStrongQuizCount(attempts, 85);
     const completedQuizIds = getCompletedQuizIds(attempts);
     if (quizProfileAverage) quizProfileAverage.textContent = `${averageScore}%`;
-    if (quizProfileBest) quizProfileBest.textContent = `${bestScore}%`;
+    if (quizProfileBest) quizProfileBest.textContent = String(strongResults);
     if (quizProfileCompletedSets) {
         quizProfileCompletedSets.textContent = `${completedQuizIds.size}/${Object.keys(quizzes).length}`;
     }
-    const rankMeta = getQuizRankMeta(attempts.length, averageScore, completedQuizIds.size);
+    const rankMeta = getQuizRankMeta(earnedPoints, averageScore, completedQuizIds.size);
 
     if (quizProfileRank) {
         quizProfileRank.textContent = rankMeta.currentTier.label;
@@ -1286,6 +1326,7 @@ function populateQuizProfile(attempts = []) {
         } else {
             const requirementCopy = rankMeta.nextTier.requirements
                 .map((requirement) => {
+                    if (requirement.label === 'points') return `${requirement.target} points`;
                     if (requirement.label === 'average score') return `${requirement.target}% average`;
                     if (requirement.label === 'completed sets') return `${requirement.target} completed sets`;
                     return `${requirement.target} ${requirement.label}`;
@@ -1341,34 +1382,35 @@ function getQuizBadgeDefinitions(attempts = []) {
     ), 0);
     const uniqueTopics = new Set(attempts.map((attempt) => attempt.quizId)).size;
     const completedQuizIds = getCompletedQuizIds(attempts);
+    const earnedPoints = getEarnedQuizPoints(attempts);
     const advancedCompleted = completedQuizIds.has('phishing-scenarios');
     const masteryCompleted = completedQuizIds.has('best-practices');
-    const strongAttempts = attempts.filter((attempt) => Number(attempt.percentage || 0) >= 85).length;
-    const needsReviewCleared = attempts.filter((attempt) => Number(attempt.percentage || 0) >= 75).length;
+    const strongAttempts = getStrongQuizCount(attempts, 85);
+    const needsReviewCleared = completedQuizIds.size;
     const allQuizIds = Object.keys(quizzes);
 
     return [
         {
             id: 'first-step',
             title: 'First Step',
-            detail: 'Complete your first signed-in quiz attempt.',
-            earned: attempts.length >= 1,
+            detail: 'Complete your first credited quiz set.',
+            earned: completedQuizIds.size >= 1,
             difficulty: 'Starter',
             icon: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2 3 7v6c0 5 3.84 9.74 9 11 5.16-1.26 9-6 9-11V7l-9-5Zm-1 14-4-4 1.41-1.41L11 13.17l5.59-5.58L18 9l-7 7Z"/></svg>'
         },
         {
             id: 'practice-streak',
             title: 'Practice Streak',
-            detail: 'Save at least 3 quiz attempts.',
-            earned: attempts.length >= 3,
+            detail: 'Earn at least 210 quiz points.',
+            earned: earnedPoints >= 210,
             difficulty: 'Starter',
             icon: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8Z"/></svg>'
         },
         {
             id: 'steady-learner',
             title: 'Steady Learner',
-            detail: 'Save at least 5 quiz attempts.',
-            earned: attempts.length >= 5,
+            detail: 'Earn at least 320 quiz points.',
+            earned: earnedPoints >= 320,
             difficulty: 'Starter',
             icon: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M5 4h14v2H5V4Zm0 7h10v2H5v-2Zm0 7h14v2H5v-2Zm12-8h2v8h-2v-8Z"/></svg>'
         },
@@ -1383,8 +1425,8 @@ function getQuizBadgeDefinitions(attempts = []) {
         {
             id: 'steady-awareness',
             title: 'Steady Awareness',
-            detail: 'Maintain an average score of 75% or higher.',
-            earned: averageScore >= 75 && attempts.length >= 2,
+            detail: 'Maintain an average score of 75% or higher after earning points from at least 2 quiz sets.',
+            earned: averageScore >= 75 && completedQuizIds.size >= 2,
             difficulty: 'Core',
             icon: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M3 17h3v4H3v-4Zm5-7h3v11H8V10Zm5 3h3v8h-3v-8Zm5-10h3v18h-3V3Z"/></svg>'
         },
@@ -1415,7 +1457,7 @@ function getQuizBadgeDefinitions(attempts = []) {
         {
             id: 'review-crusher',
             title: 'Review Crusher',
-            detail: 'Build 5 saved attempts scoring 75% or higher.',
+            detail: 'Earn credit in all 5 quiz sets.',
             earned: needsReviewCleared >= 5,
             difficulty: 'Advanced',
             icon: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 5H5v14h14V5Zm-8 11-4-4 1.4-1.4 2.6 2.58 4.6-4.59L17 10l-6 6Z"/></svg>'
@@ -1439,8 +1481,8 @@ function getQuizBadgeDefinitions(attempts = []) {
         {
             id: 'guardian-grade',
             title: 'Guardian Grade',
-            detail: 'Maintain an average score of 88% or higher across at least 6 attempts.',
-            earned: averageScore >= 88 && attempts.length >= 6,
+            detail: 'Maintain an average score of 88% or higher after earning at least 500 quiz points.',
+            earned: averageScore >= 88 && earnedPoints >= 500,
             difficulty: 'Hard',
             icon: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2 4 5v6c0 5.25 3.44 10.14 8 11.76 4.56-1.62 8-6.51 8-11.76V5l-8-3Zm-1 15-3.5-3.5 1.41-1.41L11 14.17l4.59-4.58L17 11l-6 6Z"/></svg>'
         },
@@ -1796,7 +1838,7 @@ function renderQuizLeaderboard(entries, currentUserId, minimumAttempts = 2) {
             <div class="quiz-leaderboard-rank">#${entry.rank}</div>
             <div class="quiz-leaderboard-main">
                 <strong>${entry.name}</strong>
-                <span>${entry.attemptsCount} attempt${entry.attemptsCount === 1 ? '' : 's'} - Best ${Math.round(entry.bestScore)}%</span>
+                <span>${entry.earnedPoints || 0} pts - ${entry.completedSetsCount || 0} sets completed</span>
             </div>
             <div class="quiz-leaderboard-score-wrap">
                 <span class="quiz-leaderboard-score-icon" aria-hidden="true">
@@ -1872,7 +1914,7 @@ function renderPublicQuizProfile(profile) {
     const unlockedBadges = badges.filter((badge) => badge.earned);
     const topics = Array.isArray(profile.topics) ? profile.topics : [];
     const completedSetsCount = topics.length;
-    const rankMeta = getQuizRankMeta(profile.attemptsCount || 0, Math.round(profile.averageScore || 0), completedSetsCount);
+    const rankMeta = getQuizRankMeta(profile.earnedPoints || 0, Math.round(profile.averageScore || 0), completedSetsCount);
     const note = String(profile.profileNote || '').trim();
     const shouldCollapseBadges = unlockedBadges.length > 6;
 
@@ -1908,18 +1950,18 @@ function renderPublicQuizProfile(profile) {
                         <p>${escapeHtml(note || 'This user has not added a public profile note yet.')}</p>
                     </div>
 
-                    <div class="quiz-public-profile-stat-grid">
-                        <div class="quiz-public-profile-stat">
-                            <span>Total Attempts</span>
-                            <strong>${escapeHtml(profile.attemptsCount)}</strong>
-                        </div>
+                        <div class="quiz-public-profile-stat-grid">
+                            <div class="quiz-public-profile-stat">
+                                <span>Earned Points</span>
+                                <strong>${escapeHtml(profile.earnedPoints || 0)}</strong>
+                            </div>
                         <div class="quiz-public-profile-stat">
                             <span>Average Score</span>
                             <strong>${escapeHtml(Math.round(profile.averageScore || 0))}%</strong>
                         </div>
                         <div class="quiz-public-profile-stat">
-                            <span>Best Score</span>
-                            <strong>${escapeHtml(Math.round(profile.bestScore || 0))}%</strong>
+                            <span>Strong Results</span>
+                            <strong>${escapeHtml(profile.strongResultsCount || 0)}</strong>
                         </div>
                         <div class="quiz-public-profile-stat">
                             <span>Completed Sets</span>
@@ -2311,10 +2353,13 @@ window.addEventListener('resize', () => {
 });
 
 bindQuizSidebarNavigation();
+window.addEventListener('hashchange', () => syncQuizViewFromHash('smooth'));
 
 if (isLoggedIn()) {
     setActiveQuizSidebarLink('quizzes');
 }
+
+syncQuizViewFromHash();
 
 
 
