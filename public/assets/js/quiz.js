@@ -1058,10 +1058,25 @@ async function loadSignedInQuizData() {
     if (!isLoggedIn()) return;
 
     try {
-        const [attemptData, leaderboardData] = await Promise.all([
+        const [attemptData, leaderboardData, authData] = await Promise.all([
             apiFetch('/api/quiz/attempts'),
-            apiFetch('/api/quiz/leaderboard')
+            apiFetch('/api/quiz/leaderboard'),
+            apiFetch('/api/auth/me')
         ]);
+
+        if (authData?.user) {
+            setStoredUser(authData.user);
+
+            const fullLabel = authData.user.name || authData.user.username || 'Student';
+            const secondaryLabel = authData.user.email || 'Quiz account';
+
+            if (quizSidebarName) quizSidebarName.textContent = fullLabel;
+            if (quizSidebarEmail) quizSidebarEmail.textContent = secondaryLabel;
+            if (quizMobileTopbarLabel) quizMobileTopbarLabel.textContent = fullLabel;
+            if (quizProfileName) quizProfileName.textContent = fullLabel;
+            if (quizProfileEmail) quizProfileEmail.textContent = secondaryLabel;
+            syncQuizProfileNoteUi(authData.user.profileNote || '');
+        }
 
         signedInQuizAttempts = Array.isArray(attemptData?.attempts) ? attemptData.attempts : [];
         renderQuizHistory(signedInQuizAttempts, {
