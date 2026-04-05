@@ -674,7 +674,8 @@ function updateIndicators(indicators = []) {
             text.includes('no obvious phishing-related words were found') ||
             text.includes('does not appear to ask for a password') ||
             text.includes('no password fields are detected') ||
-            text.includes('forms appear to stay within the same site')
+            text.includes('forms appear to stay within the same site') ||
+            text.includes('no hidden lookalike-domain pattern was detected')
         ) {
             return { label: 'Good Sign', tone: 'safe' };
         }
@@ -694,7 +695,9 @@ function updateIndicators(indicators = []) {
             text.includes('submits data to an external domain') ||
             text.includes('ai model flagged this url as high risk') ||
             text.includes('ai model has flagged this url as high risk') ||
+            text.includes('ai model still flagged this url as high risk') ||
             text.includes('threat-intelligence service identified this url as unsafe') ||
+            text.includes('threat-intelligence service flagged this url as unsafe') ||
             text.includes('browser-style reputation warning') ||
             text.includes('local phishing dataset warning') ||
             text.includes('matched a known phishing entry')
