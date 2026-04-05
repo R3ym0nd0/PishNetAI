@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Sora:wght@500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/style.css?v=20260405b">
+    <link rel="stylesheet" href="assets/css/style.css?v=20260406a">
     <link rel="icon" href="assets/images/logo.png" type="image/png">
 </head>
 <body>
@@ -390,12 +390,34 @@
             </div>
         </div>
         <div id="aiMessages" class="ai-messages" role="log" aria-live="polite">
-                <div class="ai-welcome" id="aiWelcome">
-                    <img src="assets/images/logo.png" alt="PhishNet AI logo" class="ai-welcome-logo">
-                    <h3>How can I help you today?</h3>
-                    <p>I'm Phinny, your phishing-focused assistant. Paste a suspicious URL, message, or ask what to do next.</p>
+            <div class="ai-welcome" id="aiWelcome">
+                <img src="assets/images/logo.png" alt="PhishNet AI logo" class="ai-welcome-logo">
+                <h3>How can I help you today?</h3>
+                <p>I'm Phinny, your phishing-focused assistant. Choose a prompt or ask your own question.</p>
+                <div class="assistant-prompt-grid assistant-prompt-grid-mini">
+                    <button type="button" class="assistant-prompt-card assistant-prompt-card-mini" data-ai-prompt="Check this suspicious link for phishing signs.">
+                        <span class="assistant-prompt-kicker">Scan Help</span>
+                        <strong>Check a suspicious link</strong>
+                        <span>Ask Phinny to explain a risky URL.</span>
+                    </button>
+                    <button type="button" class="assistant-prompt-card assistant-prompt-card-mini" data-ai-prompt="What are the common signs of a phishing website?">
+                        <span class="assistant-prompt-kicker">Awareness</span>
+                        <strong>Explain phishing signs</strong>
+                        <span>Learn what to watch out for online.</span>
+                    </button>
+                    <button type="button" class="assistant-prompt-card assistant-prompt-card-mini" data-ai-prompt="How can I stay safe before logging in to a website?">
+                        <span class="assistant-prompt-kicker">Safety</span>
+                        <strong>How do I stay safe?</strong>
+                        <span>Get quick online safety guidance.</span>
+                    </button>
+                    <button type="button" class="assistant-prompt-card assistant-prompt-card-mini" data-ai-prompt="Help me understand this suspicious message or scam.">
+                        <span class="assistant-prompt-kicker">Support</span>
+                        <strong>Understand a scam message</strong>
+                        <span>Break down a message or fake alert.</span>
+                    </button>
                 </div>
             </div>
+        </div>
         <form id="aiForm" class="ai-form" autocomplete="off">
             <div class="form-input-wrapper">
                 <textarea 
@@ -426,6 +448,6 @@
         </svg>
     </button>
 
-    <script type="module" src="assets/js/script.js?v=20260405b"></script>
+    <script type="module" src="assets/js/script.js?v=20260406a"></script>
 </body>
 </html>

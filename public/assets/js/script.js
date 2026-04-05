@@ -499,7 +499,7 @@ function showAiWelcome() {
     welcome.innerHTML = `
         <img src="assets/images/logo.png" alt="PhishNet AI logo" class="ai-welcome-logo">
         <h3>How can I help you today?</h3>
-        <p>I'm Phinny, your phishing-focused assistant. Paste a suspicious URL, message, or ask what to do next.</p>
+        <p>I'm Phinny, your phishing-focused assistant. Ask about a suspicious link, message, or what to do next.</p>
     `;
     aiMessages.appendChild(welcome);
 }

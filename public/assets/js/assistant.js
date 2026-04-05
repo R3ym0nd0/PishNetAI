@@ -152,13 +152,48 @@ function showWelcomeMessage() {
     const welcome = document.createElement('div');
     welcome.className = 'welcome-message';
     welcome.innerHTML = `
-        <div class="welcome-icon">
-            <img src="assets/images/logo.png" alt="PhishNet Logo" class="welcome-logo">
+        <div class="assistant-intro-copy">
+            <img src="assets/images/logo.png" alt="PhishNet AI logo" class="assistant-intro-logo welcome-logo">
+            <h2>How can I help you today?</h2>
+            <p>I'm Phinny, your phishing-focused assistant. Ask about a suspicious link, message, or what to do next.</p>
         </div>
-        <h2>How can I help you today?</h2>
-        <p>I'm Phinny, your phishing detection assistant. I can help you identify suspicious URLs, analyze messages, and stay safe online.</p>
+        <div class="assistant-prompt-grid">
+            <button type="button" class="assistant-prompt-card" data-assistant-prompt="Check this suspicious link for phishing signs.">
+                <span class="assistant-prompt-icon" aria-hidden="true">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M10.5 3a7.5 7.5 0 1 0 4.61 13.42l4.23 4.22 1.06-1.06-4.22-4.23A7.5 7.5 0 0 0 10.5 3zm0 1.5a6 6 0 1 1 0 12 6 6 0 0 1 0-12z"/><path d="M10.5 7.25a.75.75 0 0 1 .75.75v1.75H13a.75.75 0 0 1 0 1.5h-1.75V13a.75.75 0 0 1-1.5 0v-1.75H8a.75.75 0 0 1 0-1.5h1.75V8a.75.75 0 0 1 .75-.75z"/></svg>
+                </span>
+                <strong>Check link</strong>
+            </button>
+            <button type="button" class="assistant-prompt-card" data-assistant-prompt="What are the common signs of a phishing website?">
+                <span class="assistant-prompt-icon" aria-hidden="true">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3 4 7v5c0 4.97 3.06 8.87 8 10 4.94-1.13 8-5.03 8-10V7l-8-4zm0 1.68 6.5 3.25V12c0 4.12-2.4 7.33-6.5 8.39C7.9 19.33 5.5 16.12 5.5 12V7.93L12 4.68z"/><path d="M11.25 8.25h1.5v5h-1.5zm0 6.5h1.5v1.5h-1.5z"/></svg>
+                </span>
+                <strong>Phishing signs</strong>
+            </button>
+            <button type="button" class="assistant-prompt-card" data-assistant-prompt="How can I stay safe before logging in to a website?">
+                <span class="assistant-prompt-icon" aria-hidden="true">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2 5 5v5c0 4.55 2.91 8.77 7 10 4.09-1.23 7-5.45 7-10V5l-7-3zm0 1.64 5.5 2.36V10c0 3.8-2.32 7.21-5.5 8.34C8.82 17.21 6.5 13.8 6.5 10V6l5.5-2.36z"/><path d="M10.4 11.6 9.1 10.3 8 11.4l2.4 2.4 5.6-5.6-1.1-1.1z"/></svg>
+                </span>
+                <strong>Stay safe</strong>
+            </button>
+            <button type="button" class="assistant-prompt-card" data-assistant-prompt="Help me understand this suspicious message or scam.">
+                <span class="assistant-prompt-icon" aria-hidden="true">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M5 4h14a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H8l-4 4V6a2 2 0 0 1 2-2zm0 1.5a.5.5 0 0 0-.5.5v10.38L7.38 14.5H19a.5.5 0 0 0 .5-.5V6a.5.5 0 0 0-.5-.5H5z"/><path d="M8 8h8v1.5H8zm0 3h5v1.5H8z"/></svg>
+                </span>
+                <strong>Scam help</strong>
+            </button>
+        </div>
     `;
     aiMessagesFull.appendChild(welcome);
+
+    welcome.querySelectorAll('[data-assistant-prompt]').forEach((button) => {
+        button.addEventListener('click', async () => {
+            const prompt = button.getAttribute('data-assistant-prompt') || '';
+            if (!prompt) return;
+            aiInputFull.value = prompt;
+            await sendAssistantMessage(prompt);
+        });
+    });
 }
 
 function hideWelcomeMessage() {
