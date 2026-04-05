@@ -696,6 +696,7 @@ function updateIndicators(indicators = []) {
             text.includes('ai model flagged this url as high risk') ||
             text.includes('ai model has flagged this url as high risk') ||
             text.includes('ai model still flagged this url as high risk') ||
+            text.includes('ai model still flags this url as high risk') ||
             text.includes('threat-intelligence service identified this url as unsafe') ||
             text.includes('threat-intelligence service flagged this url as unsafe') ||
             text.includes('browser-style reputation warning') ||

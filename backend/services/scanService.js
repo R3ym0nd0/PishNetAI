@@ -334,7 +334,7 @@ async function scanUrl(url) {
     Number.isFinite(phishingProbability) ? phishingProbability : confidence
   );
   const riskScore = buildFinalRiskScore(modelRiskScore, behaviorAssessment, features);
-  const prediction = buildFinalPrediction(modelRiskScore, behaviorAssessment, riskScore);
+  const prediction = buildFinalPrediction(modelRiskScore, behaviorAssessment, riskScore, features);
 
   const indicators = buildIndicators(features, riskScore, behaviorAssessment.reasons, modelRiskScore, prediction);
   if (aiFallback?.used) {

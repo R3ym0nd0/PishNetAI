@@ -60,10 +60,24 @@ function buildBehaviorAssessment(features) {
   }
 
   if (!features.dnsResolves) add(16, 'The hostname did not resolve cleanly during lookup.');
-  if (features.hasExternalFormAction && !trustedLegitimateDomain) {
-    add(24, 'A form submits data to an external domain.');
-  } else if (features.hasExternalFormAction && features.hasPasswordField) {
+  const hasOldDomain = typeof features.domainAgeDays === 'number' && features.domainAgeDays >= 365;
+  const cleanUrlShape =
+    !features.hasIpAddressInUrl &&
+    !features.hasPunycode &&
+    !features.hasShortenerDomain &&
+    !features.suspiciousTld &&
+    !features.hasAtSymbol;
+
+  if (features.hasExternalFormAction && features.hasPasswordField) {
     add(24, 'A credential-related form submits data to an external domain.');
+  } else if (features.hasExternalFormAction && !trustedLegitimateDomain) {
+    if (hasOldDomain && cleanUrlShape && !features.hasPasswordField) {
+      add(8, 'A form submits data to an external domain, but the site otherwise looks established.');
+    } else {
+      add(24, 'A form submits data to an external domain.');
+    }
+  } else if (features.hasExternalFormAction && trustedLegitimateDomain && !features.hasPasswordField) {
+    add(4, 'A form submits data to an external service, which can happen on legitimate sites.');
   }
 
   if (features.hasPasswordField && !features.usesHttps) {
@@ -118,6 +132,7 @@ function buildFinalRiskScore(modelRiskScore, behaviorAssessment, features) {
   const trustedLegitimateDomain = Boolean(features.knownLegitimateDomain);
   const noCredentialCollection = !features.hasPasswordField;
   const noCredentialRiskBehavior = !features.hasPasswordField && !behaviorAssessment.hardFlag;
+  const hasEstablishedDomain = typeof features.domainAgeDays === 'number' && features.domainAgeDays >= 365;
   const cleanUrlShape =
     !features.hasIpAddressInUrl &&
     !features.hasPunycode &&
@@ -173,14 +188,44 @@ function buildFinalRiskScore(modelRiskScore, behaviorAssessment, features) {
     finalScore = Math.min(finalScore, 24);
   } else if (trustedLegitimateDomain && cleanUrlShape && !behaviorAssessment.hardFlag) {
     finalScore = Math.min(finalScore, 38);
+  } else if (
+    hasEstablishedDomain &&
+    noCredentialCollection &&
+    cleanUrlShape &&
+    !features.reputationFlagged &&
+    !features.localDatasetFlagged &&
+    behaviorAssessment.score <= 24 &&
+    !behaviorAssessment.hardFlag
+  ) {
+    finalScore = Math.min(finalScore, 38);
   }
 
   return clamp(finalScore, 0, 100);
 }
 
 function buildFinalPrediction(modelRiskScore, behaviorAssessment, finalRiskScore) {
+  const features = arguments[3] || {};
+  const hasEstablishedDomain = typeof features.domainAgeDays === 'number' && features.domainAgeDays >= 365;
+  const cleanUrlShape =
+    !features.hasIpAddressInUrl &&
+    !features.hasPunycode &&
+    !features.hasShortenerDomain &&
+    !features.suspiciousTld &&
+    !features.hasAtSymbol;
+
   if (finalRiskScore <= 15) return 'Safe';
   if (finalRiskScore <= 25) return 'Safe';
+  if (
+    hasEstablishedDomain &&
+    !features.hasPasswordField &&
+    !features.reputationFlagged &&
+    !features.localDatasetFlagged &&
+    cleanUrlShape &&
+    behaviorAssessment.score <= 24 &&
+    finalRiskScore <= 40
+  ) {
+    return 'Safe';
+  }
   if (behaviorAssessment.hardFlag) return 'Phishing';
   if (modelRiskScore >= 85) return 'Phishing';
   if (modelRiskScore >= 70 && behaviorAssessment.score >= 25) return 'Phishing';
