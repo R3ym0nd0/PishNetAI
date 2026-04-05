@@ -5619,7 +5619,15 @@ body.quiz-signed-in .quiz-library-toolbar {
     }
 
     .quiz-public-profile-stat {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 6px;
         justify-items: center;
+        text-align: center;
+    }
+
+    .quiz-public-profile-stat span,
+    .quiz-public-profile-stat strong {
         text-align: center;
     }
 

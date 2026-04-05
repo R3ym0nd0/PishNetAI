@@ -1,6 +1,7 @@
 const axios = require('axios');
 const { extractFeatures } = require('./featureExtractor');
 const { predictPhishingRisk } = require('./aiPredictionService');
+const { lookupUrlReputation } = require('./reputationService');
 const {
   buildBehaviorAssessment,
   buildFinalPrediction,
@@ -75,8 +76,24 @@ async function fetchWebsite(url) {
   }
 }
 
-function buildIndicators(features, riskScore, heuristicReasons = []) {
+function buildIndicators(features, riskScore, heuristicReasons = [], modelRiskScore = 0, prediction = 'Safe') {
   const indicators = [];
+  const aiDrivenPhishingRisk =
+    prediction === 'Phishing' &&
+    modelRiskScore >= 70 &&
+    features.usesHttps &&
+    !features.hasPasswordField &&
+    !features.hasExternalFormAction &&
+    !features.hasIpAddressInUrl &&
+    !features.hasPunycode &&
+    !features.suspiciousTld;
+
+  if (features.reputationFlagged) {
+    const threatTypes = Array.isArray(features.reputationThreatTypes) && features.reputationThreatTypes.length > 0
+      ? ` (${features.reputationThreatTypes.join(', ').toLowerCase().replace(/_/g, ' ')})`
+      : '';
+    indicators.unshift(`Browser-style reputation warning: A threat-intelligence service flagged this URL as unsafe${threatTypes}.`);
+  }
 
   if (features.knownLegitimateDomain) {
     indicators.push(
@@ -113,6 +130,14 @@ function buildIndicators(features, riskScore, heuristicReasons = []) {
     indicators.push('No obvious phishing-related words were found on the page.');
   }
 
+  if (aiDrivenPhishingRisk) {
+    indicators.unshift('AI model warning: The visible page checks looked mostly normal, but the AI model still flagged this URL as high risk.');
+  } else if (modelRiskScore >= 70) {
+    indicators.push('AI model warning: The AI model found suspicious phishing-like patterns in this URL.');
+  } else if (modelRiskScore >= 45 && riskScore >= 35) {
+    indicators.push('AI model note: The AI model found moderate risk patterns in this URL.');
+  }
+
   indicators.push(`The page contains ${features.formCount} form(s), ${features.inputCount} input field(s), and ${features.hiddenInputCount} hidden input(s).`);
   indicators.push(`Overall scan risk score: ${riskScore}%.`);
   heuristicReasons.forEach((reason) => indicators.push(`Scanner note: ${reason}`));
@@ -121,7 +146,24 @@ function buildIndicators(features, riskScore, heuristicReasons = []) {
 }
 
 function buildSummary(prediction, features, riskScore, behaviorAssessment, modelRiskScore) {
+  if (features.reputationFlagged) {
+    return 'A browser-style reputation service flagged this URL as unsafe, so it should be treated as a high-risk phishing or malware-related warning.';
+  }
+
+  const aiDrivenPhishingRisk =
+    prediction === 'Phishing' &&
+    modelRiskScore >= 70 &&
+    features.usesHttps &&
+    !features.hasPasswordField &&
+    !features.hasExternalFormAction &&
+    !features.hasIpAddressInUrl &&
+    !features.hasPunycode &&
+    !features.suspiciousTld;
+
   if (prediction === 'Phishing') {
+    if (aiDrivenPhishingRisk) {
+      return 'The visible page checks looked mostly normal, but the AI model still flagged this URL as high risk, so the result should be treated as an AI-driven warning.';
+    }
     return 'This URL shows multiple phishing-like signals from both the AI model and the rule-based scan, so it should be treated as risky.';
   }
 
@@ -190,9 +232,63 @@ function buildPageOverview(features) {
   return parts.join(' ');
 }
 
+function buildPageOverviewWithRiskContext(features, prediction, riskScore, behaviorAssessment, modelRiskScore) {
+  const baseOverview = buildPageOverview(features);
+  if (features.reputationFlagged) {
+    return 'The scanned page may look normal, but a browser-style reputation service has already flagged this URL as unsafe.';
+  }
+  const aiDrivenPhishingRisk =
+    prediction === 'Phishing' &&
+    modelRiskScore >= 70 &&
+    features.usesHttps &&
+    !features.hasPasswordField &&
+    !features.hasExternalFormAction &&
+    !features.hasIpAddressInUrl &&
+    !features.hasPunycode &&
+    !features.suspiciousTld;
+
+  if (aiDrivenPhishingRisk) {
+    return 'The scanned page looks normal on visible checks, but the AI model still treated this URL as high risk.';
+  }
+
+  if (prediction === 'Phishing' && riskScore >= 70) {
+    return 'The scanned page shows multiple suspicious signs that match a high-risk phishing-style result.';
+  }
+
+  return baseOverview;
+}
+
+function buildRecommendationWithRiskContext(prediction, riskScore, features, behaviorAssessment, modelRiskScore) {
+  if (features.reputationFlagged) {
+    return 'Avoid interacting with this URL and do not enter any sensitive information. Verify it through an official source before visiting again.';
+  }
+
+  const aiDrivenPhishingRisk =
+    prediction === 'Phishing' &&
+    modelRiskScore >= 70 &&
+    features.usesHttps &&
+    !features.hasPasswordField &&
+    !features.hasExternalFormAction &&
+    !features.hasIpAddressInUrl &&
+    !features.hasPunycode &&
+    !features.suspiciousTld;
+
+  if (aiDrivenPhishingRisk) {
+    return 'Proceed carefully and verify the URL through an official source before interacting with the page or sharing any sensitive information.';
+  }
+
+  return buildRecommendation(prediction, riskScore);
+}
+
 async function scanUrl(url) {
   const response = await fetchWebsite(url);
   const { features, modelFeatures } = await extractFeatures({ inputUrl: url, response });
+  const reputationAssessment = await lookupUrlReputation(features.finalUrl || url);
+  features.reputationChecked = Boolean(reputationAssessment.checked);
+  features.reputationProvider = reputationAssessment.provider || null;
+  features.reputationFlagged = Boolean(reputationAssessment.flagged);
+  features.reputationThreatTypes = Array.isArray(reputationAssessment.threatTypes) ? reputationAssessment.threatTypes : [];
+  features.reputationLookupError = reputationAssessment.error || null;
   const behaviorAssessment = buildBehaviorAssessment(features);
   let predictionPayload;
   let aiFallback = null;
@@ -217,9 +313,12 @@ async function scanUrl(url) {
   const riskScore = buildFinalRiskScore(modelRiskScore, behaviorAssessment, features);
   const prediction = buildFinalPrediction(modelRiskScore, behaviorAssessment, riskScore);
 
-  const indicators = buildIndicators(features, riskScore, behaviorAssessment.reasons);
+  const indicators = buildIndicators(features, riskScore, behaviorAssessment.reasons, modelRiskScore, prediction);
   if (aiFallback?.used) {
     indicators.push('Scanner note: The AI prediction service was temporarily unavailable, so this result used the rule-based scan fallback.');
+  }
+  if (reputationAssessment.enabled && !reputationAssessment.checked && reputationAssessment.error) {
+    indicators.push('Scanner note: The browser-style reputation lookup was unavailable, so the result relied on the scanner logic only.');
   }
 
   return {
@@ -230,14 +329,17 @@ async function scanUrl(url) {
     behaviorRiskScore: behaviorAssessment.score,
     modelRiskScore,
     heuristicRiskScore: behaviorAssessment.score,
+    reputationChecked: Boolean(reputationAssessment.checked),
+    reputationFlagged: Boolean(reputationAssessment.flagged),
+    reputationThreatTypes: Array.isArray(reputationAssessment.threatTypes) ? reputationAssessment.threatTypes : [],
     knownLegitimateDomain: Boolean(features.knownLegitimateDomain),
     grade: getGradeFromRiskScore(riskScore),
     riskLevel: getRiskLevel(riskScore),
     riskClass: getRiskClass(riskScore),
     indicators,
     summary: buildSummary(prediction, features, riskScore, behaviorAssessment, modelRiskScore),
-    pageOverview: buildPageOverview(features),
-    recommendation: buildRecommendation(prediction, riskScore),
+    pageOverview: buildPageOverviewWithRiskContext(features, prediction, riskScore, behaviorAssessment, modelRiskScore),
+    recommendation: buildRecommendationWithRiskContext(prediction, riskScore, features, behaviorAssessment, modelRiskScore),
     heuristicReasons: behaviorAssessment.reasons,
     aiFallback,
     features,

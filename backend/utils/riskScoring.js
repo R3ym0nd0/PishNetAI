@@ -93,6 +93,11 @@ function buildBehaviorAssessment(features) {
     add(14, 'The page uses phishing-related language together with login-style behavior.');
   }
 
+  if (features.reputationFlagged) {
+    add(42, 'A browser-style reputation service flagged this URL as unsafe.');
+    hardFlag = true;
+  }
+
   if (trustedLegitimateDomain && !hardFlag && !features.hasPasswordField) {
     score = Math.min(score, 8);
   }
@@ -142,6 +147,10 @@ function buildFinalRiskScore(modelRiskScore, behaviorAssessment, features) {
   }
 
   let finalScore = Math.round((Number(modelRiskScore) * 0.78) + (Number(behaviorAssessment.score) * 0.22));
+
+  if (features.reputationFlagged) {
+    finalScore = Math.max(finalScore, behaviorAssessment.score, 88);
+  }
 
   if (behaviorAssessment.hardFlag) {
     finalScore = Math.max(finalScore, behaviorAssessment.score, 78);

@@ -11,6 +11,16 @@ This folder contains the Node.js scanning pipeline for the PhishNet AI URL scann
 5. Send those features to the Python AI service.
 6. Return a unified response to the frontend.
 
+## Optional Reputation Check
+
+The scanner can also use a browser-style reputation lookup to catch URLs that are already flagged by threat-intelligence services.
+
+Set this environment variable to enable it:
+
+- `SAFE_BROWSING_API_KEY`
+
+When enabled, a flagged URL can raise the final score and add a strong warning in the scanner result even if the visible page checks look mostly normal.
+
 ## Model Input Mapping
 
 The Python model expects the features in this exact order:

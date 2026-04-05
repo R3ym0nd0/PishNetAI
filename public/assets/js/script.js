@@ -691,7 +691,11 @@ function updateIndicators(indicators = []) {
             text.includes('higher-risk list') ||
             text.includes('lookalike-domain') ||
             text.includes('credential-related form') ||
-            text.includes('submits data to an external domain')
+            text.includes('submits data to an external domain') ||
+            text.includes('ai model flagged this url as high risk') ||
+            text.includes('ai model has flagged this url as high risk') ||
+            text.includes('threat-intelligence service identified this url as unsafe') ||
+            text.includes('browser-style reputation warning')
         ) {
             return { label: 'Red Flag', tone: 'danger' };
         }
@@ -707,7 +711,10 @@ function updateIndicators(indicators = []) {
             text.includes('registrar information') ||
             text.includes('query parameter') ||
             text.includes('outside link') ||
-            text.includes('outside script')
+            text.includes('outside script') ||
+            text.includes('ai model found suspicious phishing-like patterns') ||
+            text.includes('ai model found moderate risk patterns') ||
+            text.includes('visible page checks looked mostly normal, but the ai model still raised concerns')
         ) {
             return { label: 'Caution', tone: 'warning' };
         }
