@@ -2,6 +2,7 @@ const axios = require('axios');
 const { extractFeatures } = require('./featureExtractor');
 const { predictPhishingRisk } = require('./aiPredictionService');
 const { lookupUrlReputation } = require('./reputationService');
+const { lookupLocalPhishingDataset } = require('./localPhishingDatasetService');
 const {
   buildBehaviorAssessment,
   buildFinalPrediction,
@@ -88,6 +89,11 @@ function buildIndicators(features, riskScore, heuristicReasons = [], modelRiskSc
     !features.hasPunycode &&
     !features.suspiciousTld;
 
+  if (features.localDatasetFlagged) {
+    const datasetTarget = features.localDatasetTarget ? ` targeting ${features.localDatasetTarget}` : '';
+    indicators.unshift(`Local phishing dataset warning: This URL matched a known phishing entry${datasetTarget}.`);
+  }
+
   if (features.reputationFlagged) {
     const threatTypes = Array.isArray(features.reputationThreatTypes) && features.reputationThreatTypes.length > 0
       ? ` (${features.reputationThreatTypes.join(', ').toLowerCase().replace(/_/g, ' ')})`
@@ -146,6 +152,10 @@ function buildIndicators(features, riskScore, heuristicReasons = [], modelRiskSc
 }
 
 function buildSummary(prediction, features, riskScore, behaviorAssessment, modelRiskScore) {
+  if (features.localDatasetFlagged) {
+    return 'This URL matched a known phishing entry in the local phishing dataset, so it should be treated as a high-risk phishing warning.';
+  }
+
   if (features.reputationFlagged) {
     return 'A browser-style reputation service flagged this URL as unsafe, so it should be treated as a high-risk phishing or malware-related warning.';
   }
@@ -234,6 +244,9 @@ function buildPageOverview(features) {
 
 function buildPageOverviewWithRiskContext(features, prediction, riskScore, behaviorAssessment, modelRiskScore) {
   const baseOverview = buildPageOverview(features);
+  if (features.localDatasetFlagged) {
+    return 'The scanned page may look normal, but this URL matched a known phishing record in the local phishing dataset.';
+  }
   if (features.reputationFlagged) {
     return 'The scanned page may look normal, but a browser-style reputation service has already flagged this URL as unsafe.';
   }
@@ -259,6 +272,10 @@ function buildPageOverviewWithRiskContext(features, prediction, riskScore, behav
 }
 
 function buildRecommendationWithRiskContext(prediction, riskScore, features, behaviorAssessment, modelRiskScore) {
+  if (features.localDatasetFlagged) {
+    return 'Avoid interacting with this URL and do not enter any sensitive information. Treat it as a known phishing warning and verify through an official source.';
+  }
+
   if (features.reputationFlagged) {
     return 'Avoid interacting with this URL and do not enter any sensitive information. Verify it through an official source before visiting again.';
   }
@@ -283,7 +300,13 @@ function buildRecommendationWithRiskContext(prediction, riskScore, features, beh
 async function scanUrl(url) {
   const response = await fetchWebsite(url);
   const { features, modelFeatures } = await extractFeatures({ inputUrl: url, response });
+  const localDatasetAssessment = lookupLocalPhishingDataset(features.finalUrl || url);
   const reputationAssessment = await lookupUrlReputation(features.finalUrl || url);
+  features.localDatasetChecked = Boolean(localDatasetAssessment.checked);
+  features.localDatasetFlagged = Boolean(localDatasetAssessment.flagged);
+  features.localDatasetSource = localDatasetAssessment.source || null;
+  features.localDatasetMatchType = localDatasetAssessment.matchType || null;
+  features.localDatasetTarget = localDatasetAssessment.target || null;
   features.reputationChecked = Boolean(reputationAssessment.checked);
   features.reputationProvider = reputationAssessment.provider || null;
   features.reputationFlagged = Boolean(reputationAssessment.flagged);
@@ -329,6 +352,9 @@ async function scanUrl(url) {
     behaviorRiskScore: behaviorAssessment.score,
     modelRiskScore,
     heuristicRiskScore: behaviorAssessment.score,
+    localDatasetChecked: Boolean(localDatasetAssessment.checked),
+    localDatasetFlagged: Boolean(localDatasetAssessment.flagged),
+    localDatasetTarget: localDatasetAssessment.target || null,
     reputationChecked: Boolean(reputationAssessment.checked),
     reputationFlagged: Boolean(reputationAssessment.flagged),
     reputationThreatTypes: Array.isArray(reputationAssessment.threatTypes) ? reputationAssessment.threatTypes : [],

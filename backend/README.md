@@ -21,6 +21,14 @@ Set this environment variable to enable it:
 
 When enabled, a flagged URL can raise the final score and add a strong warning in the scanner result even if the visible page checks look mostly normal.
 
+## Local Phishing Dataset Check
+
+The scanner also checks the submitted URL against the local `verified_online.csv` phishing dataset.
+
+- Exact URL and host+path matches can raise the final score.
+- A matched record adds a strong phishing warning even without any extra API call.
+- This works as an offline phishing reputation layer alongside the AI model and Safe Browsing check.
+
 ## Model Input Mapping
 
 The Python model expects the features in this exact order:

@@ -695,7 +695,9 @@ function updateIndicators(indicators = []) {
             text.includes('ai model flagged this url as high risk') ||
             text.includes('ai model has flagged this url as high risk') ||
             text.includes('threat-intelligence service identified this url as unsafe') ||
-            text.includes('browser-style reputation warning')
+            text.includes('browser-style reputation warning') ||
+            text.includes('local phishing dataset warning') ||
+            text.includes('matched a known phishing entry')
         ) {
             return { label: 'Red Flag', tone: 'danger' };
         }

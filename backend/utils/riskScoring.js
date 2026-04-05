@@ -98,6 +98,11 @@ function buildBehaviorAssessment(features) {
     hardFlag = true;
   }
 
+  if (features.localDatasetFlagged) {
+    add(38, 'This URL matched a known phishing entry in the local phishing dataset.');
+    hardFlag = true;
+  }
+
   if (trustedLegitimateDomain && !hardFlag && !features.hasPasswordField) {
     score = Math.min(score, 8);
   }
@@ -150,6 +155,10 @@ function buildFinalRiskScore(modelRiskScore, behaviorAssessment, features) {
 
   if (features.reputationFlagged) {
     finalScore = Math.max(finalScore, behaviorAssessment.score, 88);
+  }
+
+  if (features.localDatasetFlagged) {
+    finalScore = Math.max(finalScore, behaviorAssessment.score, 84);
   }
 
   if (behaviorAssessment.hardFlag) {
