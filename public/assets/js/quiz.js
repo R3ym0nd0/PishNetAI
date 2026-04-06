@@ -397,7 +397,7 @@ const guestQuizPrompt = document.getElementById('guestQuizPrompt');
 const quizRetryBtn = document.getElementById('quizRetryBtn');
 const quizChooseAnotherBtn = document.getElementById('quizChooseAnotherBtn');
 const quizExitBtn = document.getElementById('quizExitBtn');
-const quizGrid = document.querySelector('.quiz-grid');
+const quizGrid = document.getElementById('quizzesGrid');
 const quizCards = [...document.querySelectorAll('.quiz-card[data-quiz-card]')];
 
 let currentQuizId = null;

@@ -6,7 +6,7 @@
     <title>PhishNet AI - Training</title>
     <link rel="icon" href="assets/images/logo.png" type="image/png">
     <link rel="stylesheet" href="assets/css/style.css?v=20260403c">
-    <link rel="stylesheet" href="assets/css/quiz.css?v=20260406i">
+    <link rel="stylesheet" href="assets/css/quiz.css?v=20260406k">
 </head>
 <body class="quiz-signed-in">
     <div class="page-shell">
@@ -68,7 +68,7 @@
                                     <path d="M4 6.75A1.25 1.25 0 1 0 4 9.25a1.25 1.25 0 0 0 0-2.5Zm4 1.25c0-.41.34-.75.75-.75h10.5a.75.75 0 0 1 0 1.5H8.75A.75.75 0 0 1 8 8Zm-4 4A1.25 1.25 0 1 0 4 14.5a1.25 1.25 0 0 0 0-2.5Zm4 1.25c0-.41.34-.75.75-.75h10.5a.75.75 0 0 1 0 1.5H8.75a.75.75 0 0 1-.75-.75Zm-4 4A1.25 1.25 0 1 0 4 20a1.25 1.25 0 0 0 0-2.5Zm4 1.25c0-.41.34-.75.75-.75h10.5a.75.75 0 0 1 0 1.5H8.75a.75.75 0 0 1-.75-.75Z"/>
                                 </svg>
                             </span>
-                            <span>Quiz Sets</span>
+                            <span>Quizzes</span>
                         </a>
                         <a href="#labsPanel" class="quiz-sidebar-link" data-quiz-nav-link>
                             <span class="quiz-sidebar-link-icon" aria-hidden="true">
@@ -444,7 +444,7 @@
             </section>
 
             <section class="panel quiz-history-panel" id="labsPanel" hidden>
-                <div class="quiz-grid">
+                <div class="quiz-grid" id="labsGrid">
                     <article class="quiz-card" data-lab-card="login-page-check">
                         <div class="quiz-card-header">
                             <span class="quiz-badge popular">Hands-On</span>
@@ -557,7 +557,7 @@
                     <div class="quiz-page-tabs" id="quizPagination" aria-label="Quiz pages"></div>
                 </div>
 
-                <div class="quiz-grid">
+                <div class="quiz-grid" id="quizzesGrid">
                     <article class="quiz-card" data-quiz-card="url-basics">
                         <div class="quiz-card-header">
                             <span class="quiz-badge popular">Core Series</span>
@@ -940,6 +940,6 @@
     </div>
 
     <script type="module" src="assets/js/script.js?v=20260403c"></script>
-    <script src="assets/js/quiz.js?v=20260406i"></script>
+    <script src="assets/js/quiz.js?v=20260406k"></script>
 </body>
 </html>

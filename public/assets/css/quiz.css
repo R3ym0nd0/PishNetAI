@@ -869,6 +869,8 @@ body.quiz-sidebar-open {
 .quiz-badges-panel[hidden],
 .quiz-history-panel[hidden],
 .quiz-leaderboard-panel[hidden],
+#labsPanel[hidden],
+#loginPageLab[hidden],
 #quizzes[hidden],
 #quizWorkspace[hidden] {
     display: none !important;
@@ -1131,7 +1133,7 @@ body.quiz-signed-in #quizHistoryPanel {
     color: var(--text-soft);
     font-size: 0.93rem;
     line-height: 1.55;
-    max-width: 62ch;
+    max-width: none;
 }
 
 .quiz-history-head-chip {
