@@ -302,6 +302,7 @@ const quizPointValues = {
 };
 
 const quizStartButtons = document.querySelectorAll('.quiz-start-btn[data-quiz]');
+const labStartButtons = document.querySelectorAll('.quiz-start-btn[data-start-lab]');
 const quizSidebar = document.getElementById('quizSidebar');
 const quizSidebarOverlay = document.getElementById('quizSidebarOverlay');
 const quizSidebarToggle = document.getElementById('quizSidebarToggle');
@@ -354,6 +355,14 @@ const quizHistoryList = document.getElementById('quizHistoryList');
 const quizHistoryEmpty = document.getElementById('quizHistoryEmpty');
 const quizHistoryToggleBtn = document.getElementById('quizHistoryToggleBtn');
 const quizLeaderboardPanel = document.getElementById('quizLeaderboardPanel');
+const labsPanel = document.getElementById('labsPanel');
+const loginPageLab = document.getElementById('loginPageLab');
+const loginPageLabClose = document.getElementById('loginPageLabClose');
+const loginPageLabSelectionCount = document.getElementById('loginPageLabSelectionCount');
+const loginPageLabSubmit = document.getElementById('loginPageLabSubmit');
+const loginPageLabReset = document.getElementById('loginPageLabReset');
+const loginPageLabFeedback = document.getElementById('loginPageLabFeedback');
+const loginPageLabSpotTargets = [...document.querySelectorAll('.lab-spot-target[data-lab-spot]')];
 const quizLeaderboardList = document.getElementById('quizLeaderboardList');
 const quizLeaderboardEmpty = document.getElementById('quizLeaderboardEmpty');
 const quizProfileGuestPrompt = document.getElementById('quizProfileGuestPrompt');
@@ -399,6 +408,7 @@ let answers = [];
 let signedInQuizAttempts = [];
 let currentQuizPage = 1;
 let lockedQuizSidebarScrollY = 0;
+const loginPageLabCorrectSpots = new Set(['domain', 'urgency', 'support']);
 let quizSidebarTouchStartY = 0;
 const guestQuizCardsPreviewCount = 6;
 const maxAdaptiveQuizCardsPerPage = 9;
@@ -770,9 +780,10 @@ function updateQuizCardTierLabels() {
 }
 
 function setActiveQuizSidebarLink(targetId = '') {
+    const normalizedTargetId = targetId === 'loginPageLab' ? 'labsPanel' : targetId;
     quizSidebarNavLinks.forEach((link) => {
         const href = link.getAttribute('href') || '';
-        const isActive = href === `#${targetId}`;
+        const isActive = href === `#${normalizedTargetId}`;
         link.classList.toggle('is-active', isActive);
         if (isActive) {
             link.setAttribute('aria-current', 'page');
@@ -907,6 +918,8 @@ function handleQuizSidebarCloseControl(event) {
 function setQuizAppView(view = 'quiz-library') {
     const signedIn = isLoggedIn();
     const quizLibraryOnly = view === 'quiz-library';
+    const labsOnly = view === 'labs';
+    const currentLabOnly = view === 'current-lab';
     const leaderboardOnly = view === 'leaderboard';
     const profileOnly = view === 'profile';
     const badgesOnly = view === 'badges';
@@ -918,6 +931,8 @@ function setQuizAppView(view = 'quiz-library') {
     if (quizHistoryPanelSection) quizHistoryPanelSection.hidden = !historyOnly;
     if (quizLeaderboardPanel) quizLeaderboardPanel.hidden = !leaderboardOnly;
     if (quizzesSection) quizzesSection.hidden = !quizLibraryOnly;
+    if (labsPanel) labsPanel.hidden = !labsOnly;
+    if (loginPageLab) loginPageLab.hidden = !currentLabOnly;
     if (quizWorkspace) quizWorkspace.hidden = !currentQuizOnly || !currentQuizId;
 
     if (quizHistoryGuestPrompt) quizHistoryGuestPrompt.hidden = !historyOnly || signedIn;
@@ -953,6 +968,10 @@ function scrollToQuizSection(targetId, behavior = 'smooth') {
             setQuizAppView('profile');
         } else if (targetId === 'quizHistoryPanel') {
             setQuizAppView('history');
+        } else if (targetId === 'labsPanel') {
+            setQuizAppView('labs');
+        } else if (targetId === 'loginPageLab') {
+            setQuizAppView('current-lab');
         } else if (targetId === 'quizWorkspace') {
             setQuizAppView('current-quiz');
         } else {
@@ -967,6 +986,10 @@ function scrollToQuizSection(targetId, behavior = 'smooth') {
             setQuizAppView('profile');
         } else if (targetId === 'quizHistoryPanel') {
             setQuizAppView('history');
+        } else if (targetId === 'labsPanel') {
+            setQuizAppView('labs');
+        } else if (targetId === 'loginPageLab') {
+            setQuizAppView('current-lab');
         } else if (targetId === 'quizWorkspace') {
             setQuizAppView('current-quiz');
         } else {
@@ -1039,7 +1062,7 @@ function applyQuizPageState() {
         if (quizSidebarLogoutBtn) quizSidebarLogoutBtn.hidden = false;
         if (quizSidebarProfileBtn) quizSidebarProfileBtn.disabled = false;
 
-        if (quizSectionTitle) quizSectionTitle.textContent = 'Available Quizzes';
+        if (quizSectionTitle) quizSectionTitle.textContent = 'Available Training';
         if (quizSectionDescription) {
             quizSectionDescription.textContent = 'Choose a quiz set and strengthen your phishing awareness one topic at a time.';
         }
@@ -1063,7 +1086,7 @@ function applyQuizPageState() {
         if (quizSidebarProfileBtn) quizSidebarProfileBtn.disabled = false;
         closeQuizSidebarDrawer();
 
-        if (quizSectionTitle) quizSectionTitle.textContent = 'Available Quizzes';
+        if (quizSectionTitle) quizSectionTitle.textContent = 'Available Training';
         if (quizSectionDescription) {
             quizSectionDescription.textContent = 'Choose a quiz set and strengthen your phishing awareness one topic at a time.';
         }
@@ -2195,6 +2218,88 @@ function resetQuizWorkspace() {
     setQuizAppView('quiz-library');
 }
 
+function resetLoginPageLabState() {
+    if (loginPageLabSpotTargets.length) {
+        loginPageLabSpotTargets.forEach((button) => {
+            button.classList.remove('is-selected');
+            button.setAttribute('aria-pressed', 'false');
+        });
+    }
+
+    if (loginPageLabSelectionCount) {
+        loginPageLabSelectionCount.textContent = '0 / 3';
+    }
+
+    if (loginPageLabFeedback) {
+        loginPageLabFeedback.hidden = true;
+        loginPageLabFeedback.className = 'lab-feedback-card';
+        loginPageLabFeedback.innerHTML = '';
+    }
+
+    if (loginPageLabSubmit) {
+        loginPageLabSubmit.hidden = false;
+        loginPageLabSubmit.disabled = false;
+    }
+    if (loginPageLabReset) loginPageLabReset.hidden = true;
+}
+
+function openLoginPageLab() {
+    if (!loginPageLab) return;
+    resetLoginPageLabState();
+    setQuizAppView('current-lab');
+    history.replaceState(null, '', '#loginPageLab');
+    loginPageLab.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function closeLoginPageLab() {
+    if (!loginPageLab) return;
+    resetLoginPageLabState();
+    setQuizAppView('labs');
+    setActiveQuizSidebarLink('labsPanel');
+    history.replaceState(null, '', '#labsPanel');
+    labsPanel?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function getLoginPageLabSelections() {
+    return loginPageLabSpotTargets
+        .filter((button) => button.classList.contains('is-selected'))
+        .map((button) => button.dataset.labSpot);
+}
+
+function renderLoginPageLabFeedback(selectedSpots) {
+    if (!loginPageLabFeedback) return;
+    const correctSelections = selectedSpots.filter((spot) => loginPageLabCorrectSpots.has(spot));
+    const missedSpots = [...loginPageLabCorrectSpots].filter((spot) => !selectedSpots.includes(spot));
+    const wrongSelections = selectedSpots.filter((spot) => !loginPageLabCorrectSpots.has(spot));
+    const perfectMatch = correctSelections.length === loginPageLabCorrectSpots.size && wrongSelections.length === 0;
+
+    const explanationMap = {
+        domain: 'The URL does not clearly match the official school domain, which is a strong phishing signal.',
+        urgency: 'The suspension warning pressures the user to act fast instead of verifying first.',
+        support: 'The support contact uses a suspicious helpdesk-style domain unrelated to the school.',
+        brand: 'A copied logo or school name is not enough proof that a page is legitimate.',
+        submit: 'A submit button by itself is not the strongest red flag; the surrounding context matters more.'
+    };
+
+    const notes = [
+        ...missedSpots.map((spot) => `<li><strong>Missed:</strong> ${explanationMap[spot]}</li>`),
+        ...wrongSelections.map((spot) => `<li><strong>Weak pick:</strong> ${explanationMap[spot]}</li>`)
+    ].join('');
+
+    loginPageLabFeedback.className = `lab-feedback-card ${perfectMatch ? 'is-success' : 'is-warning'}`;
+    loginPageLabFeedback.innerHTML = `
+        <strong>${perfectMatch ? 'Nice catch.' : 'Good try.'}</strong>
+        <p>${perfectMatch
+            ? 'You found the strongest phishing signals on the page: the suspicious domain, the urgent scare tactic, and the fake support contact.'
+            : 'The best red flags here are the suspicious domain, the urgency message, and the unrelated support contact.'}</p>
+        ${notes ? `<ul>${notes}</ul>` : ''}
+    `;
+    loginPageLabFeedback.hidden = false;
+
+    if (loginPageLabSubmit) loginPageLabSubmit.hidden = true;
+    if (loginPageLabReset) loginPageLabReset.hidden = false;
+}
+
 quizStartButtons.forEach((button) => {
     button.addEventListener('click', (event) => {
         event.preventDefault();
@@ -2208,6 +2313,59 @@ quizStartButtons.forEach((button) => {
         }
         startQuiz(button.dataset.quiz);
     });
+});
+
+labStartButtons.forEach((button) => {
+    button.addEventListener('click', (event) => {
+        event.preventDefault();
+        const labId = button.dataset.startLab;
+        if (labId === 'login-page-check') {
+            openLoginPageLab();
+        }
+    });
+});
+
+loginPageLabSpotTargets.forEach((button) => {
+    button.addEventListener('click', () => {
+        const isSelected = button.classList.contains('is-selected');
+        const currentSelections = getLoginPageLabSelections();
+
+        if (!isSelected && currentSelections.length >= 3) {
+            return;
+        }
+
+        button.classList.toggle('is-selected');
+        button.setAttribute('aria-pressed', button.classList.contains('is-selected') ? 'true' : 'false');
+
+        if (loginPageLabSelectionCount) {
+            loginPageLabSelectionCount.textContent = `${getLoginPageLabSelections().length} / 3`;
+        }
+    });
+});
+
+loginPageLabSubmit?.addEventListener('click', () => {
+    const selections = getLoginPageLabSelections();
+    if (!selections.length) {
+        if (loginPageLabFeedback) {
+            loginPageLabFeedback.className = 'lab-feedback-card is-warning';
+            loginPageLabFeedback.innerHTML = `
+                <strong>Inspect the page first.</strong>
+                <p>Click the suspicious parts of the fake login page before checking your findings.</p>
+            `;
+            loginPageLabFeedback.hidden = false;
+        }
+        return;
+    }
+
+    renderLoginPageLabFeedback(selections);
+});
+
+loginPageLabReset?.addEventListener('click', () => {
+    resetLoginPageLabState();
+});
+
+loginPageLabClose?.addEventListener('click', () => {
+    closeLoginPageLab();
 });
 
 quizNextBtn?.addEventListener('click', () => {
