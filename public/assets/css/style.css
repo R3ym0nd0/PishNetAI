@@ -1513,9 +1513,15 @@ html {
 }
 
 .secondary-button {
-    background: rgba(255, 255, 255, 0.12);
-    border: 1px solid rgba(255, 255, 255, 0.18);
+    background: rgba(255, 255, 255, 0.04);
+    border: 1.5px solid rgba(255, 255, 255, 0.82);
     color: #ffffff;
+    box-shadow: none;
+}
+
+.secondary-button:hover {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.95);
 }
 
 .hero-points {

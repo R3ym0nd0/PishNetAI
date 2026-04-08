@@ -41,11 +41,37 @@ function buildPasswordData(password) {
 }
 
 const QUIZ_POINT_VALUES = {
-  'url-basics': 100,
+  'url-basics': 80,
+  'login-page-clues': 100,
   'message-red-flags': 110,
-  'after-clicking': 110,
-  'phishing-scenarios': 130,
-  'best-practices': 150
+  'after-clicking': 90,
+  'qr-link-safety': 110,
+  'social-media-scams': 120,
+  'sender-source-checks': 130,
+  'attachment-download-safety': 130,
+  'account-recovery-traps': 140,
+  'form-data-requests': 140,
+  'payment-delivery-scams': 150,
+  'support-impersonation': 150,
+  'scholarship-bait': 160,
+  'document-sharing-traps': 160,
+  'mobile-alert-deception': 170,
+  'event-registration-risks': 170,
+  'marketplace-meetup-scams': 180,
+  'multi-step-phish-cases': 190,
+  'campus-portal-spoofs': 200,
+  'urgent-admin-fraud': 210,
+  'cloud-drive-compromise': 220,
+  'internship-hiring-scams': 220,
+  'verification-chain-attacks': 230,
+  'phishing-scenarios': 240,
+  'executive-impersonation': 250,
+  'breach-followup-scams': 260,
+  'recovery-flow-attacks': 270,
+  'financial-approval-fraud': 280,
+  'cross-channel-takeovers': 290,
+  'best-practices': 320,
+  'lab-login-page-check': 100
 };
 
 function getCompletedQuizIdsFromAttempts(attempts = []) {
@@ -541,7 +567,7 @@ async function createQuizAttempt(userId, { quizId, quizTitle, score, totalQuesti
     };
   }
 
-async function listQuizAttemptsForUser(userId, limit = 20) {
+async function listQuizAttemptsForUser(userId, limit = 100) {
   const result = await query(
     `
       SELECT id, user_id, quiz_id, quiz_title, score, total_questions, percentage, created_at
@@ -550,7 +576,7 @@ async function listQuizAttemptsForUser(userId, limit = 20) {
       ORDER BY created_at DESC
       LIMIT $2
     `,
-    [userId, Math.max(1, Math.min(Number(limit) || 20, 50))]
+    [userId, Math.max(1, Math.min(Number(limit) || 100, 200))]
   );
 
   return result.rows.map((row) => ({
@@ -741,8 +767,46 @@ async function getPublicQuizProfile(userId) {
   const bestScore = allAttempts.reduce((best, attempt) => Math.max(best, attempt.percentage), 0);
   const completedQuizIds = getCompletedQuizIdsFromAttempts(allAttempts);
   const earnedPoints = getEarnedPointsFromCompletedQuizIds(completedQuizIds);
-  const allQuizIds = ['url-basics', 'message-red-flags', 'after-clicking', 'phishing-scenarios', 'best-practices'];
-  const coreQuizIds = ['url-basics', 'message-red-flags', 'after-clicking'];
+  const allQuizIds = [
+    'url-basics',
+    'login-page-clues',
+    'message-red-flags',
+    'after-clicking',
+    'qr-link-safety',
+    'social-media-scams',
+    'sender-source-checks',
+    'attachment-download-safety',
+    'account-recovery-traps',
+    'form-data-requests',
+    'payment-delivery-scams',
+    'support-impersonation',
+    'scholarship-bait',
+    'document-sharing-traps',
+    'mobile-alert-deception',
+    'event-registration-risks',
+    'marketplace-meetup-scams',
+    'multi-step-phish-cases',
+    'campus-portal-spoofs',
+    'urgent-admin-fraud',
+    'cloud-drive-compromise',
+    'internship-hiring-scams',
+    'verification-chain-attacks',
+    'phishing-scenarios',
+    'executive-impersonation',
+    'breach-followup-scams',
+    'recovery-flow-attacks',
+    'financial-approval-fraud',
+    'cross-channel-takeovers',
+    'best-practices'
+  ];
+  const coreQuizIds = [
+    'url-basics',
+    'login-page-clues',
+    'message-red-flags',
+    'after-clicking',
+    'qr-link-safety',
+    'social-media-scams'
+  ];
   const strongAttemptsCount = getStrongQuizCountFromAttempts(allAttempts, 85);
   const needsReviewCleared = completedQuizIds.size;
   const advancedCompleted = completedQuizIds.has('phishing-scenarios');
@@ -757,12 +821,12 @@ async function getPublicQuizProfile(userId) {
     {
       id: 'practice-streak',
       title: 'Practice Streak',
-      earned: earnedPoints >= 210
+      earned: earnedPoints >= 180
     },
     {
       id: 'steady-learner',
       title: 'Steady Learner',
-      earned: earnedPoints >= 320
+      earned: earnedPoints >= 300
     },
     {
       id: 'sharp-eye',
@@ -792,7 +856,7 @@ async function getPublicQuizProfile(userId) {
     {
       id: 'review-crusher',
       title: 'Review Crusher',
-      earned: needsReviewCleared >= 5
+      earned: needsReviewCleared >= 30
     },
     {
       id: 'scenario-survivor',

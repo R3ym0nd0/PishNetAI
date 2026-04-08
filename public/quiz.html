@@ -6,7 +6,7 @@
     <title>PhishNet AI - Training</title>
     <link rel="icon" href="assets/images/logo.png" type="image/png">
     <link rel="stylesheet" href="assets/css/style.css?v=20260403c">
-    <link rel="stylesheet" href="assets/css/quiz.css?v=20260408f">
+    <link rel="stylesheet" href="assets/css/quiz.css?v=20260409c">
 </head>
 <body class="quiz-signed-in">
     <div class="page-shell">
@@ -457,8 +457,8 @@
                         <p>Inspect a realistic login page and decide whether it looks legitimate or suspicious before signing in.</p>
                         <div class="quiz-meta">
                             <span>Interface Review</span>
-                            <span>~4 min</span>
-                            <span class="difficulty easy">Starter Lab</span>
+                            <span>100 pts</span>
+                            <span class="difficulty easy">Beginner</span>
                         </div>
                         <button type="button" class="quiz-start-btn" data-start-lab="login-page-check">Start Lab</button>
                     </article>
@@ -466,18 +466,22 @@
             </section>
 
             <section class="panel quiz-session-panel lab-shell" id="loginPageLab" hidden>
-                <div class="lab-shell-head">
+                <div class="quiz-session-head lab-shell-head">
                     <div>
-                        <p class="lab-shell-kicker">Hands-On Lab</p>
-                        <h3>Login Page Check</h3>
-                        <p class="lab-shell-copy">Inspect the fake login page and click the strongest red flags.</p>
+                        <p class="quiz-session-kicker">Hands-On Lab</p>
+                        <h2>Login Page Check</h2>
+                        <p class="quiz-session-desc">Inspect the fake login page and click the strongest red flags.</p>
                     </div>
-                    <button type="button" class="lab-close-btn" id="loginPageLabClose">Close</button>
+                    <button type="button" class="quiz-exit-btn lab-close-btn" id="loginPageLabClose" aria-label="Close lab">
+                        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                            <path d="M18.3 5.71 12 12l6.3 6.29-1.41 1.42L10.59 13.4 4.29 19.7 2.88 18.3 9.17 12 2.88 5.71 4.29 4.29l6.3 6.3 6.29-6.3z"/>
+                        </svg>
+                    </button>
                 </div>
 
                 <div class="lab-login-layout">
                     <div class="lab-login-stage">
-                        <div class="lab-scenario-card">
+                        <div class="lab-scenario-card quiz-question-card">
                             <div class="lab-scenario-meta">
                                 <span class="lab-brief-label">Incoming Message</span>
                                 <span class="lab-scenario-channel">Email Notice</span>
@@ -489,7 +493,7 @@
                             </p>
                         </div>
 
-                        <div class="lab-preview-card">
+                        <div class="lab-preview-card quiz-question-card">
                             <div class="lab-browser-bar">
                                 <span></span>
                                 <span></span>
@@ -529,9 +533,9 @@
                         </div>
                     </div>
 
-                    <div class="lab-decision-card">
+                    <div class="lab-decision-card quiz-question-card">
                         <div class="lab-checklist-head">
-                            <p class="lab-shell-kicker">Find The Red Flags</p>
+                            <p class="quiz-question-kicker">Find The Red Flags</p>
                             <h4>Click the 3 strongest warning signs</h4>
                             <p>You only get 3 picks, so choose carefully.</p>
                         </div>
@@ -564,7 +568,7 @@
                 <div class="quiz-grid" id="quizzesGrid">
                     <article class="quiz-card" data-quiz-card="url-basics">
                         <div class="quiz-card-header">
-                            <span class="quiz-badge popular">Core Series</span>
+                            <span class="quiz-badge recommended">Core Series</span>
                             <span class="quiz-complete-chip" id="quizCompletedChip-url-basics" hidden>
                                 <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                                     <path d="m9.55 18.2-4.9-4.9 1.4-1.4 3.5 3.5 8.4-8.4 1.4 1.4-9.8 9.8Z"/>
@@ -575,11 +579,31 @@
                         <h3>URL Basics</h3>
                         <p>Practice checking links and recognizing URL patterns that are often used in phishing attempts.</p>
                         <div class="quiz-meta">
-                            <span>10 Questions</span>
-                            <span>~3 min</span>
+                            <span>5 Questions</span>
+                            <span>80 pts</span>
                             <span class="difficulty easy">Beginner</span>
                         </div>
                         <button type="button" class="quiz-start-btn" data-quiz="url-basics">Start Set</button>
+                    </article>
+
+                    <article class="quiz-card" data-quiz-card="login-page-clues">
+                        <div class="quiz-card-header">
+                            <span class="quiz-badge recommended">Core Series</span>
+                            <span class="quiz-complete-chip" id="quizCompletedChip-login-page-clues" hidden>
+                                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                    <path d="m9.55 18.2-4.9-4.9 1.4-1.4 3.5 3.5 8.4-8.4 1.4 1.4-9.8 9.8Z"/>
+                                </svg>
+                                <span>Completed</span>
+                            </span>
+                        </div>
+                        <h3>Login Page Clues</h3>
+                        <p>Practice checking login pages for warning signs before entering your school or personal account details.</p>
+                        <div class="quiz-meta">
+                            <span>5 Questions</span>
+                            <span>100 pts</span>
+                            <span class="difficulty easy">Beginner</span>
+                        </div>
+                        <button type="button" class="quiz-start-btn" data-quiz="login-page-clues">Start Set</button>
                     </article>
 
                     <article class="quiz-card" data-quiz-card="message-red-flags">
@@ -595,8 +619,8 @@
                         <h3>Message Red Flags</h3>
                         <p>Learn how to notice warning signs in emails, texts, and chat messages before they put your account or information at risk.</p>
                         <div class="quiz-meta">
-                            <span>12 Questions</span>
-                            <span>~4 min</span>
+                            <span>5 Questions</span>
+                            <span>110 pts</span>
                             <span class="difficulty medium">Intermediate</span>
                         </div>
                         <button type="button" class="quiz-start-btn" data-quiz="message-red-flags">Start Set</button>
@@ -604,7 +628,7 @@
 
                     <article class="quiz-card" data-quiz-card="after-clicking">
                         <div class="quiz-card-header">
-                            <span class="quiz-badge new">Core Series</span>
+                            <span class="quiz-badge recommended">Core Series</span>
                             <span class="quiz-complete-chip" id="quizCompletedChip-after-clicking" hidden>
                                 <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                                     <path d="m9.55 18.2-4.9-4.9 1.4-1.4 3.5 3.5 8.4-8.4 1.4 1.4-9.8 9.8Z"/>
@@ -615,11 +639,391 @@
                         <h3>After Clicking: What to Do?</h3>
                         <p>Review the right steps to take after clicking a suspicious link or sharing personal details on an unsafe page.</p>
                         <div class="quiz-meta">
-                            <span>8 Questions</span>
-                            <span>~2 min</span>
+                            <span>5 Questions</span>
+                            <span>90 pts</span>
                             <span class="difficulty easy">Beginner</span>
                         </div>
                         <button type="button" class="quiz-start-btn" data-quiz="after-clicking">Start Set</button>
+                    </article>
+
+                    <article class="quiz-card" data-quiz-card="qr-link-safety">
+                        <div class="quiz-card-header">
+                            <span class="quiz-badge recommended">Core Series</span>
+                            <span class="quiz-complete-chip" id="quizCompletedChip-qr-link-safety" hidden>
+                                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                    <path d="m9.55 18.2-4.9-4.9 1.4-1.4 3.5 3.5 8.4-8.4 1.4 1.4-9.8 9.8Z"/>
+                                </svg>
+                                <span>Completed</span>
+                            </span>
+                        </div>
+                        <h3>QR &amp; Link Safety</h3>
+                        <p>Learn how hidden destinations in QR codes and links can lead to risky pages even when they look harmless at first.</p>
+                        <div class="quiz-meta">
+                            <span>5 Questions</span>
+                            <span>110 pts</span>
+                            <span class="difficulty medium">Intermediate</span>
+                        </div>
+                        <button type="button" class="quiz-start-btn" data-quiz="qr-link-safety">Start Set</button>
+                    </article>
+
+                    <article class="quiz-card" data-quiz-card="social-media-scams">
+                        <div class="quiz-card-header">
+                            <span class="quiz-badge recommended">Core Series</span>
+                            <span class="quiz-complete-chip" id="quizCompletedChip-social-media-scams" hidden>
+                                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                    <path d="m9.55 18.2-4.9-4.9 1.4-1.4 3.5 3.5 8.4-8.4 1.4 1.4-9.8 9.8Z"/>
+                                </svg>
+                                <span>Completed</span>
+                            </span>
+                        </div>
+                        <h3>Social Media Scams</h3>
+                        <p>Practice spotting phishing and impersonation tactics that often appear in social media posts, chats, and direct messages.</p>
+                        <div class="quiz-meta">
+                            <span>5 Questions</span>
+                            <span>120 pts</span>
+                            <span class="difficulty medium">Intermediate</span>
+                        </div>
+                        <button type="button" class="quiz-start-btn" data-quiz="social-media-scams">Start Set</button>
+                    </article>
+
+                    <article class="quiz-card" data-quiz-card="sender-source-checks">
+                        <div class="quiz-card-header">
+                            <span class="quiz-badge">Skill Builder Series</span>
+                            <span class="quiz-complete-chip" id="quizCompletedChip-sender-source-checks" hidden>
+                                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                    <path d="m9.55 18.2-4.9-4.9 1.4-1.4 3.5 3.5 8.4-8.4 1.4 1.4-9.8 9.8Z"/>
+                                </svg>
+                                <span>Completed</span>
+                            </span>
+                        </div>
+                        <h3>Sender &amp; Source Checks</h3>
+                        <p>Build stronger habits for checking who sent a message and whether the source really matches the organization it claims to be.</p>
+                        <div class="quiz-meta">
+                            <span>5 Questions</span>
+                            <span>130 pts</span>
+                            <span class="difficulty medium">Intermediate</span>
+                        </div>
+                        <button type="button" class="quiz-start-btn" data-quiz="sender-source-checks">Start Set</button>
+                    </article>
+
+                    <article class="quiz-card" data-quiz-card="attachment-download-safety">
+                        <div class="quiz-card-header">
+                            <span class="quiz-badge">Skill Builder Series</span>
+                            <span class="quiz-complete-chip" id="quizCompletedChip-attachment-download-safety" hidden>
+                                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                    <path d="m9.55 18.2-4.9-4.9 1.4-1.4 3.5 3.5 8.4-8.4 1.4 1.4-9.8 9.8Z"/>
+                                </svg>
+                                <span>Completed</span>
+                            </span>
+                        </div>
+                        <h3>Attachment &amp; Download Safety</h3>
+                        <p>Practice safer decisions when messages include unexpected files, downloads, or documents that ask you to open them quickly.</p>
+                        <div class="quiz-meta">
+                            <span>5 Questions</span>
+                            <span>130 pts</span>
+                            <span class="difficulty medium">Intermediate</span>
+                        </div>
+                        <button type="button" class="quiz-start-btn" data-quiz="attachment-download-safety">Start Set</button>
+                    </article>
+
+                    <article class="quiz-card" data-quiz-card="account-recovery-traps">
+                        <div class="quiz-card-header">
+                            <span class="quiz-badge">Skill Builder Series</span>
+                            <span class="quiz-complete-chip" id="quizCompletedChip-account-recovery-traps" hidden>
+                                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                    <path d="m9.55 18.2-4.9-4.9 1.4-1.4 3.5 3.5 8.4-8.4 1.4 1.4-9.8 9.8Z"/>
+                                </svg>
+                                <span>Completed</span>
+                            </span>
+                        </div>
+                        <h3>Account Recovery Traps</h3>
+                        <p>Learn how phishing messages abuse resets, verification steps, and recovery claims to steal account access.</p>
+                        <div class="quiz-meta">
+                            <span>5 Questions</span>
+                            <span>140 pts</span>
+                            <span class="difficulty hard">Hard</span>
+                        </div>
+                        <button type="button" class="quiz-start-btn" data-quiz="account-recovery-traps">Start Set</button>
+                    </article>
+
+                    <article class="quiz-card" data-quiz-card="form-data-requests">
+                        <div class="quiz-card-header">
+                            <span class="quiz-badge">Skill Builder Series</span>
+                            <span class="quiz-complete-chip" id="quizCompletedChip-form-data-requests" hidden>
+                                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                    <path d="m9.55 18.2-4.9-4.9 1.4-1.4 3.5 3.5 8.4-8.4 1.4 1.4-9.8 9.8Z"/>
+                                </svg>
+                                <span>Completed</span>
+                            </span>
+                        </div>
+                        <h3>Form &amp; Data Requests</h3>
+                        <p>Practice noticing when a page or message asks for more information than a legitimate process usually needs.</p>
+                        <div class="quiz-meta">
+                            <span>5 Questions</span>
+                            <span>140 pts</span>
+                            <span class="difficulty hard">Hard</span>
+                        </div>
+                        <button type="button" class="quiz-start-btn" data-quiz="form-data-requests">Start Set</button>
+                    </article>
+
+                    <article class="quiz-card" data-quiz-card="payment-delivery-scams">
+                        <div class="quiz-card-header">
+                            <span class="quiz-badge">Skill Builder Series</span>
+                            <span class="quiz-complete-chip" id="quizCompletedChip-payment-delivery-scams" hidden>
+                                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                    <path d="m9.55 18.2-4.9-4.9 1.4-1.4 3.5 3.5 8.4-8.4 1.4 1.4-9.8 9.8Z"/>
+                                </svg>
+                                <span>Completed</span>
+                            </span>
+                        </div>
+                        <h3>Payment &amp; Delivery Scams</h3>
+                        <p>Strengthen your judgment around phishing attempts involving fees, deliveries, billing problems, and fake payment requests.</p>
+                        <div class="quiz-meta">
+                            <span>5 Questions</span>
+                            <span>150 pts</span>
+                            <span class="difficulty hard">Hard</span>
+                        </div>
+                        <button type="button" class="quiz-start-btn" data-quiz="payment-delivery-scams">Start Set</button>
+                    </article>
+
+                    <article class="quiz-card" data-quiz-card="support-impersonation">
+                        <div class="quiz-card-header">
+                            <span class="quiz-badge">Skill Builder Series</span>
+                            <span class="quiz-complete-chip" id="quizCompletedChip-support-impersonation" hidden>
+                                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                    <path d="m9.55 18.2-4.9-4.9 1.4-1.4 3.5 3.5 8.4-8.4 1.4 1.4-9.8 9.8Z"/>
+                                </svg>
+                                <span>Completed</span>
+                            </span>
+                        </div>
+                        <h3>Support Impersonation</h3>
+                        <p>Spot the tricks used by fake support staff, helpdesk pages, and urgent notices that try to steal trust and access.</p>
+                        <div class="quiz-meta">
+                            <span>5 Questions</span>
+                            <span>150 pts</span>
+                            <span class="difficulty hard">Hard</span>
+                        </div>
+                        <button type="button" class="quiz-start-btn" data-quiz="support-impersonation">Start Set</button>
+                    </article>
+
+                    <article class="quiz-card" data-quiz-card="scholarship-bait">
+                        <div class="quiz-card-header">
+                            <span class="quiz-badge">Challenger Series</span>
+                            <span class="quiz-complete-chip" id="quizCompletedChip-scholarship-bait" hidden>
+                                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                    <path d="m9.55 18.2-4.9-4.9 1.4-1.4 3.5 3.5 8.4-8.4 1.4 1.4-9.8 9.8Z"/>
+                                </svg>
+                                <span>Completed</span>
+                            </span>
+                        </div>
+                        <h3>Scholarship Bait</h3>
+                        <p>Work through higher-pressure scholarship and grant scams that mix urgency, prestige, and fake verification steps.</p>
+                        <div class="quiz-meta">
+                            <span>5 Questions</span>
+                            <span>160 pts</span>
+                            <span class="difficulty hard">Hard</span>
+                        </div>
+                        <button type="button" class="quiz-start-btn" data-quiz="scholarship-bait">Start Set</button>
+                    </article>
+
+                    <article class="quiz-card" data-quiz-card="document-sharing-traps">
+                        <div class="quiz-card-header">
+                            <span class="quiz-badge">Challenger Series</span>
+                            <span class="quiz-complete-chip" id="quizCompletedChip-document-sharing-traps" hidden>
+                                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                    <path d="m9.55 18.2-4.9-4.9 1.4-1.4 3.5 3.5 8.4-8.4 1.4 1.4-9.8 9.8Z"/>
+                                </svg>
+                                <span>Completed</span>
+                            </span>
+                        </div>
+                        <h3>Document Sharing Traps</h3>
+                        <p>Spot the riskier sharing tricks that use shared files, comments, and access requests to lure users into fake sign-ins.</p>
+                        <div class="quiz-meta">
+                            <span>5 Questions</span>
+                            <span>160 pts</span>
+                            <span class="difficulty hard">Hard</span>
+                        </div>
+                        <button type="button" class="quiz-start-btn" data-quiz="document-sharing-traps">Start Set</button>
+                    </article>
+
+                    <article class="quiz-card" data-quiz-card="mobile-alert-deception">
+                        <div class="quiz-card-header">
+                            <span class="quiz-badge">Challenger Series</span>
+                            <span class="quiz-complete-chip" id="quizCompletedChip-mobile-alert-deception" hidden>
+                                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                    <path d="m9.55 18.2-4.9-4.9 1.4-1.4 3.5 3.5 8.4-8.4 1.4 1.4-9.8 9.8Z"/>
+                                </svg>
+                                <span>Completed</span>
+                            </span>
+                        </div>
+                        <h3>Mobile Alert Deception</h3>
+                        <p>Handle mobile-style phishing cases that use push alerts, SMS warnings, and account notices designed for fast phone reactions.</p>
+                        <div class="quiz-meta">
+                            <span>5 Questions</span>
+                            <span>170 pts</span>
+                            <span class="difficulty hard">Hard</span>
+                        </div>
+                        <button type="button" class="quiz-start-btn" data-quiz="mobile-alert-deception">Start Set</button>
+                    </article>
+
+                    <article class="quiz-card" data-quiz-card="event-registration-risks">
+                        <div class="quiz-card-header">
+                            <span class="quiz-badge">Challenger Series</span>
+                            <span class="quiz-complete-chip" id="quizCompletedChip-event-registration-risks" hidden>
+                                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                    <path d="m9.55 18.2-4.9-4.9 1.4-1.4 3.5 3.5 8.4-8.4 1.4 1.4-9.8 9.8Z"/>
+                                </svg>
+                                <span>Completed</span>
+                            </span>
+                        </div>
+                        <h3>Event Registration Risks</h3>
+                        <p>Practice spotting riskier event and registration scams that use limited slots, fake organizers, and payment pressure.</p>
+                        <div class="quiz-meta">
+                            <span>5 Questions</span>
+                            <span>170 pts</span>
+                            <span class="difficulty hard">Hard</span>
+                        </div>
+                        <button type="button" class="quiz-start-btn" data-quiz="event-registration-risks">Start Set</button>
+                    </article>
+
+                    <article class="quiz-card" data-quiz-card="marketplace-meetup-scams">
+                        <div class="quiz-card-header">
+                            <span class="quiz-badge">Challenger Series</span>
+                            <span class="quiz-complete-chip" id="quizCompletedChip-marketplace-meetup-scams" hidden>
+                                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                    <path d="m9.55 18.2-4.9-4.9 1.4-1.4 3.5 3.5 8.4-8.4 1.4 1.4-9.8 9.8Z"/>
+                                </svg>
+                                <span>Completed</span>
+                            </span>
+                        </div>
+                        <h3>Marketplace &amp; Meetup Scams</h3>
+                        <p>Handle phishing-style scam cases that mix payment pressure, fake buyer support, and identity checks in peer-to-peer deals.</p>
+                        <div class="quiz-meta">
+                            <span>5 Questions</span>
+                            <span>180 pts</span>
+                            <span class="difficulty hard">Hard</span>
+                        </div>
+                        <button type="button" class="quiz-start-btn" data-quiz="marketplace-meetup-scams">Start Set</button>
+                    </article>
+
+                    <article class="quiz-card" data-quiz-card="multi-step-phish-cases">
+                        <div class="quiz-card-header">
+                            <span class="quiz-badge">Challenger Series</span>
+                            <span class="quiz-complete-chip" id="quizCompletedChip-multi-step-phish-cases" hidden>
+                                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                    <path d="m9.55 18.2-4.9-4.9 1.4-1.4 3.5 3.5 8.4-8.4 1.4 1.4-9.8 9.8Z"/>
+                                </svg>
+                                <span>Completed</span>
+                            </span>
+                        </div>
+                        <h3>Multi-Step Phish Cases</h3>
+                        <p>Work through chained phishing cases where several believable steps appear before the real credential theft attempt happens.</p>
+                        <div class="quiz-meta">
+                            <span>5 Questions</span>
+                            <span>190 pts</span>
+                            <span class="difficulty hard">Hard</span>
+                        </div>
+                        <button type="button" class="quiz-start-btn" data-quiz="multi-step-phish-cases">Start Set</button>
+                    </article>
+
+                    <article class="quiz-card" data-quiz-card="campus-portal-spoofs">
+                        <div class="quiz-card-header">
+                            <span class="quiz-badge">Advanced Series</span>
+                            <span class="quiz-complete-chip" id="quizCompletedChip-campus-portal-spoofs" hidden>
+                                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                    <path d="m9.55 18.2-4.9-4.9 1.4-1.4 3.5 3.5 8.4-8.4 1.4 1.4-9.8 9.8Z"/>
+                                </svg>
+                                <span>Completed</span>
+                            </span>
+                        </div>
+                        <h3>Campus Portal Spoofs</h3>
+                        <p>Analyze more deceptive portal copies that mix familiar campus details with cloned login and update prompts.</p>
+                        <div class="quiz-meta">
+                            <span>5 Questions</span>
+                            <span>200 pts</span>
+                            <span class="difficulty hard">Advanced</span>
+                        </div>
+                        <button type="button" class="quiz-start-btn" data-quiz="campus-portal-spoofs">Start Set</button>
+                    </article>
+
+                    <article class="quiz-card" data-quiz-card="urgent-admin-fraud">
+                        <div class="quiz-card-header">
+                            <span class="quiz-badge">Advanced Series</span>
+                            <span class="quiz-complete-chip" id="quizCompletedChip-urgent-admin-fraud" hidden>
+                                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                    <path d="m9.55 18.2-4.9-4.9 1.4-1.4 3.5 3.5 8.4-8.4 1.4 1.4-9.8 9.8Z"/>
+                                </svg>
+                                <span>Completed</span>
+                            </span>
+                        </div>
+                        <h3>Urgent Admin Fraud</h3>
+                        <p>Handle deceptive admin-style messages that imitate registrar, finance, or IT notices with stronger authority pressure.</p>
+                        <div class="quiz-meta">
+                            <span>5 Questions</span>
+                            <span>210 pts</span>
+                            <span class="difficulty hard">Advanced</span>
+                        </div>
+                        <button type="button" class="quiz-start-btn" data-quiz="urgent-admin-fraud">Start Set</button>
+                    </article>
+
+                    <article class="quiz-card" data-quiz-card="cloud-drive-compromise">
+                        <div class="quiz-card-header">
+                            <span class="quiz-badge">Advanced Series</span>
+                            <span class="quiz-complete-chip" id="quizCompletedChip-cloud-drive-compromise" hidden>
+                                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                    <path d="m9.55 18.2-4.9-4.9 1.4-1.4 3.5 3.5 8.4-8.4 1.4 1.4-9.8 9.8Z"/>
+                                </svg>
+                                <span>Completed</span>
+                            </span>
+                        </div>
+                        <h3>Cloud Drive Compromise</h3>
+                        <p>Work through advanced file-sharing cases where fake storage notices, access errors, and permission prompts hide credential theft.</p>
+                        <div class="quiz-meta">
+                            <span>5 Questions</span>
+                            <span>220 pts</span>
+                            <span class="difficulty hard">Advanced</span>
+                        </div>
+                        <button type="button" class="quiz-start-btn" data-quiz="cloud-drive-compromise">Start Set</button>
+                    </article>
+
+                    <article class="quiz-card" data-quiz-card="internship-hiring-scams">
+                        <div class="quiz-card-header">
+                            <span class="quiz-badge">Advanced Series</span>
+                            <span class="quiz-complete-chip" id="quizCompletedChip-internship-hiring-scams" hidden>
+                                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                    <path d="m9.55 18.2-4.9-4.9 1.4-1.4 3.5 3.5 8.4-8.4 1.4 1.4-9.8 9.8Z"/>
+                                </svg>
+                                <span>Completed</span>
+                            </span>
+                        </div>
+                        <h3>Internship Hiring Scams</h3>
+                        <p>Practice tougher hiring-related phishing cases involving fake recruiters, application portals, and job verification traps.</p>
+                        <div class="quiz-meta">
+                            <span>5 Questions</span>
+                            <span>220 pts</span>
+                            <span class="difficulty hard">Advanced</span>
+                        </div>
+                        <button type="button" class="quiz-start-btn" data-quiz="internship-hiring-scams">Start Set</button>
+                    </article>
+
+                    <article class="quiz-card" data-quiz-card="verification-chain-attacks">
+                        <div class="quiz-card-header">
+                            <span class="quiz-badge">Advanced Series</span>
+                            <span class="quiz-complete-chip" id="quizCompletedChip-verification-chain-attacks" hidden>
+                                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                    <path d="m9.55 18.2-4.9-4.9 1.4-1.4 3.5 3.5 8.4-8.4 1.4 1.4-9.8 9.8Z"/>
+                                </svg>
+                                <span>Completed</span>
+                            </span>
+                        </div>
+                        <h3>Verification Chain Attacks</h3>
+                        <p>Work through the hardest verification flows where attackers chain links, forms, and codes together to reach full account takeover.</p>
+                        <div class="quiz-meta">
+                            <span>5 Questions</span>
+                            <span>230 pts</span>
+                            <span class="difficulty hard">Advanced</span>
+                        </div>
+                        <button type="button" class="quiz-start-btn" data-quiz="verification-chain-attacks">Start Set</button>
                     </article>
 
                     <article class="quiz-card" data-quiz-card="phishing-scenarios">
@@ -635,12 +1039,116 @@
                         <h3>Phishing Scenarios</h3>
                         <p>Go through realistic situations that test how well you can identify and respond to possible phishing attempts.</p>
                         <div class="quiz-meta">
-                            <span>15 Questions</span>
-                            <span>~5 min</span>
+                            <span>5 Questions</span>
+                            <span>240 pts</span>
                             <span class="difficulty hard">Advanced</span>
                         </div>
                         <p class="quiz-unlock-note" id="quizUnlockNote-phishing-scenarios" hidden></p>
                         <button type="button" class="quiz-start-btn" data-quiz="phishing-scenarios">Start Set</button>
+                    </article>
+                    <article class="quiz-card" data-quiz-card="executive-impersonation">
+                        <div class="quiz-card-header">
+                            <span class="quiz-badge">Mastery Series</span>
+                            <span class="quiz-complete-chip" id="quizCompletedChip-executive-impersonation" hidden>
+                                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                    <path d="m9.55 18.2-4.9-4.9 1.4-1.4 3.5 3.5 8.4-8.4 1.4 1.4-9.8 9.8Z"/>
+                                </svg>
+                                <span>Completed</span>
+                            </span>
+                        </div>
+                        <h3>Executive Impersonation</h3>
+                        <p>Handle high-pressure messages that pretend to come from school leaders, administrators, or decision-makers.</p>
+                        <div class="quiz-meta">
+                            <span>5 Questions</span>
+                            <span>250 pts</span>
+                            <span class="difficulty hard">Mastery</span>
+                        </div>
+                        <p class="quiz-unlock-note" id="quizUnlockNote-executive-impersonation" hidden></p>
+                        <button type="button" class="quiz-start-btn" data-quiz="executive-impersonation">Start Set</button>
+                    </article>
+
+                    <article class="quiz-card" data-quiz-card="breach-followup-scams">
+                        <div class="quiz-card-header">
+                            <span class="quiz-badge">Mastery Series</span>
+                            <span class="quiz-complete-chip" id="quizCompletedChip-breach-followup-scams" hidden>
+                                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                    <path d="m9.55 18.2-4.9-4.9 1.4-1.4 3.5 3.5 8.4-8.4 1.4 1.4-9.8 9.8Z"/>
+                                </svg>
+                                <span>Completed</span>
+                            </span>
+                        </div>
+                        <h3>Breach Follow-Up Scams</h3>
+                        <p>Practice spotting fake breach warnings that try to exploit fear after a supposed security incident.</p>
+                        <div class="quiz-meta">
+                            <span>5 Questions</span>
+                            <span>260 pts</span>
+                            <span class="difficulty hard">Mastery</span>
+                        </div>
+                        <p class="quiz-unlock-note" id="quizUnlockNote-breach-followup-scams" hidden></p>
+                        <button type="button" class="quiz-start-btn" data-quiz="breach-followup-scams">Start Set</button>
+                    </article>
+
+                    <article class="quiz-card" data-quiz-card="recovery-flow-attacks">
+                        <div class="quiz-card-header">
+                            <span class="quiz-badge">Mastery Series</span>
+                            <span class="quiz-complete-chip" id="quizCompletedChip-recovery-flow-attacks" hidden>
+                                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                    <path d="m9.55 18.2-4.9-4.9 1.4-1.4 3.5 3.5 8.4-8.4 1.4 1.4-9.8 9.8Z"/>
+                                </svg>
+                                <span>Completed</span>
+                            </span>
+                        </div>
+                        <h3>Recovery Flow Attacks</h3>
+                        <p>Learn to recognize suspicious account recovery steps, one-time-code traps, and takeover attempts.</p>
+                        <div class="quiz-meta">
+                            <span>5 Questions</span>
+                            <span>270 pts</span>
+                            <span class="difficulty hard">Mastery</span>
+                        </div>
+                        <p class="quiz-unlock-note" id="quizUnlockNote-recovery-flow-attacks" hidden></p>
+                        <button type="button" class="quiz-start-btn" data-quiz="recovery-flow-attacks">Start Set</button>
+                    </article>
+
+                    <article class="quiz-card" data-quiz-card="financial-approval-fraud">
+                        <div class="quiz-card-header">
+                            <span class="quiz-badge">Mastery Series</span>
+                            <span class="quiz-complete-chip" id="quizCompletedChip-financial-approval-fraud" hidden>
+                                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                    <path d="m9.55 18.2-4.9-4.9 1.4-1.4 3.5 3.5 8.4-8.4 1.4 1.4-9.8 9.8Z"/>
+                                </svg>
+                                <span>Completed</span>
+                            </span>
+                        </div>
+                        <h3>Financial Approval Fraud</h3>
+                        <p>Spot convincing approval requests involving reimbursements, invoices, budgets, and last-minute payments.</p>
+                        <div class="quiz-meta">
+                            <span>5 Questions</span>
+                            <span>280 pts</span>
+                            <span class="difficulty hard">Mastery</span>
+                        </div>
+                        <p class="quiz-unlock-note" id="quizUnlockNote-financial-approval-fraud" hidden></p>
+                        <button type="button" class="quiz-start-btn" data-quiz="financial-approval-fraud">Start Set</button>
+                    </article>
+
+                    <article class="quiz-card" data-quiz-card="cross-channel-takeovers">
+                        <div class="quiz-card-header">
+                            <span class="quiz-badge">Mastery Series</span>
+                            <span class="quiz-complete-chip" id="quizCompletedChip-cross-channel-takeovers" hidden>
+                                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                    <path d="m9.55 18.2-4.9-4.9 1.4-1.4 3.5 3.5 8.4-8.4 1.4 1.4-9.8 9.8Z"/>
+                                </svg>
+                                <span>Completed</span>
+                            </span>
+                        </div>
+                        <h3>Cross-Channel Takeovers</h3>
+                        <p>Work through attacks that jump across email, text, chat, and calls to feel more believable.</p>
+                        <div class="quiz-meta">
+                            <span>5 Questions</span>
+                            <span>290 pts</span>
+                            <span class="difficulty hard">Mastery</span>
+                        </div>
+                        <p class="quiz-unlock-note" id="quizUnlockNote-cross-channel-takeovers" hidden></p>
+                        <button type="button" class="quiz-start-btn" data-quiz="cross-channel-takeovers">Start Set</button>
                     </article>
 
                     <article class="quiz-card" data-quiz-card="best-practices">
@@ -656,9 +1164,9 @@
                         <h3>Best Practices</h3>
                         <p>Strengthen your everyday safety habits with practical best practices for accounts, messages, and suspicious websites.</p>
                         <div class="quiz-meta">
-                            <span>10 Questions</span>
-                            <span>~3 min</span>
-                            <span class="difficulty medium">Intermediate</span>
+                            <span>5 Questions</span>
+                            <span>320 pts</span>
+                            <span class="difficulty hard">Mastery</span>
                         </div>
                         <p class="quiz-unlock-note" id="quizUnlockNote-best-practices" hidden></p>
                         <button type="button" class="quiz-start-btn" data-quiz="best-practices">Start Set</button>
@@ -944,6 +1452,6 @@
     </div>
 
     <script type="module" src="assets/js/script.js?v=20260403c"></script>
-    <script src="assets/js/quiz.js?v=20260408f"></script>
+    <script src="assets/js/quiz.js?v=20260409d"></script>
 </body>
 </html>

@@ -632,7 +632,7 @@ app.get('/api/quiz/attempts', async (req, res) => {
 
   return res.json({
     ok: true,
-    attempts: await listQuizAttemptsForUser(user.id)
+    attempts: await listQuizAttemptsForUser(user.id, 100)
   });
 });
 

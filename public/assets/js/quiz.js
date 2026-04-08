@@ -6,17 +6,145 @@ const DEPLOY_FRONTEND_ORIGINS = new Set([
     'https://pishnetai.vercel.app'
 ]);
 const RENDER_API_BASE = 'https://phishnetai-fb30.onrender.com';
-const coreQuizIds = ['url-basics', 'message-red-flags', 'after-clicking'];
+const coreQuizIds = [
+    'url-basics',
+    'message-red-flags',
+    'after-clicking',
+    'login-page-clues',
+    'qr-link-safety',
+    'social-media-scams'
+];
+const skillBuilderQuizIds = [
+    'sender-source-checks',
+    'attachment-download-safety',
+    'account-recovery-traps',
+    'form-data-requests',
+    'payment-delivery-scams',
+    'support-impersonation'
+];
+const challengerQuizIds = [
+    'scholarship-bait',
+    'document-sharing-traps',
+    'mobile-alert-deception',
+    'event-registration-risks',
+    'marketplace-meetup-scams',
+    'multi-step-phish-cases'
+];
+const advancedSeriesQuizIds = [
+    'campus-portal-spoofs',
+    'urgent-admin-fraud',
+    'cloud-drive-compromise',
+    'internship-hiring-scams',
+    'verification-chain-attacks',
+    'phishing-scenarios'
+];
+const masterySeriesQuizIds = [
+    'executive-impersonation',
+    'breach-followup-scams',
+    'recovery-flow-attacks',
+    'financial-approval-fraud',
+    'cross-channel-takeovers',
+    'best-practices'
+];
+const masteryPrepQuizIds = masterySeriesQuizIds.filter((quizId) => quizId !== 'best-practices');
 const advancedQuizRules = {
+    'sender-source-checks': {
+        requiresQuizIds: [...coreQuizIds],
+        label: 'Unlocks after you finish all 6 Core Series quiz sets.'
+    },
+    'attachment-download-safety': {
+        requiresQuizIds: [...coreQuizIds],
+        label: 'Unlocks after you finish all 6 Core Series quiz sets.'
+    },
+    'account-recovery-traps': {
+        requiresQuizIds: [...coreQuizIds],
+        label: 'Unlocks after you finish all 6 Core Series quiz sets.'
+    },
+    'form-data-requests': {
+        requiresQuizIds: [...coreQuizIds],
+        label: 'Unlocks after you finish all 6 Core Series quiz sets.'
+    },
+    'payment-delivery-scams': {
+        requiresQuizIds: [...coreQuizIds],
+        label: 'Unlocks after you finish all 6 Core Series quiz sets.'
+    },
+    'support-impersonation': {
+        requiresQuizIds: [...coreQuizIds],
+        label: 'Unlocks after you finish all 6 Core Series quiz sets.'
+    },
+    'scholarship-bait': {
+        requiresQuizIds: [...skillBuilderQuizIds],
+        label: 'Unlocks after you finish the Skill Builder Series.'
+    },
+    'document-sharing-traps': {
+        requiresQuizIds: [...skillBuilderQuizIds],
+        label: 'Unlocks after you finish the Skill Builder Series.'
+    },
+    'mobile-alert-deception': {
+        requiresQuizIds: [...skillBuilderQuizIds],
+        label: 'Unlocks after you finish the Skill Builder Series.'
+    },
+    'event-registration-risks': {
+        requiresQuizIds: [...skillBuilderQuizIds],
+        label: 'Unlocks after you finish the Skill Builder Series.'
+    },
+    'marketplace-meetup-scams': {
+        requiresQuizIds: [...skillBuilderQuizIds],
+        label: 'Unlocks after you finish the Skill Builder Series.'
+    },
+    'multi-step-phish-cases': {
+        requiresQuizIds: [...skillBuilderQuizIds],
+        label: 'Unlocks after you finish the Skill Builder Series.'
+    },
+    'campus-portal-spoofs': {
+        requiresQuizIds: [...challengerQuizIds],
+        label: 'Unlocks after you finish the Challenger Series.'
+    },
+    'urgent-admin-fraud': {
+        requiresQuizIds: [...challengerQuizIds],
+        label: 'Unlocks after you finish the Challenger Series.'
+    },
+    'cloud-drive-compromise': {
+        requiresQuizIds: [...challengerQuizIds],
+        label: 'Unlocks after you finish the Challenger Series.'
+    },
+    'internship-hiring-scams': {
+        requiresQuizIds: [...challengerQuizIds],
+        label: 'Unlocks after you finish the Challenger Series.'
+    },
+    'verification-chain-attacks': {
+        requiresQuizIds: [...challengerQuizIds],
+        label: 'Unlocks after you finish the Challenger Series.'
+    },
     'phishing-scenarios': {
-        requiresQuizIds: ['url-basics', 'message-red-flags', 'after-clicking'],
-        label: 'Unlocks after you complete all 3 core quiz sets.'
+        requiresQuizIds: [...coreQuizIds, ...skillBuilderQuizIds, ...challengerQuizIds],
+        label: 'Unlocks after you complete the Core, Skill Builder, and Challenger series.'
     },
     'best-practices': {
-        requiresQuizIds: ['phishing-scenarios'],
+        requiresQuizIds: [...masteryPrepQuizIds],
         minimumAttempts: 4,
         minimumAverageScore: 70,
-        label: 'Unlocks after Phishing Scenarios plus 4 saved attempts and a 70% average.'
+        label: 'Unlocks after the earlier Mastery sets plus 4 saved attempts and a 70% average.'
+    },
+    'executive-impersonation': {
+        requiresQuizIds: [...advancedSeriesQuizIds],
+        label: 'Unlocks after you finish the Advanced Series.'
+    },
+    'breach-followup-scams': {
+        requiresQuizIds: [...advancedSeriesQuizIds],
+        label: 'Unlocks after you finish the Advanced Series.'
+    },
+    'recovery-flow-attacks': {
+        requiresQuizIds: [...advancedSeriesQuizIds],
+        label: 'Unlocks after you finish the Advanced Series.'
+    },
+    'financial-approval-fraud': {
+        requiresQuizIds: [...advancedSeriesQuizIds],
+        label: 'Unlocks after you finish the Advanced Series.'
+    },
+    'cross-channel-takeovers': {
+        requiresQuizIds: [...advancedSeriesQuizIds],
+        label: 'Unlocks after you finish the Advanced Series.'
     }
 };
 
@@ -72,6 +200,18 @@ const quizzes = {
                 ],
                 answer: 1,
                 explanation: 'The real domain is at the end. In that suspicious link, `verify-user-access.net` is the actual website, not `lcc.edu`.'
+            },
+            {
+                topic: 'Lookalike domains',
+                prompt: 'You are about to open `https://lcc-portal.co/login` after searching for your school portal. What should you do first?',
+                options: [
+                    'Open it because the address still includes `lcc` and `portal`.',
+                    'Compare it with the real school domain before using it.',
+                    'Trust it if the page loads with a lock icon.',
+                    'Sign in once and leave if the design looks unusual.'
+                ],
+                answer: 1,
+                explanation: 'Lookalike domains often use believable words. It is safer to compare the full address with the official domain first.'
             }
         ]
     },
@@ -126,6 +266,18 @@ const quizzes = {
                 ],
                 answer: 1,
                 explanation: 'Unexpected files can carry malware or phishing forms. Verify first before opening anything.'
+            },
+            {
+                topic: 'Link pressure',
+                prompt: 'A message says, "Use this link only today or your account request will be cancelled." Which response is safest?',
+                options: [
+                    'Open the link quickly so the request does not expire.',
+                    'Ask someone else to open it for you first.',
+                    'Verify the request from the official website or office.',
+                    'Reply to the sender and wait for a second link.'
+                ],
+                answer: 2,
+                explanation: 'Urgent link pressure is a common phishing tactic. A safer move is to verify through an official source you already trust.'
             }
         ]
     },
@@ -180,6 +332,1338 @@ const quizzes = {
                 ],
                 answer: 1,
                 explanation: 'A suspicious download should be treated carefully. Run a security check and avoid reopening the file.'
+            },
+            {
+                topic: 'Account recovery',
+                prompt: 'You are not sure whether you entered your student number on a fake page. What is the safest next step?',
+                options: [
+                    'Do nothing unless you notice a problem later.',
+                    'Check your real account for unusual changes and secure it if needed.',
+                    'Open the suspicious page again to confirm what you typed.',
+                    'Post the link in a group chat and ask if others tried it.'
+                ],
+                answer: 1,
+                explanation: 'When information may have been exposed, it is safer to check the real account directly and secure it if anything looks unusual.'
+            }
+        ]
+    },
+    'login-page-clues': {
+        title: 'Login Page Clues',
+        description: 'Practice checking login pages for warning signs before entering your school or personal account details.',
+        questions: [
+            {
+                topic: 'Page checks',
+                prompt: 'A login page looks polished and uses your school colors, but the address ends in `.secure-help.net`. What matters most?',
+                options: [
+                    'The familiar school colors on the page.',
+                    'Whether the address matches the official domain.',
+                    'Whether the button style looks updated.',
+                    'Whether the page loads without errors.'
+                ],
+                answer: 1,
+                explanation: 'Attackers can copy a school design. The full website address is a stronger trust check than the page style.'
+            },
+            {
+                topic: 'Form requests',
+                prompt: 'A page asks for your school email, password, and backup phone number before you can continue. What should you notice first?',
+                options: [
+                    'The page is asking for more information than expected.',
+                    'The form uses neat spacing and aligned labels.',
+                    'The password box hides the characters properly.',
+                    'The page asks for details in one step only.'
+                ],
+                answer: 0,
+                explanation: 'A login page that asks for extra personal details can be a sign that the form is collecting more than it should.'
+            },
+            {
+                topic: 'Urgency on page',
+                prompt: 'A login page says your account will be closed today unless you sign in again right now. What is the strongest warning sign?',
+                options: [
+                    'The page uses large bold text near the top.',
+                    'The warning creates pressure to act immediately.',
+                    'The form appears in the center of the page.',
+                    'The message mentions your account status.'
+                ],
+                answer: 1,
+                explanation: 'Pressure and urgency are common phishing tactics used to stop users from checking the page carefully.'
+            },
+            {
+                topic: 'Support details',
+                prompt: 'A login page tells you to contact `support@verify-portal-mail.net` if you have problems signing in. What should you do?',
+                options: [
+                    'Use the support address if the page looks official enough.',
+                    'Check if the support contact belongs to the real organization.',
+                    'Trust it if the email uses the word `support`.',
+                    'Ignore the contact details and focus only on the logo.'
+                ],
+                answer: 1,
+                explanation: 'Fake pages often include support contacts that look believable but do not belong to the official organization.'
+            },
+            {
+                topic: 'Safer move',
+                prompt: 'You are unsure if a login page is real. What is the safest next step?',
+                options: [
+                    'Try signing in once to see where the page redirects.',
+                    'Open the real website or app you already trust instead.',
+                    'Send the page to a friend and ask them to test it.',
+                    'Refresh the page and see if the warning disappears.'
+                ],
+                answer: 1,
+                explanation: 'When a login page feels off, it is safer to use the official website or app you already know instead of trusting the page.'
+            }
+        ]
+    },
+    'qr-link-safety': {
+        title: 'QR & Link Safety',
+        description: 'Learn how hidden destinations in QR codes and links can lead to risky pages even when they look harmless at first.',
+        questions: [
+            {
+                topic: 'QR destination',
+                prompt: 'You scan a QR code on a school bulletin board and it opens a shortened login link. What should you do first?',
+                options: [
+                    'Open it because the QR code came from campus.',
+                    'Check where the link leads before trusting it.',
+                    'Sign in quickly before the page expires.',
+                    'Share it with classmates to confirm it works.'
+                ],
+                answer: 1,
+                explanation: 'QR codes and shortened links can hide the real destination, so it is safer to check the target first.'
+            },
+            {
+                topic: 'Shortened links',
+                prompt: 'A message says a shortened link leads to an updated school form. Which reaction is safest?',
+                options: [
+                    'Trust it if the message came from a familiar group.',
+                    'Preview or verify the destination before opening it.',
+                    'Open it on mobile because the risk is lower there.',
+                    'Save it for later and open it after class.'
+                ],
+                answer: 1,
+                explanation: 'A shortened link hides the real site, so it is safer to preview or verify it before opening.'
+            },
+            {
+                topic: 'Login after scan',
+                prompt: 'A QR code leads to a sign-in page that asks for your school account. What matters most before you enter anything?',
+                options: [
+                    'Whether the page loads quickly after the scan.',
+                    'Whether the page uses the official school domain.',
+                    'Whether the QR code looked professionally printed.',
+                    'Whether the form only asks for two fields.'
+                ],
+                answer: 1,
+                explanation: 'The printed code or page speed does not prove trust. The official domain is the stronger check.'
+            },
+            {
+                topic: 'Urgent QR notice',
+                prompt: 'A QR code poster says "Scan now to keep your student access active today." What should you notice?',
+                options: [
+                    'The message is creating urgency to push quick action.',
+                    'The poster uses a clean and modern layout.',
+                    'The instruction is short and easy to follow.',
+                    'The message mentions your student access.'
+                ],
+                answer: 0,
+                explanation: 'Urgent wording is often used to pressure people into reacting before they verify where the QR code leads.'
+            },
+            {
+                topic: 'Safer route',
+                prompt: 'You are unsure whether a QR code or link is legitimate. What is the safest option?',
+                options: [
+                    'Go to the official site directly instead of using it.',
+                    'Try it once and leave if anything looks unusual.',
+                    'Ask another student to open it first.',
+                    'Take a screenshot and scan it again later.'
+                ],
+                answer: 0,
+                explanation: 'Using the official site or app directly is safer than relying on an unknown QR code or link.'
+            }
+        ]
+    },
+    'social-media-scams': {
+        title: 'Social Media Scams',
+        description: 'Practice spotting phishing and impersonation tactics that often appear in social media posts, chats, and direct messages.',
+        questions: [
+            {
+                topic: 'Impersonation',
+                prompt: 'A classmate account sends you a login link and says the school page is broken unless you use this one. What should you do?',
+                options: [
+                    'Use it if the account name looks familiar.',
+                    'Verify with the classmate through another trusted contact.',
+                    'Open it in a private tab to be safer.',
+                    'Trust it because the message sounds personal.'
+                ],
+                answer: 1,
+                explanation: 'A familiar account can still be impersonated or compromised. It is safer to verify through another channel you trust.'
+            },
+            {
+                topic: 'Prize bait',
+                prompt: 'A social media post says the first 50 students to sign in through a link will receive free load. Which sign is most suspicious?',
+                options: [
+                    'The post mentions a reward for quick action.',
+                    'The post includes a bright image and headline.',
+                    'The post uses short text with a direct link.',
+                    'The post has many comments under it.'
+                ],
+                answer: 0,
+                explanation: 'Prize bait and urgency are often used together to push users into opening risky links without checking them.'
+            },
+            {
+                topic: 'Direct messages',
+                prompt: 'A direct message says, "Is this you in the photo?" and includes a shortened link. What is the safest response?',
+                options: [
+                    'Open it because the message is short and common.',
+                    'Check with the sender first before touching the link.',
+                    'Open it only if the sender is on your friends list.',
+                    'Save it and come back to it after a few hours.'
+                ],
+                answer: 1,
+                explanation: 'Compromised accounts often send simple bait messages with hidden links. It is safer to verify with the sender first.'
+            },
+            {
+                topic: 'Fake announcements',
+                prompt: 'A page uses your school logo and posts an urgent login announcement in a student group. What should you verify first?',
+                options: [
+                    'Whether the wording matches the school tone.',
+                    'Whether the linked domain is the real official one.',
+                    'Whether the page has a large number of followers.',
+                    'Whether the announcement looks professionally designed.'
+                ],
+                answer: 1,
+                explanation: 'Fake pages can copy branding and attract followers. The linked domain is still the stronger trust check.'
+            },
+            {
+                topic: 'Safer action',
+                prompt: 'A suspicious social media message asks you to log in to confirm your account. What is the safest move?',
+                options: [
+                    'Go to the official website or app on your own.',
+                    'Reply first and wait for another explanation.',
+                    'Try the link only if it uses HTTPS.',
+                    'Open the link on another device to compare it.'
+                ],
+                answer: 0,
+                explanation: 'Going directly to the official platform yourself is safer than trusting a login link from a social media message.'
+            }
+        ]
+    },
+    'sender-source-checks': {
+        title: 'Sender & Source Checks',
+        description: 'Build stronger habits for checking who sent a message and whether the source really matches the organization it claims to be.',
+        questions: [
+            {
+                topic: 'Display name mismatch',
+                prompt: 'An email shows the name "LCC Finance Office," but the sender address is `alerts-finance@outlookmail.com`. What should matter most?',
+                options: [
+                    'The displayed sender name at the top.',
+                    'The actual email address behind the message.',
+                    'The formal tone used in the message.',
+                    'The school-related subject line.'
+                ],
+                answer: 1,
+                explanation: 'A display name can be copied easily. The actual sender address is a much stronger trust check.'
+            },
+            {
+                topic: 'Message source',
+                prompt: 'A text about a grade issue comes from an unknown number and includes a portal link. What is the safest first step?',
+                options: [
+                    'Open the link because the topic sounds important.',
+                    'Check the portal directly using your usual route.',
+                    'Reply and ask for more details in the same thread.',
+                    'Save the number first before deciding.'
+                ],
+                answer: 1,
+                explanation: 'When the source is unfamiliar, it is safer to use the official portal or contact route you already trust.'
+            },
+            {
+                topic: 'Compromised contact',
+                prompt: 'A familiar classmate account asks you to review a file through a login link. Which detail should raise concern first?',
+                options: [
+                    'The request feels unusual for that account.',
+                    'The file name sounds short and generic.',
+                    'The message was sent after class hours.',
+                    'The sender used your nickname.'
+                ],
+                answer: 0,
+                explanation: 'A familiar account can still be compromised. An unusual request is a strong reason to verify before trusting it.'
+            },
+            {
+                topic: 'Copied branding',
+                prompt: 'A message includes the school logo and footer, but the reply-to address points to another domain. What should you do?',
+                options: [
+                    'Trust the branding because the footer looks official.',
+                    'Check whether the reply-to matches the real organization.',
+                    'Focus only on whether the grammar looks polished.',
+                    'Forward it to friends first to compare opinions.'
+                ],
+                answer: 1,
+                explanation: 'Copied branding does not prove legitimacy. A mismatched reply-to address is a stronger warning sign.'
+            },
+            {
+                topic: 'Cross-checking',
+                prompt: 'You receive a password reset notice you did not request. What is the best response?',
+                options: [
+                    'Open the message and inspect the reset flow there.',
+                    'Go to the official account page directly and check there.',
+                    'Reply and ask why the reset was triggered.',
+                    'Ignore it and keep using the same password.'
+                ],
+                answer: 1,
+                explanation: 'If a reset notice was unexpected, it is safer to check your account from the official site directly instead of trusting the message.'
+            }
+        ]
+    },
+    'attachment-download-safety': {
+        title: 'Attachment & Download Safety',
+        description: 'Practice safer decisions when messages include unexpected files, downloads, or documents that ask you to open them quickly.',
+        questions: [
+            {
+                topic: 'Unexpected file',
+                prompt: 'An email claims to contain an updated tuition statement as a zip file you did not expect. What is the safest first reaction?',
+                options: [
+                    'Extract it first and inspect the contents after.',
+                    'Verify the request through an official school contact.',
+                    'Open it on a phone because that is safer.',
+                    'Rename the file before opening it.'
+                ],
+                answer: 1,
+                explanation: 'Unexpected downloads should be verified first, especially when the file type can hide malware.'
+            },
+            {
+                topic: 'Shared document',
+                prompt: 'A direct message says "View your schedule update" and includes a file download instead of a normal document link. What should you notice?',
+                options: [
+                    'The file arrived through an unusual channel.',
+                    'The message uses a short sentence only.',
+                    'The file name includes the word `schedule`.',
+                    'The sender used a polite tone.'
+                ],
+                answer: 0,
+                explanation: 'A download arriving through an unusual channel should be treated carefully, especially if you were not expecting it.'
+            },
+            {
+                topic: 'Executable files',
+                prompt: 'A message says you must install a file to keep your student account active. Which response is safest?',
+                options: [
+                    'Install it if the message includes your full name.',
+                    'Avoid the file and verify the claim from the official portal.',
+                    'Open it only after disabling Wi-Fi first.',
+                    'Download it and wait until later to run it.'
+                ],
+                answer: 1,
+                explanation: 'Legitimate account updates should not require random file installs from messages. Verify the claim through the official portal.'
+            },
+            {
+                topic: 'Macros and forms',
+                prompt: 'A document asks you to enable editing or content before you can read it. What should you do?',
+                options: [
+                    'Enable the feature so the document loads properly.',
+                    'Treat the file as suspicious and avoid enabling it.',
+                    'Move the file to another folder and open it again.',
+                    'Print it first to see if it becomes safer.'
+                ],
+                answer: 1,
+                explanation: 'Prompting users to enable extra document features is a common tactic used to trigger malicious content.'
+            },
+            {
+                topic: 'Safer file handling',
+                prompt: 'You are unsure whether a downloaded file is legitimate. What is the safest move?',
+                options: [
+                    'Send it to a friend and ask them to open it first.',
+                    'Avoid opening it until the request is confirmed.',
+                    'Open it offline so it cannot do harm.',
+                    'Upload it back to the sender for checking.'
+                ],
+                answer: 1,
+                explanation: 'If the file is suspicious, the safest move is to avoid opening it until the request itself has been verified.'
+            }
+        ]
+    },
+    'account-recovery-traps': {
+        title: 'Account Recovery Traps',
+        description: 'Learn how phishing messages abuse password resets, verification steps, and account recovery claims to steal account access.',
+        questions: [
+            {
+                topic: 'Recovery pressure',
+                prompt: 'A message says your recovery request must be approved through a link in the next 15 minutes. What is the biggest concern?',
+                options: [
+                    'The short deadline is pressuring you to act fast.',
+                    'The message mentions account recovery directly.',
+                    'The wording is brief and to the point.',
+                    'The notice includes a case number.'
+                ],
+                answer: 0,
+                explanation: 'Urgent recovery notices are often used to create panic before you have time to verify the request properly.'
+            },
+            {
+                topic: 'Unexpected reset',
+                prompt: 'You receive a recovery code by text even though you did not try to reset anything. What should you do?',
+                options: [
+                    'Share the code if the sender claims to be support.',
+                    'Keep the code private and secure the real account if needed.',
+                    'Enter the code into any page that mentions your account.',
+                    'Reply with the code to stop the alerts.'
+                ],
+                answer: 1,
+                explanation: 'Unexpected recovery codes should never be shared. They may mean someone is trying to access your account.'
+            },
+            {
+                topic: 'Verification prompts',
+                prompt: 'A page asks for your password and then your one-time code to "confirm recovery." What should you notice?',
+                options: [
+                    'The page is collecting multiple sensitive credentials.',
+                    'The page uses a familiar account color theme.',
+                    'The code field appears after the password field.',
+                    'The page provides a help link below the form.'
+                ],
+                answer: 0,
+                explanation: 'A fake recovery page often asks for both your password and verification code so attackers can take over the account immediately.'
+            },
+            {
+                topic: 'Support impersonation',
+                prompt: 'Someone claims they are helping with your recovery case and asks you to read back a verification code. What is the safest response?',
+                options: [
+                    'Read it back if they already know your email address.',
+                    'Do not share the code and verify support independently.',
+                    'Give only part of the code to stay safe.',
+                    'Wait until they explain the full process in chat.'
+                ],
+                answer: 1,
+                explanation: 'Verification codes should not be shared with people messaging you directly. Real support can be checked through official channels.'
+            },
+            {
+                topic: 'Safer recovery route',
+                prompt: 'Which recovery step is safest when you truly need to reset an account?',
+                options: [
+                    'Use the reset flow from the official site or app directly.',
+                    'Follow the latest reset link sent to your messages.',
+                    'Ask social media pages to handle it for you.',
+                    'Use the first recovery page from search results.'
+                ],
+                answer: 0,
+                explanation: 'The safest recovery route is the official website or app you already trust, not a link that arrived through a message.'
+            }
+        ]
+    },
+    'form-data-requests': {
+        title: 'Form & Data Requests',
+        description: 'Practice noticing when a page or message is asking for more information than a legitimate process usually needs.',
+        questions: [
+            {
+                topic: 'Too much information',
+                prompt: 'A scholarship form asks for your password, student ID, and recovery email on one page. What is the strongest warning sign?',
+                options: [
+                    'The form is asking for credentials it should not need.',
+                    'The form uses several fields on one screen.',
+                    'The form collects contact details together.',
+                    'The form places the submit button at the bottom.'
+                ],
+                answer: 0,
+                explanation: 'A legitimate form should not ask for account passwords as part of a normal information request.'
+            },
+            {
+                topic: 'External forms',
+                prompt: 'A message says you must complete a form immediately, but the page opens on a domain unrelated to the school. What should you do?',
+                options: [
+                    'Continue if the form mentions your department name.',
+                    'Verify why the form is hosted on another domain first.',
+                    'Trust it if the page still uses HTTPS.',
+                    'Fill only the non-sensitive fields and submit.'
+                ],
+                answer: 1,
+                explanation: 'An unrelated form domain is a reason to verify the request before sharing any information.'
+            },
+            {
+                topic: 'Sensitive verification',
+                prompt: 'A page asks for your mobile number, date of birth, and one-time code to keep your access active. What should you notice?',
+                options: [
+                    'The page is combining identity details with a security code.',
+                    'The page clearly labels each field for the user.',
+                    'The page uses a secure lock icon in the browser.',
+                    'The code field appears last in the form.'
+                ],
+                answer: 0,
+                explanation: 'Combining identity details with a one-time code is often a sign that the form is collecting enough data to misuse your account.'
+            },
+            {
+                topic: 'Submission pressure',
+                prompt: 'A form warns that your request will be cancelled if you leave any field blank. What should you do first?',
+                options: [
+                    'Complete every field so the request is not lost.',
+                    'Check whether the form and request are really official.',
+                    'Refresh the page and try again from the start.',
+                    'Enter placeholder data in the extra fields.'
+                ],
+                answer: 1,
+                explanation: 'Pressure to complete every field can be used to push people into sharing unnecessary or sensitive information.'
+            },
+            {
+                topic: 'Safer habit',
+                prompt: 'A form request seems important but slightly unusual. Which habit is safest?',
+                options: [
+                    'Pause and confirm the request before submitting anything.',
+                    'Submit the form once and edit it later if needed.',
+                    'Complete only the first half of the form for now.',
+                    'Use the same answers you gave on another site.'
+                ],
+                answer: 0,
+                explanation: 'Pausing to verify the request first is a safer habit than submitting information and hoping the form is legitimate.'
+            }
+        ]
+    },
+    'payment-delivery-scams': {
+        title: 'Payment & Delivery Scams',
+        description: 'Strengthen your judgment around phishing attempts that involve fees, deliveries, billing problems, and fake payment requests.',
+        questions: [
+            {
+                topic: 'Small fee trick',
+                prompt: 'A message says your parcel is waiting but you must pay a small fee through a link. What is the safest reaction?',
+                options: [
+                    'Pay it because the amount is small anyway.',
+                    'Check the courier or seller through the official app first.',
+                    'Open the page if the message includes a tracking number.',
+                    'Use another card so the main account stays safe.'
+                ],
+                answer: 1,
+                explanation: 'Small-fee delivery scams rely on urgency and low amounts. It is safer to verify the claim through the real courier or seller.'
+            },
+            {
+                topic: 'Billing notice',
+                prompt: 'An email says your subscription failed and asks you to update payment details through a message link. What should you do first?',
+                options: [
+                    'Open the link and check whether the amount looks right.',
+                    'Go to the official service directly instead of the link.',
+                    'Reply and ask whether cash payment is possible.',
+                    'Trust it if the logo and colors seem correct.'
+                ],
+                answer: 1,
+                explanation: 'Billing notices can be copied easily. Going to the official service directly is safer than trusting the message link.'
+            },
+            {
+                topic: 'Fake order issue',
+                prompt: 'A message says there is a problem with your order and asks you to confirm your card number to avoid cancellation. What should you notice?',
+                options: [
+                    'The message is asking for payment data unsafely.',
+                    'The message includes an order issue explanation.',
+                    'The request is written in short sentences.',
+                    'The message was sent outside business hours.'
+                ],
+                answer: 0,
+                explanation: 'Requests for card details through messages or suspicious pages are a major warning sign.'
+            },
+            {
+                topic: 'Refund bait',
+                prompt: 'A page promises a fast refund if you verify your login and bank details right away. What is the safest move?',
+                options: [
+                    'Avoid the page and contact the service from the official site.',
+                    'Continue if the refund amount matches your purchase.',
+                    'Use the page only if it loads with HTTPS.',
+                    'Enter partial details first to test the process.'
+                ],
+                answer: 0,
+                explanation: 'Refund bait is often used to collect both account and payment details. Use the official service instead of the page.'
+            },
+            {
+                topic: 'Safer payment habit',
+                prompt: 'Which habit lowers the risk of payment-related phishing the most?',
+                options: [
+                    'Checking issues from the official app or site.',
+                    'Using message links when they look professional.',
+                    'Responding quickly so orders are not delayed.',
+                    'Saving all payment links in one note.'
+                ],
+                answer: 0,
+                explanation: 'Using the official app or site directly is a much safer habit than following payment or delivery links from messages.'
+            }
+        ]
+    },
+    'support-impersonation': {
+        title: 'Support Impersonation',
+        description: 'Spot the tricks used by fake support staff, helpdesk pages, and urgent technical notices that try to steal trust and account access.',
+        questions: [
+            {
+                topic: 'Helpdesk urgency',
+                prompt: 'A helpdesk message says your account shows suspicious activity and you must verify it through a link today. What should you notice first?',
+                options: [
+                    'The message is using urgency to push fast action.',
+                    'The message mentions suspicious activity directly.',
+                    'The message includes a ticket number.',
+                    'The message gives a support signature.'
+                ],
+                answer: 0,
+                explanation: 'Urgent technical warnings are often used to stop users from verifying whether the support request is real.'
+            },
+            {
+                topic: 'Fake agent chat',
+                prompt: 'A chat popup says an agent can secure your account if you confirm your email and password right away. What is the safest response?',
+                options: [
+                    'Do not provide credentials and leave the chat.',
+                    'Share the email first, then decide about the password.',
+                    'Ask the agent to prove they work for support.',
+                    'Continue only if the page uses a branded logo.'
+                ],
+                answer: 0,
+                explanation: 'Real support should not ask for your password in a chat. Sharing credentials there is risky.'
+            },
+            {
+                topic: 'Remote access bait',
+                prompt: 'Someone claiming to be support asks you to install a remote tool so they can "clean up" your account issue. What should you do?',
+                options: [
+                    'Install it if they mention a specific problem.',
+                    'Refuse the tool and verify support independently.',
+                    'Install it only after changing your password.',
+                    'Let them explain longer before deciding.'
+                ],
+                answer: 1,
+                explanation: 'Unexpected remote support requests are risky. Verify support from a trusted official channel instead.'
+            },
+            {
+                topic: 'Ticket portals',
+                prompt: 'A support email links to a ticket page on a domain you have never seen before. What should you do first?',
+                options: [
+                    'Sign in once to check the ticket details.',
+                    'Compare the domain with the official support site.',
+                    'Reply and ask the sender if the page is safe.',
+                    'Trust it if the email includes your correct name.'
+                ],
+                answer: 1,
+                explanation: 'Fake support portals often use believable but unfamiliar domains. Compare the domain with the official support site first.'
+            },
+            {
+                topic: 'Safer support check',
+                prompt: 'Which support-related habit is safest when a message claims there is an urgent problem with your account?',
+                options: [
+                    'Use the official help center or contact route you know.',
+                    'Open the message link first and inspect the page there.',
+                    'Answer the support message before the case closes.',
+                    'Rely on the support badge shown in the email or chat.'
+                ],
+                answer: 0,
+                explanation: 'The safest habit is to contact support through the official route you already trust, not through the urgent message link.'
+            }
+        ]
+    },
+    'scholarship-bait': {
+        title: 'Scholarship Bait',
+        description: 'Work through higher-pressure scholarship and grant scams that mix urgency, prestige, and fake verification steps.',
+        questions: [
+            {
+                topic: 'Prestige bait',
+                prompt: 'A message says you were shortlisted for an exclusive grant and must sign in through a provided link before midnight. What matters most?',
+                options: [
+                    'The exclusive language used in the message.',
+                    'Whether the link belongs to the real scholarship provider.',
+                    'Whether the amount offered looks realistic.',
+                    'Whether the email includes your full name.'
+                ],
+                answer: 1,
+                explanation: 'Prestige and urgency can distract from the real issue. The actual domain still matters most.'
+            },
+            {
+                topic: 'Verification trap',
+                prompt: 'A scholarship form asks for your portal password to confirm your identity. What should you assume first?',
+                options: [
+                    'It is collecting a credential it should never need.',
+                    'It is using a stronger verification method.',
+                    'It is connected to your school account system.',
+                    'It is trying to speed up the review process.'
+                ],
+                answer: 0,
+                explanation: 'A legitimate scholarship form should not require your account password as part of normal verification.'
+            },
+            {
+                topic: 'Forwarded opportunity',
+                prompt: 'A class group forwards a scholarship link that many students are praising. What is still the safest step?',
+                options: [
+                    'Trust it because several students already shared it.',
+                    'Verify the opportunity from the real source yourself.',
+                    'Open it but avoid entering personal details first.',
+                    'Use it only on a different device.'
+                ],
+                answer: 1,
+                explanation: 'A widely shared link can still be fake. Independent verification is still safer than relying on group momentum.'
+            },
+            {
+                topic: 'Fast deadline',
+                prompt: 'A page warns that your scholarship slot will disappear if you leave the form unfinished. What should you notice?',
+                options: [
+                    'The form includes an account deadline at the top.',
+                    'The page is pressuring you to submit without checking.',
+                    'The page uses short instructions to guide you.',
+                    'The message appears before the form fields.'
+                ],
+                answer: 1,
+                explanation: 'Pressure and scarcity are common phishing tactics because they push people to skip verification.'
+            },
+            {
+                topic: 'Safer route',
+                prompt: 'Which response is safest when a scholarship message feels both exciting and slightly suspicious?',
+                options: [
+                    'Verify it from the official organization or campus office.',
+                    'Open it once and decide based on the page design.',
+                    'Submit only the non-sensitive details first.',
+                    'Reply and ask the sender to reassure you.'
+                ],
+                answer: 0,
+                explanation: 'When a high-reward message feels off, a trusted official source is the safest place to verify it.'
+            }
+        ]
+    },
+    'document-sharing-traps': {
+        title: 'Document Sharing Traps',
+        description: 'Spot the riskier sharing tricks that use shared files, document comments, and access requests to lure users into fake sign-ins.',
+        questions: [
+            {
+                topic: 'Shared access request',
+                prompt: 'A shared document notice says you need to sign in again to view comments from a teacher. What should you verify first?',
+                options: [
+                    'Whether the comment count seems believable.',
+                    'Whether the sign-in page uses the real service domain.',
+                    'Whether the notice came during class hours.',
+                    'Whether the document title matches your course.'
+                ],
+                answer: 1,
+                explanation: 'Shared document phishing often copies real notifications. The domain is the stronger check.'
+            },
+            {
+                topic: 'Comment bait',
+                prompt: 'A document notification says you were mentioned in feedback and includes a login prompt. What is the safest move?',
+                options: [
+                    'Open the login prompt if the file name looks familiar.',
+                    'Go to the document service directly and check there.',
+                    'Reply to the sender and ask if they tagged you.',
+                    'Open it on mobile because it is a document, not a site.'
+                ],
+                answer: 1,
+                explanation: 'Accessing the service directly is safer than trusting a login prompt from the notification.'
+            },
+            {
+                topic: 'Fake collaboration',
+                prompt: 'A class project file invites you to enable editing after a second sign-in. What should you notice?',
+                options: [
+                    'The file is part of a collaboration workflow.',
+                    'The extra sign-in may be a fake credential prompt.',
+                    'The project title uses your course code.',
+                    'The page offers multiple access options.'
+                ],
+                answer: 1,
+                explanation: 'A second sign-in prompt can be a fake layer added to steal credentials.'
+            },
+            {
+                topic: 'Unusual host',
+                prompt: 'A shared file link opens on a domain that resembles a document service but adds extra words. What is the safest response?',
+                options: [
+                    'Trust it if the layout looks identical to the real service.',
+                    'Treat it as suspicious and compare the full domain.',
+                    'Use it only if the file preview loads quickly.',
+                    'Sign in once and leave if the content is missing.'
+                ],
+                answer: 1,
+                explanation: 'Lookalike document domains are a common phishing method. Compare the full address before trusting it.'
+            },
+            {
+                topic: 'Safer collaboration habit',
+                prompt: 'Which habit best reduces shared-document phishing risk?',
+                options: [
+                    'Opening shared files from the official app or saved workspace.',
+                    'Trusting links that arrive from classmates you know.',
+                    'Using incognito mode before opening shared links.',
+                    'Previewing the page and signing in only if needed.'
+                ],
+                answer: 0,
+                explanation: 'Opening files from the official app or service you already trust reduces reliance on message links.'
+            }
+        ]
+    },
+    'mobile-alert-deception': {
+        title: 'Mobile Alert Deception',
+        description: 'Handle mobile-style phishing cases that use push alerts, SMS warnings, and account notices designed for fast phone reactions.',
+        questions: [
+            {
+                topic: 'Push urgency',
+                prompt: 'A phone alert says your account was locked and you must tap to restore access immediately. What is the safest response?',
+                options: [
+                    'Tap it quickly before the lock becomes permanent.',
+                    'Open the real app or site yourself instead.',
+                    'Tap it once and stop if the design looks unusual.',
+                    'Wait for the same alert to appear again.'
+                ],
+                answer: 1,
+                explanation: 'Urgent push alerts are designed for fast reactions. Opening the real app yourself is safer.'
+            },
+            {
+                topic: 'SMS warning',
+                prompt: 'A text says your SIM or banking access will be suspended today unless you verify through a shortened link. What should you notice?',
+                options: [
+                    'The warning uses suspension pressure and a hidden destination.',
+                    'The message uses a realistic customer service tone.',
+                    'The message mentions a same-day deadline clearly.',
+                    'The link is short enough to fit on mobile.'
+                ],
+                answer: 0,
+                explanation: 'Urgency plus a shortened link is a strong mobile phishing combination.'
+            },
+            {
+                topic: 'App store bait',
+                prompt: 'A mobile page says you need a security update and offers a direct download button. What is the safest move?',
+                options: [
+                    'Use the page if it matches your phone theme.',
+                    'Get updates only from the official app store or source.',
+                    'Download it now and install it after checking later.',
+                    'Take a screenshot and come back when you have Wi-Fi.'
+                ],
+                answer: 1,
+                explanation: 'Security updates should come from the official app store or trusted source, not a random page.'
+            },
+            {
+                topic: 'Overlay login',
+                prompt: 'A mobile page overlays a login prompt on top of a familiar service screen. What should you suspect?',
+                options: [
+                    'The overlay may be a fake prompt placed over copied content.',
+                    'The service is using a faster mobile sign-in flow.',
+                    'The page is loading an account check in two steps.',
+                    'The service is simplifying the mobile interface.'
+                ],
+                answer: 0,
+                explanation: 'Copied mobile screens with fake overlays are used to trick people into entering credentials quickly.'
+            },
+            {
+                topic: 'Safer mobile habit',
+                prompt: 'Which habit is best when a security alert appears on your phone?',
+                options: [
+                    'Verify the alert from the official app or settings directly.',
+                    'Open the alert once to confirm whether it feels real.',
+                    'Reply to the text and ask what triggered the alert.',
+                    'Forward the alert to a friend before acting.'
+                ],
+                answer: 0,
+                explanation: 'Verifying through the official app or settings is safer than trusting the alert itself.'
+            }
+        ]
+    },
+    'event-registration-risks': {
+        title: 'Event Registration Risks',
+        description: 'Practice spotting riskier event and registration scams that use limited slots, fake organizers, and payment or sign-in pressure.',
+        questions: [
+            {
+                topic: 'Limited slots',
+                prompt: 'An event page says only the first 20 students who sign in through a link can reserve a seat. What should stand out?',
+                options: [
+                    'The event is using scarcity to rush decisions.',
+                    'The event clearly explains how seating works.',
+                    'The page includes a matching event title.',
+                    'The page offers a quick reservation process.'
+                ],
+                answer: 0,
+                explanation: 'Scarcity is often used to pressure students into acting before verifying the event or the page.'
+            },
+            {
+                topic: 'Fake organizer',
+                prompt: 'A registration page uses campus branding but is hosted on a domain unrelated to the school. What should you do?',
+                options: [
+                    'Register if the branding looks current enough.',
+                    'Verify the event from an official school source first.',
+                    'Use the page only if no payment is required.',
+                    'Fill in only your name and see what happens next.'
+                ],
+                answer: 1,
+                explanation: 'A mismatched event domain should be verified through the official organizer before sharing information.'
+            },
+            {
+                topic: 'Fee request',
+                prompt: 'A student workshop page suddenly asks for a processing fee through a direct payment link. What is the safest move?',
+                options: [
+                    'Pay it if the fee seems small and reasonable.',
+                    'Confirm the fee from the official organizer directly.',
+                    'Use another account so the payment is isolated.',
+                    'Complete the registration first, then decide.'
+                ],
+                answer: 1,
+                explanation: 'Unexpected fee requests should be confirmed directly with the real organizer before any payment is made.'
+            },
+            {
+                topic: 'Sign-in requirement',
+                prompt: 'A simple RSVP form unexpectedly sends you to a login page asking for your school account. What should you notice?',
+                options: [
+                    'The registration process changed into a credential prompt.',
+                    'The event uses account-based registration only.',
+                    'The organizer wants to reduce duplicate signups.',
+                    'The form may need stronger identity checks.'
+                ],
+                answer: 0,
+                explanation: 'When a simple registration flow suddenly asks for account credentials, it can be a phishing sign.'
+            },
+            {
+                topic: 'Safer registration habit',
+                prompt: 'Which habit best lowers the risk of event registration phishing?',
+                options: [
+                    'Confirming the event through official campus pages or offices.',
+                    'Joining quickly if several classmates already did.',
+                    'Using the link only during school hours.',
+                    'Saving the registration link for later use.'
+                ],
+                answer: 0,
+                explanation: 'Official campus pages or offices are safer verification points than forwarded event links.'
+            }
+        ]
+    },
+    'marketplace-meetup-scams': {
+        title: 'Marketplace & Meetup Scams',
+        description: 'Handle phishing-style scam cases that mix payment pressure, fake buyer support, and identity checks in peer-to-peer deals.',
+        questions: [
+            {
+                topic: 'Buyer confirmation',
+                prompt: 'A buyer sends a page that says you must log in to confirm payment before shipping an item. What is the safest response?',
+                options: [
+                    'Use it if the buyer already sent screenshots.',
+                    'Check the real marketplace or payment app directly.',
+                    'Open it only if the buyer sounds genuine.',
+                    'Continue if the payment amount matches your listing.'
+                ],
+                answer: 1,
+                explanation: 'Screenshots and payment claims can be faked. It is safer to check the real platform or payment app directly.'
+            },
+            {
+                topic: 'Fake support payment',
+                prompt: 'A message says marketplace support requires you to verify your card before a sale can be released. What should you notice?',
+                options: [
+                    'The message is trying to collect payment data through a pressure tactic.',
+                    'The message includes a support explanation for the sale.',
+                    'The card check is linked to buyer protection.',
+                    'The process is part of the release workflow.'
+                ],
+                answer: 0,
+                explanation: 'Fake support messages often invent payment checks to steal card details from sellers.'
+            },
+            {
+                topic: 'External checkout',
+                prompt: 'A seller or buyer asks you to move to another page because the in-app process is "down." What is safest?',
+                options: [
+                    'Use the external page if the deal seems urgent.',
+                    'Stay inside the real platform or stop the transaction.',
+                    'Move to the page but avoid chatting there.',
+                    'Ask them to lower the price first.'
+                ],
+                answer: 1,
+                explanation: 'Moving outside the real platform removes safer checks and is a common setup for scams.'
+            },
+            {
+                topic: 'Identity request',
+                prompt: 'A meetup deal asks you to upload an ID and account login before confirming a pickup slot. What should you do?',
+                options: [
+                    'Proceed if the buyer also shares an ID photo.',
+                    'Treat it as suspicious and avoid the request.',
+                    'Upload only the front part of the ID first.',
+                    'Blur some details and wait for a reply.'
+                ],
+                answer: 1,
+                explanation: 'Combining identity documents with account access requests is a strong sign that the process is unsafe.'
+            },
+            {
+                topic: 'Safer selling habit',
+                prompt: 'Which habit best reduces marketplace phishing risk?',
+                options: [
+                    'Keeping payments and messages inside the official platform.',
+                    'Moving to private chat once the deal feels serious.',
+                    'Using any payment page that loads with HTTPS.',
+                    'Accepting urgency if the buyer has good timing.'
+                ],
+                answer: 0,
+                explanation: 'The official platform usually provides safer payment and messaging flows than external pages or private links.'
+            }
+        ]
+    },
+    'multi-step-phish-cases': {
+        title: 'Multi-Step Phish Cases',
+        description: 'Work through chained phishing cases where several believable steps appear before the real credential theft attempt happens.',
+        questions: [
+            {
+                topic: 'Layered setup',
+                prompt: 'A message first asks you to confirm a notice, then sends a follow-up login form, then requests a one-time code. What does that pattern suggest?',
+                options: [
+                    'The process is using multiple steps to look legitimate.',
+                    'The sender is fixing an account issue carefully.',
+                    'The system is verifying your identity thoroughly.',
+                    'The service has a slower support workflow.'
+                ],
+                answer: 0,
+                explanation: 'Multi-step phishing flows are designed to feel legitimate by gradually asking for more sensitive information.'
+            },
+            {
+                topic: 'Escalation pressure',
+                prompt: 'Each message in a thread becomes more urgent and asks for more account data than the last one. What is the safest interpretation?',
+                options: [
+                    'The issue is becoming more serious in real time.',
+                    'The sender is escalating pressure to force compliance.',
+                    'The system needs more data because the first step failed.',
+                    'The account recovery process is almost complete.'
+                ],
+                answer: 1,
+                explanation: 'Escalating urgency and data requests are often signs that the sender is trying to force a rushed mistake.'
+            },
+            {
+                topic: 'Mixed channels',
+                prompt: 'An email starts the process, then a text continues it, then a page asks for login details. What should you do first?',
+                options: [
+                    'Continue because the flow is consistent across channels.',
+                    'Pause and verify the whole issue from an official source.',
+                    'Use only the latest step because it is most updated.',
+                    'Reply to the text and ask for clarification.'
+                ],
+                answer: 1,
+                explanation: 'Using multiple channels can make a fake process feel real. A trusted official source is the safer place to verify it.'
+            },
+            {
+                topic: 'Credential stacking',
+                prompt: 'A case asks for your password, then recovery email, then one-time code across separate steps. What should you notice?',
+                options: [
+                    'The process is collecting layered credentials for takeover.',
+                    'The process is repairing a complex account problem.',
+                    'The service is confirming account ownership carefully.',
+                    'The final code step makes the flow more trustworthy.'
+                ],
+                answer: 0,
+                explanation: 'Attackers often stack credential requests across steps to avoid looking suspicious all at once.'
+            },
+            {
+                topic: 'Best response',
+                prompt: 'Which response is safest when a phishing attempt uses several believable steps across time?',
+                options: [
+                    'Stop responding and verify everything from the official source.',
+                    'Finish the process once so you know what it wants.',
+                    'Skip the first step and answer only the final one.',
+                    'Continue if each step individually looks reasonable.'
+                ],
+                answer: 0,
+                explanation: 'A multi-step flow can be dangerous even if each step seems mild on its own. The safest move is to stop and verify externally.'
+            }
+        ]
+    },
+    'campus-portal-spoofs': {
+        title: 'Campus Portal Spoofs',
+        description: 'Analyze more deceptive portal copies that mix familiar campus details with cloned login and update prompts.',
+        questions: [
+            {
+                topic: 'Cloned portal',
+                prompt: 'A page mirrors your school portal closely, but the domain adds `student-access-center` before a different ending. What matters most?',
+                options: [
+                    'How closely the page matches the real portal design.',
+                    'Whether the full domain still belongs to the school.',
+                    'Whether the portal shows the right campus color scheme.',
+                    'How complete the page navigation looks.'
+                ],
+                answer: 1,
+                explanation: 'A cloned design can look very convincing. The full domain is still the stronger trust check.'
+            },
+            {
+                topic: 'Portal update notice',
+                prompt: 'A portal login says you must re-verify today because of a system update, then asks for password and recovery email. What should you notice?',
+                options: [
+                    'The page is collecting more than a normal login should need.',
+                    'The portal is trying to complete account migration steps.',
+                    'The school is likely improving identity verification.',
+                    'The update flow is more detailed than before.'
+                ],
+                answer: 0,
+                explanation: 'A portal login that requests extra account recovery data is a strong sign the page is unsafe.'
+            },
+            {
+                topic: 'Search result risk',
+                prompt: 'You searched for the student portal and the top result leads to a page that asks for a fresh sign-in. What is safest?',
+                options: [
+                    'Use it if it appears first in search results.',
+                    'Compare it with the official bookmarked portal first.',
+                    'Try it once and stop if the dashboard looks different.',
+                    'Trust it if the title includes the school name.'
+                ],
+                answer: 1,
+                explanation: 'Search results can still lead to spoofed pages. A saved or known official portal is safer.'
+            },
+            {
+                topic: 'Portal support link',
+                prompt: 'A portal clone includes a help link that opens another unfamiliar domain for account verification. What does that suggest?',
+                options: [
+                    'The portal is using separate services correctly.',
+                    'The spoof is extending the trap across more than one page.',
+                    'The school now uses outsourced login support tools.',
+                    'The support page is likely more secure than the portal.'
+                ],
+                answer: 1,
+                explanation: 'Some phishing flows use more than one convincing-looking page to build false trust.'
+            },
+            {
+                topic: 'Best response',
+                prompt: 'Which response is safest when a school portal page feels almost right, but not fully trustworthy?',
+                options: [
+                    'Use the official portal you already know instead.',
+                    'Retry the same page from another browser tab.',
+                    'Ask a classmate whether the page worked for them.',
+                    'Submit only your email to test the first step.'
+                ],
+                answer: 0,
+                explanation: 'A familiar portal is still not trustworthy if key details feel off. The official route is safer.'
+            }
+        ]
+    },
+    'urgent-admin-fraud': {
+        title: 'Urgent Admin Fraud',
+        description: 'Handle deceptive admin-style messages that imitate registrar, finance, or IT notices with stronger authority pressure.',
+        questions: [
+            {
+                topic: 'Authority pressure',
+                prompt: 'A message claims to be from the registrar and says non-compliance today may affect enrollment records. What should stand out?',
+                options: [
+                    'The message uses authority and consequences to force speed.',
+                    'The registrar office is clearly named in the message.',
+                    'The notice explains the policy in formal language.',
+                    'The message uses a serious administrative tone.'
+                ],
+                answer: 0,
+                explanation: 'Authority plus consequences is a common phishing pattern because it pushes people to react before checking.'
+            },
+            {
+                topic: 'Finance notice',
+                prompt: 'A finance warning asks you to verify your account through a message link or risk late penalties. What is safest?',
+                options: [
+                    'Use the link quickly so the penalties do not apply.',
+                    'Check the real finance portal or office directly.',
+                    'Reply and ask for more billing details first.',
+                    'Use the link if the amount shown looks familiar.'
+                ],
+                answer: 1,
+                explanation: 'Penalty pressure is often used in finance-themed phishing. Verify the issue from the real portal or office.'
+            },
+            {
+                topic: 'IT enforcement',
+                prompt: 'An IT notice says device access will be revoked unless you sign in through a provided reset page. What should you notice?',
+                options: [
+                    'The message is turning a login prompt into an emergency task.',
+                    'The IT team is protecting access across campus devices.',
+                    'The reset page is part of routine security maintenance.',
+                    'The notice is written clearly for students to follow.'
+                ],
+                answer: 0,
+                explanation: 'Emergency-style login prompts are a common way to pressure users into trusting fake reset pages.'
+            },
+            {
+                topic: 'Multiple admin names',
+                prompt: 'A notice switches between registrar, records, and finance in the same message. What should that suggest?',
+                options: [
+                    'Several offices are working together on one issue.',
+                    'The message may be copying authority cues without accuracy.',
+                    'The process is more official because more offices are named.',
+                    'The sender is giving extra detail to be helpful.'
+                ],
+                answer: 1,
+                explanation: 'Fake administrative messages often stack official-sounding names without a coherent process behind them.'
+            },
+            {
+                topic: 'Safer admin check',
+                prompt: 'Which habit is best when a message claims immediate action is required by an admin office?',
+                options: [
+                    'Verify it using the official office page or contact route.',
+                    'Follow the message first and verify afterward.',
+                    'Ask classmates whether they got the same notice.',
+                    'Wait to see if another warning arrives tomorrow.'
+                ],
+                answer: 0,
+                explanation: 'The safest response is to verify the issue through the official office contact you already trust.'
+            }
+        ]
+    },
+    'cloud-drive-compromise': {
+        title: 'Cloud Drive Compromise',
+        description: 'Work through advanced file-sharing cases where fake storage notices, access errors, and permission prompts hide credential theft.',
+        questions: [
+            {
+                topic: 'Drive error bait',
+                prompt: 'A storage page says the file cannot load until you sign in again because your session token expired. What should you verify first?',
+                options: [
+                    'Whether the storage domain is the real official service.',
+                    'Whether the file title matches your subject.',
+                    'Whether the error message looks technically detailed.',
+                    'Whether the file owner name is familiar.'
+                ],
+                answer: 0,
+                explanation: 'A fake cloud-drive page often uses realistic errors. The domain still matters most.'
+            },
+            {
+                topic: 'Permission request',
+                prompt: 'A shared folder prompt asks for your password to confirm permission changes. What should you conclude first?',
+                options: [
+                    'The page is requesting a credential it should not need there.',
+                    'The folder owner added a stricter access policy.',
+                    'The service now uses direct account confirmation.',
+                    'The folder may have been secured after recent issues.'
+                ],
+                answer: 0,
+                explanation: 'A permission check should not require your password inside a suspicious or unfamiliar prompt.'
+            },
+            {
+                topic: 'Multiple redirects',
+                prompt: 'A file link first opens a fake preview, then redirects to a login page, then to a code prompt. What does that pattern suggest?',
+                options: [
+                    'A complicated but legitimate storage workflow.',
+                    'A staged phishing flow designed to feel believable.',
+                    'A broken document link that needs repeated login.',
+                    'A secure process using layered access checks.'
+                ],
+                answer: 1,
+                explanation: 'Layered redirects and repeated sign-ins are often used to make a phishing flow feel more legitimate.'
+            },
+            {
+                topic: 'Shared ownership',
+                prompt: 'A file claims to be shared by a teacher, but the real owner address does not match their usual account. What is safest?',
+                options: [
+                    'Trust it if the file contents seem class-related.',
+                    'Verify the share through the teacher or official class channel.',
+                    'Open it only in preview mode and avoid editing.',
+                    'Download it first and inspect it later.'
+                ],
+                answer: 1,
+                explanation: 'If the owner identity does not match what you expect, verify it through a trusted class channel before interacting.'
+            },
+            {
+                topic: 'Best habit',
+                prompt: 'Which habit best reduces cloud-drive phishing risk?',
+                options: [
+                    'Opening important files from the official workspace or app.',
+                    'Trusting shared links when the file title sounds familiar.',
+                    'Using preview mode before entering login details.',
+                    'Checking only the logo and account avatar.'
+                ],
+                answer: 0,
+                explanation: 'Using the official app or saved workspace is safer than relying on shared links that may be spoofed.'
+            }
+        ]
+    },
+    'internship-hiring-scams': {
+        title: 'Internship Hiring Scams',
+        description: 'Practice tougher hiring-related phishing cases involving fake recruiters, application portals, and job verification traps.',
+        questions: [
+            {
+                topic: 'Recruiter urgency',
+                prompt: 'A recruiter message says your internship spot is reserved only if you finish an account check today. What should you notice?',
+                options: [
+                    'The recruiter is using urgency to control your next step.',
+                    'The role is probably in high demand.',
+                    'The message is trying to keep hiring efficient.',
+                    'The employer has a strict onboarding policy.'
+                ],
+                answer: 0,
+                explanation: 'Urgency is often used in fake hiring messages to stop applicants from verifying the process.'
+            },
+            {
+                topic: 'Application portal',
+                prompt: 'A hiring page asks you to log in with your school account before you can upload a resume. What is safest?',
+                options: [
+                    'Use it because schools often connect with recruiters.',
+                    'Verify the employer and portal independently first.',
+                    'Upload the resume first and skip the login later.',
+                    'Use it if the recruiter already knows your course.'
+                ],
+                answer: 1,
+                explanation: 'A job application should not be trusted just because it mentions school-linked access. Verify the employer and portal independently.'
+            },
+            {
+                topic: 'Document + login',
+                prompt: 'An internship form asks for both your resume and your portal password. What does that suggest?',
+                options: [
+                    'The employer is combining two different processes improperly.',
+                    'The employer needs stronger identity checks for applicants.',
+                    'The company is screening applicants more carefully.',
+                    'The form is part of an integrated hiring system.'
+                ],
+                answer: 0,
+                explanation: 'A legitimate hiring process should not require your portal password just to accept an application.'
+            },
+            {
+                topic: 'Interview bait',
+                prompt: 'A message says an interview slot is waiting, but you must verify by entering a one-time code through a linked page. What is safest?',
+                options: [
+                    'Complete it if the interview company sounds real.',
+                    'Verify the company and invitation through official channels.',
+                    'Enter only the code and skip the other fields.',
+                    'Try it once to avoid losing the interview slot.'
+                ],
+                answer: 1,
+                explanation: 'Interview pressure can be used to steal verification codes. Verify the invitation independently.'
+            },
+            {
+                topic: 'Best hiring habit',
+                prompt: 'Which habit best reduces internship phishing risk?',
+                options: [
+                    'Checking hiring messages against the company’s real site or contact.',
+                    'Replying quickly before opportunities disappear.',
+                    'Trusting messages that include job titles and logos.',
+                    'Using any portal that loads with HTTPS.'
+                ],
+                answer: 0,
+                explanation: 'A real employer’s official site or contact channel is safer than trusting a hiring link from a message.'
+            }
+        ]
+    },
+    'verification-chain-attacks': {
+        title: 'Verification Chain Attacks',
+        description: 'Work through the hardest verification flows where attackers chain links, forms, and codes together to reach full account takeover.',
+        questions: [
+            {
+                topic: 'Code chaining',
+                prompt: 'A login page accepts your password, then sends you to a separate page asking for a code, then another asking for backup email. What does that suggest?',
+                options: [
+                    'A sophisticated but legitimate security check.',
+                    'A chained phishing flow designed to gather layered access.',
+                    'A temporary issue with the normal login sequence.',
+                    'A system migration requiring additional confirmation.'
+                ],
+                answer: 1,
+                explanation: 'Chained pages that keep collecting more sensitive account details are a strong sign of account takeover intent.'
+            },
+            {
+                topic: 'Cross-channel verification',
+                prompt: 'An email starts the process, a text continues it, and a chat message reminds you to finish verification. What is the safest interpretation?',
+                options: [
+                    'The service is using every channel for reliability.',
+                    'The attacker is reinforcing pressure across channels.',
+                    'The process is urgent because the account is exposed.',
+                    'The platform is making sure you see the warning.'
+                ],
+                answer: 1,
+                explanation: 'Using several channels together can make the flow feel more legitimate while increasing pressure to comply.'
+            },
+            {
+                topic: 'Credential escalation',
+                prompt: 'A case begins with email confirmation, then asks for login, then asks for recovery info, then asks for payment details. What should you conclude?',
+                options: [
+                    'The process is expanding far beyond a normal verification task.',
+                    'The service uses one flow to update all account data.',
+                    'The account has several unrelated issues at once.',
+                    'The platform is resolving multiple warnings in one session.'
+                ],
+                answer: 0,
+                explanation: 'When a process keeps expanding into more unrelated sensitive data, it is likely a phishing chain rather than a real verification flow.'
+            },
+            {
+                topic: 'Partial trust trap',
+                prompt: 'The first two steps of a flow look normal, but the third step asks for information no real system should need. What is safest?',
+                options: [
+                    'Continue because the earlier steps already looked real.',
+                    'Treat the whole flow as compromised and stop there.',
+                    'Finish the third step only if the page still uses HTTPS.',
+                    'Retry the flow from the first step to compare it again.'
+                ],
+                answer: 1,
+                explanation: 'A phishing flow can build trust gradually. One clearly unsafe step is enough reason to stop the whole process.'
+            },
+            {
+                topic: 'Best response',
+                prompt: 'Which response is strongest when a phishing attempt uses several believable verification steps?',
+                options: [
+                    'Stop the process and secure the real account from official channels.',
+                    'Complete it quickly so you can review the account afterward.',
+                    'Ask the sender to shorten the process before you continue.',
+                    'Save screenshots and proceed if nothing looks obviously fake.'
+                ],
+                answer: 0,
+                explanation: 'The safest response is to stop the chain and secure or verify the real account from trusted official channels.'
             }
         ]
     },
@@ -234,6 +1718,348 @@ const quizzes = {
                 ],
                 answer: 1,
                 explanation: 'One-time codes should never be shared casually. Attackers often use impersonation to steal them.'
+            },
+            {
+                topic: 'Fake support page',
+                prompt: 'A support page says your school mailbox is full and asks you to sign in again to keep messages from being deleted. Which step matters most?',
+                options: [
+                    'Check whether the page uses the official school domain.',
+                    'Check whether the logo looks clear and updated.',
+                    'Check whether the form loads quickly on your phone.',
+                    'Check whether the warning appears in bold red text.'
+                ],
+                answer: 0,
+                explanation: 'A copied logo and urgent message can be faked. The official domain is the stronger trust check.'
+            }
+        ]
+    },
+    'executive-impersonation': {
+        title: 'Executive Impersonation',
+        description: 'Handle high-pressure messages that pretend to come from school leaders, administrators, or decision-makers.',
+        questions: [
+            {
+                topic: 'Authority pressure',
+                prompt: 'You receive a message claiming to be from the school president asking you to urgently review a private document through a link. What matters most first?',
+                options: [
+                    'Whether the request sounds important enough.',
+                    'Whether the sender uses the official school channel.',
+                    'Whether the message mentions your full name.',
+                    'Whether the attachment opens on your phone.'
+                ],
+                answer: 1,
+                explanation: 'Authority-based phishing often relies on urgency and title. The sender and channel should be verified first.'
+            },
+            {
+                topic: 'Urgent payment',
+                prompt: 'A department head asks you to keep a request confidential and buy digital vouchers immediately. Which signal is the biggest warning sign?',
+                options: [
+                    'The request sounds urgent and secretive.',
+                    'The message is short and direct.',
+                    'The sender uses polite language.',
+                    'The item requested is digital.'
+                ],
+                answer: 0,
+                explanation: 'Urgency plus secrecy is a classic impersonation pattern used to stop people from verifying the request.'
+            },
+            {
+                topic: 'Message verification',
+                prompt: 'A dean sends a late-night email asking you to click a link and approve a document before morning. What is the safest step?',
+                options: [
+                    'Approve it quickly if the message sounds formal.',
+                    'Open the link on another device first.',
+                    'Verify the request through an official contact route.',
+                    'Reply to the same email and wait for confirmation.'
+                ],
+                answer: 2,
+                explanation: 'Verification should happen through a trusted route you already know, not through the suspicious message itself.'
+            },
+            {
+                topic: 'Copied identity',
+                prompt: 'A message uses the name and profile picture of a real administrator, but the contact number is unfamiliar. What should you assume first?',
+                options: [
+                    'It is safe because the name and image match.',
+                    'It may be impersonation and should be verified.',
+                    'It is fine if the tone sounds professional.',
+                    'It is real if it references a current event.'
+                ],
+                answer: 1,
+                explanation: 'Names and profile photos are easy to copy. An unfamiliar contact route should be treated carefully.'
+            },
+            {
+                topic: 'Approval request',
+                prompt: 'A senior staff account asks you to approve access to a cloud file immediately using a shared link. What is the safest response?',
+                options: [
+                    'Use the link if it includes the correct office name.',
+                    'Wait for someone else to approve first.',
+                    'Open the file preview before deciding.',
+                    'Go to the official platform directly and check there.'
+                ],
+                answer: 3,
+                explanation: 'Using the official platform directly is safer than trusting a link sent in a pressured message.'
+            }
+        ]
+    },
+    'breach-followup-scams': {
+        title: 'Breach Follow-Up Scams',
+        description: 'Practice spotting fake breach warnings that try to exploit fear after a supposed security incident.',
+        questions: [
+            {
+                topic: 'Account scare',
+                prompt: 'You receive a message saying your school account was found in a data breach and must be reset through an attached link. What is the safest reaction?',
+                options: [
+                    'Use the provided reset link before the access window closes.',
+                    'Check the official school portal or IT office notice first.',
+                    'Reply and ask whether your classmates got the same alert.',
+                    'Save the message in case you need it later.'
+                ],
+                answer: 1,
+                explanation: 'Breach warnings can be faked. Verify through official sources before using any reset link.'
+            },
+            {
+                topic: 'Fear-based messaging',
+                prompt: 'Which message detail most strongly suggests a breach-themed phishing attempt?',
+                options: [
+                    'It says your account may be at risk.',
+                    'It urges immediate action through one included link.',
+                    'It includes a support footer with a case number.',
+                    'It mentions account security in the subject line.'
+                ],
+                answer: 1,
+                explanation: 'Attackers often mix fear and urgency with a single action path to push fast decisions.'
+            },
+            {
+                topic: 'Password reset pressure',
+                prompt: 'A text says your credentials leaked and tells you to sign in through a "secure recovery page." What should you do?',
+                options: [
+                    'Sign in if the page uses HTTPS.',
+                    'Wait a few minutes and try the same link again.',
+                    'Use the official website or app to check your account.',
+                    'Forward the text to friends and ask if it looks real.'
+                ],
+                answer: 2,
+                explanation: 'Official login routes are safer than links provided inside alarming messages.'
+            },
+            {
+                topic: 'Follow-up scam',
+                prompt: 'After a public news story about hacked school accounts, an email asks you to confirm your identity with your current password. Why is this risky?',
+                options: [
+                    'Real incidents do not justify sending your password.',
+                    'It arrived after normal office hours.',
+                    'It uses too many technical terms.',
+                    'It references a current event too directly.'
+                ],
+                answer: 0,
+                explanation: 'Attackers often piggyback on real events, but legitimate support should not ask for your password through email.'
+            },
+            {
+                topic: 'Credential safety',
+                prompt: 'A warning email says your account will stay exposed unless you "verify your current password" to prove ownership. What is the best response?',
+                options: [
+                    'Never provide the password through the email workflow.',
+                    'Provide only part of the password for safety.',
+                    'Change the password after sending it once.',
+                    'Reply asking whether a shorter password is allowed.'
+                ],
+                answer: 0,
+                explanation: 'A verification process that asks for your current password in a message flow should be treated as unsafe.'
+            }
+        ]
+    },
+    'recovery-flow-attacks': {
+        title: 'Recovery Flow Attacks',
+        description: 'Learn to recognize suspicious account recovery steps, one-time-code traps, and takeover attempts.',
+        questions: [
+            {
+                topic: 'Recovery email',
+                prompt: 'A page says your account recovery request has been started and asks you to enter your one-time code to cancel it. What is the biggest concern?',
+                options: [
+                    'The page may be trying to steal the one-time code.',
+                    'The page uses a short recovery deadline.',
+                    'The message mentions account protection often.',
+                    'The design looks too simple for a school page.'
+                ],
+                answer: 0,
+                explanation: 'Recovery scams often try to capture one-time codes to complete an account takeover.'
+            },
+            {
+                topic: 'Unexpected reset',
+                prompt: 'You did not request a password reset, but a message says someone else did and you must sign in now to stop it. What is safest?',
+                options: [
+                    'Use the included link to protect the account quickly.',
+                    'Go to the official sign-in page yourself and review activity there.',
+                    'Reply first and wait for an explanation.',
+                    'Ignore it completely even if more alerts arrive.'
+                ],
+                answer: 1,
+                explanation: 'If the alert is real, checking through the official platform is safer than trusting the message link.'
+            },
+            {
+                topic: 'One-time code request',
+                prompt: 'Someone claiming to be support says they sent a code to help restore your access and asks you to read it back. What should you do?',
+                options: [
+                    'Share it if they already know your full name.',
+                    'Share it only if the request sounds urgent.',
+                    'Do not share it and verify support separately.',
+                    'Share the code but change your password later.'
+                ],
+                answer: 2,
+                explanation: 'One-time codes should not be shared casually. Attackers use them to finish account takeovers.'
+            },
+            {
+                topic: 'Cancel request page',
+                prompt: 'A link says "Cancel unauthorized password reset" and opens a login form that asks for your current password. What should you check first?',
+                options: [
+                    'Whether the school logo matches the real site.',
+                    'Whether the domain is the official account provider.',
+                    'Whether the page loads quickly enough.',
+                    'Whether the warning text appears in red.'
+                ],
+                answer: 1,
+                explanation: 'A convincing design can be copied. The official domain matters more than visual polish.'
+            },
+            {
+                topic: 'Takeover prevention',
+                prompt: 'What is the best habit when you receive account recovery notices you did not trigger?',
+                options: [
+                    'Handle them through the official app or website only.',
+                    'Open the message links on a safer device.',
+                    'Ask the sender whether the notice is routine.',
+                    'Wait for a second reminder before acting.'
+                ],
+                answer: 0,
+                explanation: 'Using the official route reduces the chance of reacting inside a phishing-controlled recovery flow.'
+            }
+        ]
+    },
+    'financial-approval-fraud': {
+        title: 'Financial Approval Fraud',
+        description: 'Spot convincing approval requests involving reimbursements, invoices, budgets, and last-minute payments.',
+        questions: [
+            {
+                topic: 'Invoice pressure',
+                prompt: 'A message says an invoice must be approved immediately or a school service will be suspended today. What is the safest first move?',
+                options: [
+                    'Approve it first because service impact is serious.',
+                    'Check the request through the official finance process.',
+                    'Download the invoice and inspect it on your phone.',
+                    'Reply asking if a smaller payment is possible.'
+                ],
+                answer: 1,
+                explanation: 'Financial phishing often uses urgent consequences. Verification should happen through the official workflow.'
+            },
+            {
+                topic: 'Bank details',
+                prompt: 'An email says a supplier changed bank details and asks you to update the payment record using an attached form. Why is this risky?',
+                options: [
+                    'Bank detail changes should be verified directly.',
+                    'Attached forms are always unsafe by default.',
+                    'Emails about payments should only be short.',
+                    'Suppliers should never send account updates.'
+                ],
+                answer: 0,
+                explanation: 'Payment redirection scams often rely on fake change-of-bank notices.'
+            },
+            {
+                topic: 'Approval chain',
+                prompt: 'A finance request arrives from a familiar name, but the sender asks you to skip the usual approval process because of urgency. What should you do?',
+                options: [
+                    'Follow the normal process and verify the request.',
+                    'Approve it once if the amount is small enough.',
+                    'Send the request to another office without checking.',
+                    'Wait until the sender becomes more specific.'
+                ],
+                answer: 0,
+                explanation: 'Urgent requests to bypass normal controls are a strong fraud sign.'
+            },
+            {
+                topic: 'Digital voucher request',
+                prompt: 'A senior office message asks you to buy prepaid vouchers for an urgent event expense. What is the strongest red flag?',
+                options: [
+                    'The amount requested is unusually specific.',
+                    'The payment method is hard to reverse or trace.',
+                    'The message arrived outside office hours.',
+                    'The request uses short sentences.'
+                ],
+                answer: 1,
+                explanation: 'Irreversible payment methods are often preferred by scammers because they are harder to recover.'
+            },
+            {
+                topic: 'Approval page',
+                prompt: 'You are sent to an "approval portal" asking for your account password before you can release funds. What should you assume first?',
+                options: [
+                    'It is normal if the portal uses HTTPS.',
+                    'It may be a credential theft page.',
+                    'It is safe if the amount matches a real invoice.',
+                    'It is legitimate if the sender follows up quickly.'
+                ],
+                answer: 1,
+                explanation: 'A fake approval portal can be used to steal credentials and continue the fraud.'
+            }
+        ]
+    },
+    'cross-channel-takeovers': {
+        title: 'Cross-Channel Takeovers',
+        description: 'Work through attacks that jump across email, text, chat, and calls to feel more believable.',
+        questions: [
+            {
+                topic: 'Linked channels',
+                prompt: 'You get an email about account verification, then a text telling you to complete the same step quickly. Why is this still suspicious?',
+                options: [
+                    'Multiple channels can be used to increase pressure.',
+                    'Texts are always less trustworthy than email.',
+                    'Real support never contacts users twice.',
+                    'A second message means the first one was fake.'
+                ],
+                answer: 0,
+                explanation: 'Attackers often use multiple channels together so the request feels more urgent and legitimate.'
+            },
+            {
+                topic: 'Follow-up call',
+                prompt: 'After ignoring a login warning email, you receive a phone call telling you to read a code to "secure" the account. What is safest?',
+                options: [
+                    'Provide the code because the caller references the email.',
+                    'End the call and verify using official support details.',
+                    'Ask the caller to wait while you open the link.',
+                    'Send the code by text instead of saying it aloud.'
+                ],
+                answer: 1,
+                explanation: 'A follow-up call does not make the request trustworthy. Verification should use official contact details.'
+            },
+            {
+                topic: 'Chat handoff',
+                prompt: 'A support chat tells you to continue account verification through a new site shared by SMS. What is the best response?',
+                options: [
+                    'Switch channels and continue if both messages match.',
+                    'Use only the official support site you already know.',
+                    'Open the SMS link first, then go back to the chat.',
+                    'Wait for a third message before deciding.'
+                ],
+                answer: 1,
+                explanation: 'A channel handoff can be part of a coordinated phishing flow. Staying on official routes is safer.'
+            },
+            {
+                topic: 'Trust layering',
+                prompt: 'An attacker first sends a harmless-looking alert, then later follows up with a login page and a call. What tactic is being used?',
+                options: [
+                    'Building trust and pressure over multiple steps.',
+                    'Testing whether your phone can open forms.',
+                    'Confirming your school schedule before asking more.',
+                    'Reducing the chance of technical problems.'
+                ],
+                answer: 0,
+                explanation: 'Layered contact is used to make the attack feel more convincing and harder to dismiss.'
+            },
+            {
+                topic: 'Safe habit',
+                prompt: 'What is the strongest defense against cross-channel phishing attempts?',
+                options: [
+                    'Comparing the style of each message carefully.',
+                    'Sticking to official websites and support routes only.',
+                    'Responding on the channel that feels most formal.',
+                    'Waiting for at least two messages before acting.'
+                ],
+                answer: 1,
+                explanation: 'Using official routes removes much of the attacker’s control over the interaction.'
             }
         ]
     },
@@ -288,18 +2114,59 @@ const quizzes = {
                 ],
                 answer: 0,
                 explanation: 'Consistently checking details before acting builds strong phishing awareness over time.'
+            },
+            {
+                topic: 'Safer routine',
+                prompt: 'Which routine makes it easier to avoid phishing mistakes during busy days?',
+                options: [
+                    'Handling urgent messages first before checking the details.',
+                    'Using one trusted route to sign in instead of message links.',
+                    'Opening suspicious pages on a different browser window.',
+                    'Keeping risky messages unread until the next day.'
+                ],
+                answer: 1,
+                explanation: 'A consistent habit of using the official site or app instead of message links reduces the chance of reacting to phishing pressure.'
             }
         ]
     }
 };
 
 const quizPointValues = {
-    'url-basics': 100,
+    'url-basics': 80,
+    'login-page-clues': 100,
     'message-red-flags': 110,
-    'after-clicking': 110,
-    'phishing-scenarios': 130,
-    'best-practices': 150
+    'after-clicking': 90,
+    'qr-link-safety': 110,
+    'social-media-scams': 120,
+    'sender-source-checks': 130,
+    'attachment-download-safety': 130,
+    'account-recovery-traps': 140,
+    'form-data-requests': 140,
+    'payment-delivery-scams': 150,
+    'support-impersonation': 150,
+    'scholarship-bait': 160,
+    'document-sharing-traps': 160,
+    'mobile-alert-deception': 170,
+    'event-registration-risks': 170,
+    'marketplace-meetup-scams': 180,
+    'multi-step-phish-cases': 190,
+    'campus-portal-spoofs': 200,
+    'urgent-admin-fraud': 210,
+    'cloud-drive-compromise': 220,
+    'internship-hiring-scams': 220,
+    'verification-chain-attacks': 230,
+    'phishing-scenarios': 240,
+    'executive-impersonation': 250,
+    'breach-followup-scams': 260,
+    'recovery-flow-attacks': 270,
+    'financial-approval-fraud': 280,
+    'cross-channel-takeovers': 290,
+    'best-practices': 320,
+    'lab-login-page-check': 100
 };
+
+const loginPageLabAttemptId = 'lab-login-page-check';
+const loginPageLabAttemptTitle = 'Login Page Check Lab';
 
 const quizStartButtons = document.querySelectorAll('.quiz-start-btn[data-quiz]');
 const labStartButtons = document.querySelectorAll('.quiz-start-btn[data-start-lab]');
@@ -415,23 +2282,12 @@ let lockedQuizSidebarScrollY = 0;
 const loginPageLabCorrectSpots = new Set(['domain', 'urgency', 'support']);
 let quizSidebarTouchStartY = 0;
 const guestQuizCardsPreviewCount = 6;
-const maxAdaptiveQuizCardsPerPage = 9;
-const totalQuizPages = 10;
+const maxAdaptiveQuizCardsPerPage = 6;
+const totalQuizPages = 5;
 const totalLabPages = 1;
 
 function getQuizCardsPerPage() {
-    const viewportWidth = window.innerWidth || document.documentElement.clientWidth || 0;
-    const viewportHeight = window.innerHeight || document.documentElement.clientHeight || 0;
-
-    if (viewportWidth <= 640) {
-        return 6;
-    }
-
-    if (viewportWidth <= 1024) {
-        return viewportHeight >= 980 ? 8 : 6;
-    }
-
-    return viewportHeight >= 920 ? 9 : 6;
+    return 6;
 }
 
 function escapeHtml(value) {
@@ -444,6 +2300,7 @@ function escapeHtml(value) {
 }
 
 createPlaceholderQuizCards();
+reorderQuizCardsForPagination();
 updateQuizCardTierLabels();
 renderQuizPagination();
 renderLabsPagination();
@@ -607,6 +2464,19 @@ function getCompletedQuizIds(attempts = []) {
     return completedQuizIds;
 }
 
+function getFinishedQuizIds(attempts = []) {
+    const finishedQuizIds = new Set();
+
+    attempts.forEach((attempt) => {
+        const quizId = String(attempt?.quizId || '').trim();
+        if (quizId) {
+            finishedQuizIds.add(quizId);
+        }
+    });
+
+    return finishedQuizIds;
+}
+
 function getEarnedQuizPoints(attempts = []) {
     return [...getCompletedQuizIds(attempts)].reduce((total, quizId) => total + Number(quizPointValues[quizId] || 0), 0);
 }
@@ -630,7 +2500,7 @@ function getQuizUnlockState(quizId, attempts = []) {
         return {
             locked: false,
             reason: '',
-            cta: 'Start Quiz'
+            cta: 'Start Set'
         };
     }
 
@@ -648,12 +2518,32 @@ function getQuizUnlockState(quizId, attempts = []) {
     const averageScore = attemptsCount
         ? Math.round(attempts.reduce((total, attempt) => total + Number(attempt.percentage || 0), 0) / attemptsCount)
         : 0;
-    const completedQuizIds = getCompletedQuizIds(attempts);
+    const finishedQuizIds = getFinishedQuizIds(attempts);
     const requiredQuizIds = Array.isArray(rule.requiresQuizIds) ? rule.requiresQuizIds : [];
     const missingQuizTitles = requiredQuizIds
-        .filter((requiredQuizId) => !completedQuizIds.has(requiredQuizId))
+        .filter((requiredQuizId) => !finishedQuizIds.has(requiredQuizId))
         .map((requiredQuizId) => quizzes[requiredQuizId]?.title || requiredQuizId);
-    const hasRequiredQuizIds = requiredQuizIds.every((requiredQuizId) => completedQuizIds.has(requiredQuizId));
+    const hasRequiredQuizIds = requiredQuizIds.every((requiredQuizId) => finishedQuizIds.has(requiredQuizId));
+
+    const getSeriesUnlockNote = () => {
+        if (!requiredQuizIds.length) return rule.label || '';
+        if (requiredQuizIds.every((requiredQuizId) => coreQuizIds.includes(requiredQuizId))) {
+            return 'Finish Core Series first.';
+        }
+        if (requiredQuizIds.every((requiredQuizId) => skillBuilderQuizIds.includes(requiredQuizId))) {
+            return 'Finish Skill Builder Series first.';
+        }
+        if (requiredQuizIds.every((requiredQuizId) => challengerQuizIds.includes(requiredQuizId))) {
+            return 'Finish Challenger Series first.';
+        }
+        if (requiredQuizIds.every((requiredQuizId) => advancedSeriesQuizIds.includes(requiredQuizId))) {
+            return 'Finish Advanced Series first.';
+        }
+        if (requiredQuizIds.every((requiredQuizId) => masteryPrepQuizIds.includes(requiredQuizId))) {
+            return 'Finish the earlier Mastery sets first.';
+        }
+        return rule.label || '';
+    };
 
     const unlocked =
         hasRequiredQuizIds &&
@@ -664,13 +2554,13 @@ function getQuizUnlockState(quizId, attempts = []) {
     let reason = '';
     if (!unlocked) {
         if (missingQuizTitles.length) {
-            reason = `Complete ${missingQuizTitles.join(', ')} first.`;
+            reason = getSeriesUnlockNote();
         } else if (attemptsCount < (rule.minimumAttempts || 0)) {
-            reason = `Save ${rule.minimumAttempts} quiz attempts to unlock this set.`;
+            reason = `Save ${rule.minimumAttempts} attempts first.`;
         } else if (uniqueTopics < (rule.minimumUniqueTopics || 0)) {
-            reason = `Complete ${rule.minimumUniqueTopics} different quiz sets first.`;
+            reason = `Finish ${rule.minimumUniqueTopics} sets first.`;
         } else if (averageScore < (rule.minimumAverageScore || 0)) {
-            reason = `Reach at least a ${rule.minimumAverageScore}% average score to unlock this set.`;
+            reason = `Reach a ${rule.minimumAverageScore}% average first.`;
         } else {
             reason = rule.label;
         }
@@ -679,7 +2569,7 @@ function getQuizUnlockState(quizId, attempts = []) {
     return {
         locked: !unlocked,
         reason,
-        cta: unlocked ? 'Start Quiz' : 'Locked for Now',
+        cta: unlocked ? 'Start Set' : 'Locked for Now',
         action: unlocked ? 'start' : 'locked'
     };
 }
@@ -690,7 +2580,7 @@ function updateQuizUnlockStates(attempts = []) {
     quizStartButtons.forEach((button) => {
         const quizId = button.dataset.quiz;
         const card = button.closest('[data-quiz-card]');
-        const note = document.getElementById(`quizUnlockNote-${quizId}`);
+        let note = document.getElementById(`quizUnlockNote-${quizId}`) || card?.querySelector('.quiz-unlock-note.quiz-dynamic-unlock-note') || null;
         const completedChip = document.getElementById(`quizCompletedChip-${quizId}`);
         const state = getQuizUnlockState(quizId, attempts);
         const isCompleted = completedQuizIds.has(quizId);
@@ -702,6 +2592,17 @@ function updateQuizUnlockStates(attempts = []) {
         if (card) {
             card.classList.toggle('is-locked', state.locked);
             card.classList.toggle('is-completed', isCompleted);
+        }
+
+        if (!note && card) {
+            note = document.createElement('p');
+            note.className = 'quiz-unlock-note quiz-dynamic-unlock-note';
+            const buttonWrap = card.querySelector('.quiz-start-btn');
+            if (buttonWrap) {
+                card.insertBefore(note, buttonWrap);
+            } else {
+                card.appendChild(note);
+            }
         }
 
         if (note) {
@@ -724,12 +2625,28 @@ function getRecommendedQuizId(attempts = []) {
         }
     }
 
-    if (!getQuizUnlockState('phishing-scenarios', attempts).locked && !completedQuizIds.has('phishing-scenarios')) {
-        return 'phishing-scenarios';
+    for (const quizId of skillBuilderQuizIds) {
+        if (!completedQuizIds.has(quizId)) {
+            return quizId;
+        }
     }
 
-    if (!getQuizUnlockState('best-practices', attempts).locked && !completedQuizIds.has('best-practices')) {
-        return 'best-practices';
+    for (const quizId of challengerQuizIds) {
+        if (!completedQuizIds.has(quizId)) {
+            return quizId;
+        }
+    }
+
+    for (const quizId of advancedSeriesQuizIds) {
+        if (!completedQuizIds.has(quizId)) {
+            return quizId;
+        }
+    }
+
+    for (const quizId of masterySeriesQuizIds) {
+        if (!getQuizUnlockState(quizId, attempts).locked && !completedQuizIds.has(quizId)) {
+            return quizId;
+        }
     }
 
     const summaryByQuizId = new Map();
@@ -748,7 +2665,7 @@ function getRecommendedQuizId(attempts = []) {
         summaryByQuizId.set(attempt.quizId, existing);
     });
 
-    const fallbackOrder = [...coreQuizIds, 'phishing-scenarios', 'best-practices'];
+    const fallbackOrder = [...coreQuizIds, ...skillBuilderQuizIds, ...challengerQuizIds, ...advancedSeriesQuizIds, ...masterySeriesQuizIds];
     const reviewCandidate = [...summaryByQuizId.values()]
         .sort((left, right) => {
             if (left.bestScore !== right.bestScore) return left.bestScore - right.bestScore;
@@ -761,11 +2678,36 @@ function getRecommendedQuizId(attempts = []) {
 
 function updateQuizCardTierLabels() {
     const tierMap = {
-        'url-basics': { badge: 'Core Series', difficulty: 'Beginner' },
-        'message-red-flags': { badge: 'Core Series', difficulty: 'Intermediate' },
-        'after-clicking': { badge: 'Core Series', difficulty: 'Beginner' },
-        'phishing-scenarios': { badge: 'Advanced Series', difficulty: 'Advanced' },
-        'best-practices': { badge: 'Mastery Series', difficulty: 'Intermediate' }
+        'url-basics': { badge: 'Core Series', difficulty: 'Beginner', accent: 'core', difficultyClass: 'easy' },
+        'login-page-clues': { badge: 'Core Series', difficulty: 'Beginner', accent: 'core', difficultyClass: 'easy' },
+        'message-red-flags': { badge: 'Core Series', difficulty: 'Intermediate', accent: 'core', difficultyClass: 'medium' },
+        'after-clicking': { badge: 'Core Series', difficulty: 'Beginner', accent: 'core', difficultyClass: 'easy' },
+        'qr-link-safety': { badge: 'Core Series', difficulty: 'Intermediate', accent: 'core', difficultyClass: 'medium' },
+        'social-media-scams': { badge: 'Core Series', difficulty: 'Intermediate', accent: 'core', difficultyClass: 'medium' },
+        'sender-source-checks': { badge: 'Skill Builder Series', difficulty: 'Intermediate', accent: 'skill-builder', difficultyClass: 'medium' },
+        'attachment-download-safety': { badge: 'Skill Builder Series', difficulty: 'Intermediate', accent: 'skill-builder', difficultyClass: 'medium' },
+        'account-recovery-traps': { badge: 'Skill Builder Series', difficulty: 'Hard', accent: 'skill-builder', difficultyClass: 'hard' },
+        'form-data-requests': { badge: 'Skill Builder Series', difficulty: 'Hard', accent: 'skill-builder', difficultyClass: 'hard' },
+        'payment-delivery-scams': { badge: 'Skill Builder Series', difficulty: 'Hard', accent: 'skill-builder', difficultyClass: 'hard' },
+        'support-impersonation': { badge: 'Skill Builder Series', difficulty: 'Hard', accent: 'skill-builder', difficultyClass: 'hard' },
+        'scholarship-bait': { badge: 'Challenger Series', difficulty: 'Hard', accent: 'challenger', difficultyClass: 'hard' },
+        'document-sharing-traps': { badge: 'Challenger Series', difficulty: 'Hard', accent: 'challenger', difficultyClass: 'hard' },
+        'mobile-alert-deception': { badge: 'Challenger Series', difficulty: 'Hard', accent: 'challenger', difficultyClass: 'hard' },
+        'event-registration-risks': { badge: 'Challenger Series', difficulty: 'Hard', accent: 'challenger', difficultyClass: 'hard' },
+        'marketplace-meetup-scams': { badge: 'Challenger Series', difficulty: 'Hard', accent: 'challenger', difficultyClass: 'hard' },
+        'multi-step-phish-cases': { badge: 'Challenger Series', difficulty: 'Hard', accent: 'challenger', difficultyClass: 'hard' },
+        'campus-portal-spoofs': { badge: 'Advanced Series', difficulty: 'Advanced', accent: 'advanced', difficultyClass: 'advanced' },
+        'urgent-admin-fraud': { badge: 'Advanced Series', difficulty: 'Advanced', accent: 'advanced', difficultyClass: 'advanced' },
+        'cloud-drive-compromise': { badge: 'Advanced Series', difficulty: 'Advanced', accent: 'advanced', difficultyClass: 'advanced' },
+        'internship-hiring-scams': { badge: 'Advanced Series', difficulty: 'Advanced', accent: 'advanced', difficultyClass: 'advanced' },
+        'verification-chain-attacks': { badge: 'Advanced Series', difficulty: 'Advanced', accent: 'advanced', difficultyClass: 'advanced' },
+        'phishing-scenarios': { badge: 'Advanced Series', difficulty: 'Advanced', accent: 'advanced', difficultyClass: 'advanced' },
+        'executive-impersonation': { badge: 'Mastery Series', difficulty: 'Mastery', accent: 'mastery', difficultyClass: 'mastery' },
+        'breach-followup-scams': { badge: 'Mastery Series', difficulty: 'Mastery', accent: 'mastery', difficultyClass: 'mastery' },
+        'recovery-flow-attacks': { badge: 'Mastery Series', difficulty: 'Mastery', accent: 'mastery', difficultyClass: 'mastery' },
+        'financial-approval-fraud': { badge: 'Mastery Series', difficulty: 'Mastery', accent: 'mastery', difficultyClass: 'mastery' },
+        'cross-channel-takeovers': { badge: 'Mastery Series', difficulty: 'Mastery', accent: 'mastery', difficultyClass: 'mastery' },
+        'best-practices': { badge: 'Mastery Series', difficulty: 'Mastery', accent: 'mastery', difficultyClass: 'mastery' }
     };
 
     Object.entries(tierMap).forEach(([quizId, config]) => {
@@ -781,6 +2723,15 @@ function updateQuizCardTierLabels() {
 
         if (difficulty) {
             difficulty.textContent = config.difficulty;
+            difficulty.classList.remove('easy', 'medium', 'hard', 'advanced', 'mastery');
+            if (config.difficultyClass) {
+                difficulty.classList.add(config.difficultyClass);
+            }
+        }
+
+        card.classList.remove('is-core', 'is-beginner', 'is-intermediate', 'is-skill-builder', 'is-challenger', 'is-advanced', 'is-mastery');
+        if (config.accent) {
+            card.classList.add(`is-${config.accent}`);
         }
     });
 }
@@ -1161,6 +3112,8 @@ async function loadSignedInQuizData() {
             leaderboardData?.currentUserId || '',
             leaderboardData?.minimumAttempts || 2
         );
+        renderQuizPagination();
+        renderLabsPagination();
     } catch (error) {
         console.warn('Quiz dashboard data fallback:', error.message || error);
         signedInQuizAttempts = [];
@@ -1172,6 +3125,8 @@ async function loadSignedInQuizData() {
         populateQuizProfile([]);
         updateQuizUnlockStates([]);
         renderQuizLeaderboard([], '', 2);
+        renderQuizPagination();
+        renderLabsPagination();
     }
 }
 
@@ -1251,14 +3206,14 @@ function getQuizRankMeta(pointsCount = 0, averageScore = 0, completedSetsCount =
         {
             label: 'Aware User',
             requirements: [
-                { label: 'points', current: pointsCount, target: 100 },
+                { label: 'points', current: pointsCount, target: 80 },
                 { label: 'average score', current: averageScore, target: 70 }
             ]
         },
         {
             label: 'Threat Spotter',
             requirements: [
-                { label: 'points', current: pointsCount, target: 320 },
+                { label: 'points', current: pointsCount, target: 300 },
                 { label: 'completed sets', current: completedSetsCount, target: 4 },
                 { label: 'average score', current: averageScore, target: 80 }
             ]
@@ -1299,7 +3254,7 @@ function getQuizRankMeta(pointsCount = 0, averageScore = 0, completedSetsCount =
         : 100;
 
     const progressText = !nextTier
-        ? 'This user reached the highest awareness rank in the quiz system.'
+        ? 'This user reached the highest awareness rank in the training system.'
         : `Working toward ${nextTier.label}.`;
 
     return {
@@ -1325,7 +3280,7 @@ function populateQuizProfile(attempts = []) {
         if (quizProfileRank) quizProfileRank.textContent = 'Newcomer';
         if (quizProfileRankProgressFill) quizProfileRankProgressFill.style.width = '0%';
         if (quizProfileRankProgressText) {
-            quizProfileRankProgressText.textContent = 'Complete signed-in quiz sets to begin earning awareness points and rank progress.';
+            quizProfileRankProgressText.textContent = 'Complete signed-in training sets to begin earning awareness points and rank progress.';
         }
         if (quizProfileCompletedSets) quizProfileCompletedSets.textContent = '0';
         return;
@@ -1353,13 +3308,13 @@ function populateQuizProfile(attempts = []) {
 
     if (quizProfileRankProgressText) {
         if (!rankMeta.nextTier) {
-            quizProfileRankProgressText.textContent = 'You reached the highest awareness rank in the quiz system.';
+            quizProfileRankProgressText.textContent = 'You reached the highest awareness rank in the training system.';
         } else {
             const requirementCopy = rankMeta.nextTier.requirements
                 .map((requirement) => {
                     if (requirement.label === 'points') return `${requirement.target} points`;
                     if (requirement.label === 'average score') return `${requirement.target}% average`;
-                    if (requirement.label === 'completed sets') return `${requirement.target} completed sets`;
+                    if (requirement.label === 'completed sets') return `${requirement.target} completed training sets`;
                     return `${requirement.target} ${requirement.label}`;
                 })
                 .join(' and ');
@@ -1432,16 +3387,16 @@ function getQuizBadgeDefinitions(attempts = []) {
         {
             id: 'practice-streak',
             title: 'Practice Streak',
-            detail: 'Earn at least 210 quiz points.',
-            earned: earnedPoints >= 210,
+            detail: 'Earn at least 180 training points.',
+            earned: earnedPoints >= 180,
             difficulty: 'Starter',
             icon: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 2 4 14h6l-1 8 9-12h-6l1-8Z"/></svg>'
         },
         {
             id: 'steady-learner',
             title: 'Steady Learner',
-            detail: 'Earn at least 320 quiz points.',
-            earned: earnedPoints >= 320,
+            detail: 'Earn at least 300 training points.',
+            earned: earnedPoints >= 300,
             difficulty: 'Starter',
             icon: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M5 4h14v2H5V4Zm0 7h10v2H5v-2Zm0 7h14v2H5v-2Zm12-8h2v8h-2v-8Z"/></svg>'
         },
@@ -1488,8 +3443,8 @@ function getQuizBadgeDefinitions(attempts = []) {
         {
             id: 'review-crusher',
             title: 'Review Crusher',
-            detail: 'Earn credit in all 5 quiz sets.',
-            earned: needsReviewCleared >= 5,
+            detail: 'Earn credit in all 30 quiz sets.',
+            earned: needsReviewCleared >= 30,
             difficulty: 'Advanced',
             icon: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M19 5H5v14h14V5Zm-8 11-4-4 1.4-1.4 2.6 2.58 4.6-4.59L17 10l-6 6Z"/></svg>'
         },
@@ -1504,7 +3459,7 @@ function getQuizBadgeDefinitions(attempts = []) {
         {
             id: 'mastery-unlocked',
             title: 'Mastery Unlocked',
-            detail: 'Finish the Best Practices mastery quiz.',
+            detail: 'Finish the Best Practices capstone set.',
             earned: masteryCompleted,
             difficulty: 'Hard',
             icon: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 1 4 5v6c0 5.55 3.84 10.74 8 12 4.16-1.26 8-6.45 8-12V5l-8-4Zm3.54 8.46-4.25 4.25-2.12-2.12-1.41 1.41 3.53 3.54 5.66-5.66-1.41-1.42Z"/></svg>'
@@ -1512,7 +3467,7 @@ function getQuizBadgeDefinitions(attempts = []) {
         {
             id: 'guardian-grade',
             title: 'Guardian Grade',
-            detail: 'Maintain an average score of 88% or higher after earning at least 500 quiz points.',
+            detail: 'Maintain an average score of 88% or higher after earning at least 500 training points.',
             earned: averageScore >= 88 && earnedPoints >= 500,
             difficulty: 'Hard',
             icon: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2 4 5v6c0 5.25 3.44 10.14 8 11.76 4.56-1.62 8-6.51 8-11.76V5l-8-3Zm-1 15-3.5-3.5 1.41-1.41L11 14.17l4.59-4.58L17 11l-6 6Z"/></svg>'
@@ -1553,14 +3508,24 @@ function createPlaceholderQuizCards() {
 
     const desiredCardCount = totalQuizPages * maxAdaptiveQuizCardsPerPage;
     const placeholdersNeeded = Math.max(0, desiredCardCount - quizCards.length);
+    const placeholderSeries = [
+        'Skill Builder Series',
+        'Skill Builder Series',
+        'Challenger Series',
+        'Challenger Series',
+        'Advanced Series',
+        'Mastery Series'
+    ];
 
     for (let index = 0; index < placeholdersNeeded; index += 1) {
+        const seriesLabel = placeholderSeries[index] || 'Coming Soon';
+        const placeholderId = `placeholder-extra-${index + 1}`;
         const card = document.createElement('article');
         card.className = 'quiz-card quiz-card-placeholder is-locked';
-        card.dataset.quizCard = `placeholder-${index + 1}`;
+        card.dataset.quizCard = placeholderId;
         card.innerHTML = `
             <div class="quiz-card-header">
-                <span class="quiz-badge">Coming Soon</span>
+                <span class="quiz-badge">${seriesLabel}</span>
             </div>
             <h3>Upcoming Quiz Set ${index + 1}</h3>
             <p>More phishing awareness quizzes will appear here as we expand the learning path with new scenarios and practice sets.</p>
@@ -1574,6 +3539,94 @@ function createPlaceholderQuizCards() {
         quizGrid.appendChild(card);
         quizCards.push(card);
     }
+}
+
+function reorderQuizCardsForPagination() {
+    if (!quizGrid || !quizCards.length) return;
+
+    const priorityOrder = [
+        'url-basics',
+        'login-page-clues',
+        'message-red-flags',
+        'after-clicking',
+        'qr-link-safety',
+        'social-media-scams',
+        'sender-source-checks',
+        'attachment-download-safety',
+        'account-recovery-traps',
+        'form-data-requests',
+        'payment-delivery-scams',
+        'support-impersonation',
+        'scholarship-bait',
+        'document-sharing-traps',
+        'mobile-alert-deception',
+        'event-registration-risks',
+        'marketplace-meetup-scams',
+        'multi-step-phish-cases',
+        'campus-portal-spoofs',
+        'urgent-admin-fraud',
+        'cloud-drive-compromise',
+        'internship-hiring-scams',
+        'verification-chain-attacks',
+        'phishing-scenarios',
+        'executive-impersonation',
+        'breach-followup-scams',
+        'recovery-flow-attacks',
+        'financial-approval-fraud',
+        'cross-channel-takeovers',
+        'best-practices'
+    ];
+
+    const orderedCards = [];
+    const seen = new Set();
+
+    priorityOrder.forEach((cardId) => {
+        const card = quizCards.find((item) => item.dataset.quizCard === cardId);
+        if (card) {
+            orderedCards.push(card);
+            seen.add(card);
+        }
+    });
+
+    quizCards.forEach((card) => {
+        if (!seen.has(card)) {
+            orderedCards.push(card);
+        }
+    });
+
+    quizCards.length = 0;
+    orderedCards.forEach((card) => {
+        quizCards.push(card);
+        quizGrid.appendChild(card);
+    });
+}
+
+function hasCompletedCoreQuizPath(attempts = []) {
+    const finishedQuizIds = getFinishedQuizIds(attempts);
+    return coreQuizIds.every((quizId) => finishedQuizIds.has(quizId));
+}
+
+function hasCompletedSkillBuilderPath(attempts = []) {
+    const finishedQuizIds = getFinishedQuizIds(attempts);
+    return skillBuilderQuizIds.every((quizId) => finishedQuizIds.has(quizId));
+}
+
+function hasCompletedChallengerPath(attempts = []) {
+    const finishedQuizIds = getFinishedQuizIds(attempts);
+    return challengerQuizIds.every((quizId) => finishedQuizIds.has(quizId));
+}
+
+function hasCompletedAdvancedPath(attempts = []) {
+    const finishedQuizIds = getFinishedQuizIds(attempts);
+    return advancedSeriesQuizIds.every((quizId) => finishedQuizIds.has(quizId));
+}
+
+function getHighestAccessibleQuizPage(attempts = []) {
+    if (!hasCompletedCoreQuizPath(attempts)) return 1;
+    if (!hasCompletedSkillBuilderPath(attempts)) return 2;
+    if (!hasCompletedChallengerPath(attempts)) return 3;
+    if (!hasCompletedAdvancedPath(attempts)) return 4;
+    return totalQuizPages;
 }
 
 function renderQuizPagination() {
@@ -1626,6 +3679,17 @@ function renderLabsPagination() {
     if (!labsPagination || !labCards.length) return;
     const labsLibraryToolbar = document.getElementById('labsLibraryToolbar');
     const cardsPerPage = getQuizCardsPerPage();
+
+    if (!isLoggedIn()) {
+        labCards.forEach((card) => {
+            card.hidden = false;
+        });
+        labsPagination.innerHTML = '';
+        labsPagination.hidden = true;
+        if (labsLibraryToolbar) labsLibraryToolbar.hidden = true;
+        return;
+    }
+
     const totalPages = Math.max(totalLabPages, Math.ceil(labCards.length / cardsPerPage));
     currentLabPage = Math.min(Math.max(currentLabPage, 1), totalPages);
 
@@ -2329,17 +4393,43 @@ function renderLoginPageLabFeedback(selectedSpots) {
     ].join('');
 
     loginPageLabFeedback.className = `lab-feedback-card ${perfectMatch ? 'is-success' : 'is-warning'}`;
+    const pointsNote = perfectMatch
+        ? (isLoggedIn()
+            ? `<p><strong>Points earned:</strong> ${quizPointValues[loginPageLabAttemptId]} training points.</p>`
+            : '<p><strong>Nice catch.</strong> Sign in if you want this lab result and its points to count toward your progress.</p>')
+        : (isLoggedIn()
+            ? '<p><strong>No points yet.</strong> You need all 3 strongest red flags to earn points from this lab.</p>'
+            : '');
+
     loginPageLabFeedback.innerHTML = `
         <strong>${perfectMatch ? 'Nice catch.' : 'Good try.'}</strong>
         <p>${perfectMatch
             ? 'You found the strongest phishing signals on the page: the suspicious domain, the urgent scare tactic, and the fake support contact.'
             : 'The best red flags here are the suspicious domain, the urgency message, and the unrelated support contact.'}</p>
+        ${pointsNote}
         ${notes ? `<ul>${notes}</ul>` : ''}
     `;
     loginPageLabFeedback.hidden = false;
 
     if (loginPageLabSubmit) loginPageLabSubmit.hidden = true;
     if (loginPageLabReset) loginPageLabReset.hidden = false;
+}
+
+async function saveLoginPageLabAttempt(selectedSpots = []) {
+    if (!isLoggedIn()) return null;
+
+    const totalQuestions = loginPageLabCorrectSpots.size;
+    const correctSelections = selectedSpots.filter((spot) => loginPageLabCorrectSpots.has(spot)).length;
+    const percentage = Math.round((correctSelections / totalQuestions) * 100);
+
+    return saveSignedInAttempt({
+        quizId: loginPageLabAttemptId,
+        quizTitle: loginPageLabAttemptTitle,
+        score: correctSelections,
+        totalQuestions,
+        percentage,
+        reviewData: []
+    });
 }
 
 quizStartButtons.forEach((button) => {
@@ -2400,6 +4490,16 @@ loginPageLabSubmit?.addEventListener('click', () => {
     }
 
     renderLoginPageLabFeedback(selections);
+
+    if (isLoggedIn()) {
+        saveLoginPageLabAttempt(selections)
+            .then(() => {
+                loadSignedInQuizData();
+            })
+            .catch((error) => {
+                console.warn('Lab attempt save failed:', error.message || error);
+            });
+    }
 });
 
 loginPageLabReset?.addEventListener('click', () => {
