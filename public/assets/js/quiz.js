@@ -81,50 +81,50 @@ const quizzes = {
         questions: [
             {
                 topic: 'Urgency',
-                prompt: 'A message says your account will be suspended in 10 minutes unless you click a link. What warning sign stands out most?',
+                prompt: 'You receive a message saying your student portal will be locked in 10 minutes unless you confirm your account through a link. Which detail is the strongest warning sign?',
                 options: [
-                    'The short deadline meant to pressure you.',
-                    'The message arrived during the day.',
-                    'The sender used complete sentences.',
-                    'The message mentioned your account.'
+                    'The message sounds formal and mentions your account.',
+                    'The urgent deadline is pushing you to act fast.',
+                    'The sender included a support contact below.',
+                    'The message uses short sentences throughout.'
                 ],
-                answer: 0,
+                answer: 1,
                 explanation: 'Phishing messages often create panic so people react without checking the details first.'
             },
             {
                 topic: 'Sender check',
-                prompt: 'An email claims to be from the registrar but the sender address ends in a free email domain. What should you do?',
+                prompt: 'An email claims to be from the registrar and includes your full name, but the sender address ends in a free email domain. What is the safest response?',
                 options: [
-                    'Trust it if the signature block looks formal.',
-                    'Reply and ask for more details.',
-                    'Verify through an official school contact instead.',
-                    'Click the attachment to confirm the request.'
+                    'Trust it because it includes personal details about you.',
+                    'Reply to the same email and ask if it is legitimate.',
+                    'Verify it through an official school contact or portal.',
+                    'Open the attachment first, then decide if it feels real.'
                 ],
                 answer: 2,
                 explanation: 'If the sender address does not match the official source, verify through a trusted contact before responding.'
             },
             {
                 topic: 'Requests for secrets',
-                prompt: 'Which message is most suspicious?',
+                prompt: 'Which message should raise the strongest phishing concern?',
                 options: [
-                    "A teacher reminding you about tomorrow's class.",
-                    'A campus office asking you to confirm your password by email.',
-                    'A classmate sending project updates.',
-                    'A school department posting office hours.'
+                    'A department post reminding students about office hours.',
+                    'A campus office asking for your password by email.',
+                    'A class representative posting a room change tomorrow.',
+                    'A teacher sharing a deadline update in the class chat.'
                 ],
                 answer: 1,
                 explanation: 'Legitimate organizations should not ask for passwords through email or chat.'
             },
             {
                 topic: 'Attachments',
-                prompt: 'You get an unexpected attachment labeled "account-update-form." What is the safest next step?',
+                prompt: 'You get an unexpected attachment labeled "account-update-form" from someone claiming to be campus support. What is the safest next step?',
                 options: [
-                    'Open it if the file name looks official.',
-                    'Forward it to friends to ask what they think.',
-                    'Verify the request first through an official channel.',
-                    'Download it but do not open it yet.'
+                    'Open it in preview mode first to inspect it safely.',
+                    'Verify the request through an official school channel.',
+                    'Download it, but wait before opening the file.',
+                    'Reply and ask why the file is needed first.'
                 ],
-                answer: 2,
+                answer: 1,
                 explanation: 'Unexpected files can carry malware or phishing forms. Verify first before opening anything.'
             }
         ]
@@ -189,48 +189,48 @@ const quizzes = {
         questions: [
             {
                 topic: 'Campus scenario',
-                prompt: 'A student receives a "tuition balance" email with a payment link and urgent warning. What is the safest reaction?',
+                prompt: 'A student receives a "tuition balance" email with an urgent payment link, but the message also includes correct school branding and a student number. What is the safest response?',
                 options: [
-                    'Pay immediately to avoid penalties.',
-                    'Verify the balance through the official school portal first.',
-                    'Forward the message to a friend and let them decide.',
-                    'Reply with your full student information.'
+                    'Use the payment link since the details look accurate.',
+                    'Verify the balance through the official portal first.',
+                    'Reply to the email and ask if the warning is real.',
+                    'Wait for another message before taking action.'
                 ],
                 answer: 1,
                 explanation: 'Payment-related urgency is a common phishing tactic. Verify through the official portal before taking action.'
             },
             {
                 topic: 'Social media',
-                prompt: 'A page using your school logo asks you to log in again because your session expired. What should you check first?',
+                prompt: 'A login page shared in a student group chat uses your school logo and says your session expired. What should you verify first?',
                 options: [
-                    'Whether the logo looks real.',
-                    'Whether the browser window is large enough.',
-                    'Whether the website address is the real official domain.',
-                    'Whether the button color matches the school branding.'
+                    'Whether the page colors match the usual school design.',
+                    'Whether the button layout looks professional enough.',
+                    'Whether the website address is the official domain.',
+                    'Whether other students said the page worked for them.'
                 ],
                 answer: 2,
                 explanation: 'Visual design can be copied easily. The actual domain is a far better trust check.'
             },
             {
                 topic: 'QR code scam',
-                prompt: 'You scan a QR code posted on campus that opens a login form asking for your account details. What should you do?',
+                prompt: 'You scan a QR code posted on campus that opens a login form for a "network upgrade." The page looks polished and uses HTTPS. What is the safest move?',
                 options: [
-                    'Enter the details if the page loads quickly.',
-                    'Treat it carefully and verify the destination first.',
-                    'Trust it because it came from a QR code.',
-                    'Use the same password to see if the form works.'
+                    'Enter your credentials if the page looks secure.',
+                    'Verify the destination through an official source first.',
+                    'Trust it because it was posted on school grounds.',
+                    'Check the logo first, then continue if it looks real.'
                 ],
                 answer: 1,
                 explanation: 'QR codes can hide suspicious destinations the same way shortened links can.'
             },
             {
                 topic: 'Impersonation',
-                prompt: 'A chat message from a "school officer" asks for a one-time code sent to your phone. What is the safest response?',
+                prompt: 'A chat message from a "school officer" says they are helping restore student access and asks for the one-time code sent to your phone. What is the safest response?',
                 options: [
-                    'Share it because the request sounds official.',
-                    'Do not share the code and verify the request independently.',
-                    'Send half of the code first.',
-                    'Post the code in the group chat for confirmation.'
+                    'Share the code if the issue they mention sounds real.',
+                    'Do not share it and verify the request independently.',
+                    'Ask them to prove who they are before sharing it.',
+                    'Wait a few minutes and send it if they follow up.'
                 ],
                 answer: 1,
                 explanation: 'One-time codes should never be shared casually. Attackers often use impersonation to steal them.'
@@ -243,50 +243,50 @@ const quizzes = {
         questions: [
             {
                 topic: 'Password habits',
-                prompt: 'Which habit best reduces the impact of phishing on your accounts?',
+                prompt: 'Which habit does the most to limit damage if one of your accounts is compromised through phishing?',
                 options: [
-                    'Using the same strong password everywhere.',
+                    'Using one strong password for related school accounts.',
                     'Using different passwords for important accounts.',
-                    'Saving passwords in random chat threads.',
-                    'Sharing passwords only with close friends.'
+                    'Keeping password screenshots in a private chat.',
+                    'Changing only your email password regularly.'
                 ],
                 answer: 1,
                 explanation: 'Different passwords reduce the damage if one account is exposed through phishing.'
             },
             {
                 topic: 'Verification',
-                prompt: 'When a message asks you to act on an account issue, what is the best practice?',
+                prompt: 'When a message warns you about an account issue and provides a direct link, what is the best practice?',
                 options: [
-                    'Use the link in the message to fix it immediately.',
-                    'Log in through the official website or app instead.',
-                    'Wait for three more messages before checking.',
-                    'Ask strangers online if the message looks real.'
+                    'Use the link quickly before the problem gets worse.',
+                    'Use the official website or app you already know.',
+                    'Open the link in another browser first.',
+                    'Reply first, then decide if the sender sounds real.'
                 ],
                 answer: 1,
                 explanation: 'Going directly to the official site is safer than trusting links from messages.'
             },
             {
                 topic: 'Sharing links',
-                prompt: 'A friend asks if a suspicious link is safe. What is the best response?',
+                prompt: 'A friend asks whether a suspicious link is safe because it "looks normal." What is the best response?',
                 options: [
-                    'Tell them to open it and find out.',
-                    'Warn them not to open it until it is verified.',
-                    'Post it in a group chat for reactions.',
-                    'Say it is safe because it has HTTPS.'
+                    'Tell them to try it in incognito mode first.',
+                    'Tell them not to open it until it is verified.',
+                    'Ask more people in the group chat what they think.',
+                    'Tell them it is probably fine if it uses HTTPS.'
                 ],
                 answer: 1,
                 explanation: 'It is safer to pause and verify suspicious links before anyone interacts with them.'
             },
             {
                 topic: 'Awareness habit',
-                prompt: 'Which daily habit helps improve phishing awareness the most?',
+                prompt: 'Which everyday habit most improves phishing awareness over time?',
                 options: [
-                    'Reading only the subject line of messages.',
-                    'Checking links, sender details, and requests before acting.',
-                    'Opening all attachments quickly so they do not pile up.',
-                    'Trusting messages from familiar names automatically.'
+                    'Checking links, sender details, and requests first.',
+                    'Reading messages quickly so you do not miss updates.',
+                    'Trusting familiar names unless the writing looks bad.',
+                    'Opening attachments first, then deciding later.'
                 ],
-                answer: 1,
+                answer: 0,
                 explanation: 'Consistently checking details before acting builds strong phishing awareness over time.'
             }
         ]
@@ -375,6 +375,7 @@ const quizAttemptReviewBody = document.getElementById('quizAttemptReviewBody');
 const quizSectionTitle = document.getElementById('quizSectionTitle');
 const quizSectionDescription = document.getElementById('quizSectionDescription');
 const quizPagination = document.getElementById('quizPagination');
+const labsPagination = document.getElementById('labsPagination');
 const quizzesSection = document.getElementById('quizzes');
 const quizWorkspace = document.getElementById('quizWorkspace');
 const quizSessionTitle = document.getElementById('quizSessionTitle');
@@ -399,6 +400,8 @@ const quizChooseAnotherBtn = document.getElementById('quizChooseAnotherBtn');
 const quizExitBtn = document.getElementById('quizExitBtn');
 const quizGrid = document.getElementById('quizzesGrid');
 const quizCards = [...document.querySelectorAll('.quiz-card[data-quiz-card]')];
+const labsGrid = document.getElementById('labsGrid');
+const labCards = [...document.querySelectorAll('.quiz-card[data-lab-card]')];
 
 let currentQuizId = null;
 let currentQuestionIndex = 0;
@@ -407,12 +410,14 @@ let score = 0;
 let answers = [];
 let signedInQuizAttempts = [];
 let currentQuizPage = 1;
+let currentLabPage = 1;
 let lockedQuizSidebarScrollY = 0;
 const loginPageLabCorrectSpots = new Set(['domain', 'urgency', 'support']);
 let quizSidebarTouchStartY = 0;
 const guestQuizCardsPreviewCount = 6;
 const maxAdaptiveQuizCardsPerPage = 9;
 const totalQuizPages = 10;
+const totalLabPages = 1;
 
 function getQuizCardsPerPage() {
     const viewportWidth = window.innerWidth || document.documentElement.clientWidth || 0;
@@ -441,6 +446,7 @@ function escapeHtml(value) {
 createPlaceholderQuizCards();
 updateQuizCardTierLabels();
 renderQuizPagination();
+renderLabsPagination();
 applyQuizPageState();
 
 function getStoredAuthToken() {
@@ -1071,6 +1077,7 @@ function applyQuizPageState() {
         setQuizAppView('quiz-library');
         updateQuizUnlockStates();
         renderQuizPagination();
+        renderLabsPagination();
     } else {
         if (quizSidebarLabel) quizSidebarLabel.textContent = 'Guest access';
         if (quizSidebarName) quizSidebarName.textContent = 'Guest User';
@@ -1102,6 +1109,7 @@ function applyQuizPageState() {
         setQuizAppView('quiz-library');
         updateQuizUnlockStates();
         renderQuizPagination();
+        renderLabsPagination();
     }
 
 }
@@ -1319,7 +1327,7 @@ function populateQuizProfile(attempts = []) {
         if (quizProfileRankProgressText) {
             quizProfileRankProgressText.textContent = 'Complete signed-in quiz sets to begin earning awareness points and rank progress.';
         }
-        if (quizProfileCompletedSets) quizProfileCompletedSets.textContent = `0/${Object.keys(quizzes).length}`;
+        if (quizProfileCompletedSets) quizProfileCompletedSets.textContent = '0';
         return;
     }
 
@@ -1331,7 +1339,7 @@ function populateQuizProfile(attempts = []) {
     if (quizProfileAverage) quizProfileAverage.textContent = `${averageScore}%`;
     if (quizProfileBest) quizProfileBest.textContent = String(strongResults);
     if (quizProfileCompletedSets) {
-        quizProfileCompletedSets.textContent = `${completedQuizIds.size}/${Object.keys(quizzes).length}`;
+        quizProfileCompletedSets.textContent = String(completedQuizIds.size);
     }
     const rankMeta = getQuizRankMeta(earnedPoints, averageScore, completedQuizIds.size);
 
@@ -1614,6 +1622,40 @@ function renderQuizPagination() {
     }
 }
 
+function renderLabsPagination() {
+    if (!labsPagination || !labCards.length) return;
+    const labsLibraryToolbar = document.getElementById('labsLibraryToolbar');
+    const cardsPerPage = getQuizCardsPerPage();
+    const totalPages = Math.max(totalLabPages, Math.ceil(labCards.length / cardsPerPage));
+    currentLabPage = Math.min(Math.max(currentLabPage, 1), totalPages);
+
+    labCards.forEach((card, index) => {
+        const pageNumber = Math.floor(index / cardsPerPage) + 1;
+        card.hidden = pageNumber !== currentLabPage;
+    });
+
+    labsPagination.hidden = false;
+    if (labsLibraryToolbar) labsLibraryToolbar.hidden = false;
+    labsPagination.innerHTML = '';
+
+    for (let pageNumber = 1; pageNumber <= totalPages; pageNumber += 1) {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = `quiz-page-tab${pageNumber === currentLabPage ? ' is-active' : ''}`;
+        button.textContent = String(pageNumber);
+        button.setAttribute('aria-label', `Show lab page ${pageNumber}`);
+        if (pageNumber === currentLabPage) {
+            button.setAttribute('aria-current', 'page');
+        }
+        button.addEventListener('click', () => {
+            currentLabPage = pageNumber;
+            renderLabsPagination();
+            labsPanel?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        });
+        labsPagination.appendChild(button);
+    }
+}
+
 function renderQuizBadges(attempts = []) {
     if (!quizBadgesList) return;
 
@@ -1861,7 +1903,7 @@ function renderQuizLeaderboard(entries, currentUserId, minimumAttempts = 2) {
             <div class="quiz-leaderboard-rank">#${entry.rank}</div>
             <div class="quiz-leaderboard-main">
                 <strong>${entry.name}</strong>
-                <span>${entry.earnedPoints || 0} pts - ${entry.completedSetsCount || 0} sets completed</span>
+                <span>${entry.earnedPoints || 0} pts - ${entry.completedSetsCount || 0} completed</span>
             </div>
             <div class="quiz-leaderboard-score-wrap">
                 <span class="quiz-leaderboard-score-icon" aria-hidden="true">
@@ -1983,12 +2025,12 @@ function renderPublicQuizProfile(profile) {
                             <strong>${escapeHtml(Math.round(profile.averageScore || 0))}%</strong>
                         </div>
                         <div class="quiz-public-profile-stat">
-                            <span>Strong Results</span>
+                            <span>85%+ Results</span>
                             <strong>${escapeHtml(profile.strongResultsCount || 0)}</strong>
                         </div>
                         <div class="quiz-public-profile-stat">
-                            <span>Completed Sets</span>
-                            <strong>${escapeHtml(`${completedSetsCount}/${Object.keys(quizzes).length}`)}</strong>
+                            <span>Complete</span>
+                            <strong>${escapeHtml(completedSetsCount || 0)}</strong>
                         </div>
                     </div>
                 </section>
@@ -2508,7 +2550,8 @@ window.addEventListener('resize', () => {
     }
 
     renderQuizPagination();
-});
+    renderLabsPagination();
+  });
 
 bindQuizSidebarNavigation();
 window.addEventListener('hashchange', () => syncQuizViewFromHash('smooth'));
