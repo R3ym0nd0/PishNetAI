@@ -5593,7 +5593,7 @@ html {
     width: 100%;
     max-width: 880px;
     align-items: center;
-    gap: 18px;
+    gap: 22px;
 }
 
 .hero h1 {
@@ -5650,9 +5650,9 @@ html {
     }
 
     .hero-subtitle {
-        max-width: 30ch;
-        font-size: 0.98rem;
-        line-height: 1.6;
+        max-width: 29ch;
+        font-size: 0.96rem;
+        line-height: 1.55;
     }
 
     .hero-title-line:last-child {
@@ -5686,5 +5686,23 @@ html {
         grid-column: auto;
         width: 100%;
         justify-self: stretch;
+    }
+}
+
+@media (max-width: 400px) {
+    .hero h1 {
+        max-width: none;
+        width: 100%;
+        font-size: clamp(1.68rem, 5.5vw, 2.04rem);
+        line-height: 1.04;
+        text-align: center;
+    }
+
+    .hero-subtitle {
+        max-width: 27ch;
+    }
+
+    .hero-title-line:last-child {
+        text-align: center;
     }
 }
