@@ -139,6 +139,28 @@ function buildFinalRiskScore(modelRiskScore, behaviorAssessment, features) {
     !features.hasShortenerDomain &&
     !features.suspiciousTld &&
     !features.hasAtSymbol;
+  const mildExternalFormOnlyRisk =
+    features.hasExternalFormAction &&
+    !features.hasPasswordField &&
+    !features.reputationFlagged &&
+    !features.localDatasetFlagged &&
+    !behaviorAssessment.hardFlag &&
+    features.usesHttps &&
+    cleanUrlShape &&
+    features.redirectCount <= 1 &&
+    features.sensitiveQueryParamHits === 0 &&
+    behaviorAssessment.score <= 24;
+  const trustedLoginFlowRisk =
+    trustedLegitimateDomain &&
+    features.usesHttps &&
+    features.hasPasswordField &&
+    !features.hasExternalFormAction &&
+    !features.reputationFlagged &&
+    !features.localDatasetFlagged &&
+    !behaviorAssessment.hardFlag &&
+    cleanUrlShape &&
+    features.redirectCount <= 3 &&
+    features.sensitiveQueryParamHits === 0;
 
   if (trustedLegitimateDomain && noCredentialCollection && !behaviorAssessment.hardFlag) {
     const hasSuspiciousUrlSignals =
@@ -184,6 +206,8 @@ function buildFinalRiskScore(modelRiskScore, behaviorAssessment, features) {
     finalScore = Math.min(finalScore, 10);
   } else if (trustedLegitimateDomain && noCredentialCollection && cleanUrlShape && noCredentialRiskBehavior) {
     finalScore = Math.min(finalScore, 15);
+  } else if (trustedLoginFlowRisk) {
+    finalScore = Math.min(finalScore, 24);
   } else if (trustedLegitimateDomain && cleanUrlShape && behaviorAssessment.score < 35 && !behaviorAssessment.hardFlag) {
     finalScore = Math.min(finalScore, 24);
   } else if (trustedLegitimateDomain && cleanUrlShape && !behaviorAssessment.hardFlag) {
@@ -198,6 +222,8 @@ function buildFinalRiskScore(modelRiskScore, behaviorAssessment, features) {
     !behaviorAssessment.hardFlag
   ) {
     finalScore = Math.min(finalScore, 38);
+  } else if (mildExternalFormOnlyRisk) {
+    finalScore = Math.min(finalScore, hasEstablishedDomain ? 34 : 38);
   }
 
   return clamp(finalScore, 0, 100);
@@ -212,9 +238,33 @@ function buildFinalPrediction(modelRiskScore, behaviorAssessment, finalRiskScore
     !features.hasShortenerDomain &&
     !features.suspiciousTld &&
     !features.hasAtSymbol;
+  const mildExternalFormOnlyRisk =
+    features.hasExternalFormAction &&
+    !features.hasPasswordField &&
+    !features.reputationFlagged &&
+    !features.localDatasetFlagged &&
+    !behaviorAssessment.hardFlag &&
+    features.usesHttps &&
+    cleanUrlShape &&
+    features.redirectCount <= 1 &&
+    features.sensitiveQueryParamHits === 0 &&
+    behaviorAssessment.score <= 24;
+  const trustedLoginFlowRisk =
+    Boolean(features.knownLegitimateDomain) &&
+    features.usesHttps &&
+    features.hasPasswordField &&
+    !features.hasExternalFormAction &&
+    !features.reputationFlagged &&
+    !features.localDatasetFlagged &&
+    !behaviorAssessment.hardFlag &&
+    cleanUrlShape &&
+    features.redirectCount <= 3 &&
+    features.sensitiveQueryParamHits === 0;
 
   if (finalRiskScore <= 15) return 'Safe';
   if (finalRiskScore <= 25) return 'Safe';
+  if (trustedLoginFlowRisk && finalRiskScore <= 30) return 'Safe';
+  if (mildExternalFormOnlyRisk && finalRiskScore <= 40) return 'Safe';
   if (
     hasEstablishedDomain &&
     !features.hasPasswordField &&

@@ -3536,6 +3536,18 @@ body.quiz-signed-in .quiz-library-toolbar {
     color: #ffffff;
 }
 
+.quiz-guest-preview-card {
+    grid-column: 1 / -1;
+    padding: 0;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+}
+
+.quiz-guest-preview-card .quiz-locked-panel {
+    height: 100%;
+}
+
 .quiz-complete-chip {
     display: inline-flex;
     align-items: center;

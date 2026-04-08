@@ -2291,6 +2291,49 @@ const maxAdaptiveQuizCardsPerPage = 6;
 const totalQuizPages = 5;
 const totalLabPages = 1;
 
+function getGuestPreviewCard(gridType = 'quizzes') {
+    const grid = gridType === 'labs' ? labsGrid : quizGrid;
+    if (!grid) return null;
+
+    const cardId = gridType === 'labs' ? 'labsGuestPreviewCard' : 'quizzesGuestPreviewCard';
+    let card = document.getElementById(cardId);
+    if (card) return card;
+
+    const kicker = gridType === 'labs' ? 'Labs Locked' : 'Training Locked';
+    const title = gridType === 'labs' ? 'Sign in to unlock more hands-on labs' : 'Sign in to unlock more training sets';
+    const description = gridType === 'labs'
+        ? 'Your saved lab progress, more hands-on phishing practice, and future lab activities will appear here once you sign in.'
+        : 'More training sets, saved progress, badges, and full training access will appear here once you sign in.';
+
+    card = document.createElement('div');
+    card.id = cardId;
+    card.className = 'quiz-guest-preview-card';
+    card.innerHTML = `
+        <div class="quiz-locked-panel">
+            <p class="quiz-dashboard-kicker">${kicker}</p>
+            <h3>${title}</h3>
+            <p>${description}</p>
+            <div class="quiz-locked-panel-actions">
+                <a href="/login?returnTo=/quiz" class="quiz-sidebar-auth-btn is-signin">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                        <path d="M15 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm-9-2V7H4v3H1v2h3v3h2v-3h3v-2H6zm9 4c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                    </svg>
+                    <span>Sign In</span>
+                </a>
+                <a href="/signup?returnTo=/quiz" class="quiz-sidebar-auth-btn is-signup">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                    </svg>
+                    <span>Sign Up</span>
+                </a>
+            </div>
+        </div>
+    `;
+
+    grid.appendChild(card);
+    return card;
+}
+
 function getQuizCardsPerPage() {
     return 6;
 }
@@ -3718,17 +3761,20 @@ function renderQuizPagination() {
     if (!quizPagination || !quizCards.length) return;
     const quizLibraryToolbar = document.getElementById('quizLibraryToolbar');
     const cardsPerPage = getQuizCardsPerPage();
+    const guestPreviewCard = getGuestPreviewCard('quizzes');
 
     if (!isLoggedIn()) {
         quizCards.forEach((card, index) => {
             card.hidden = index >= guestQuizCardsPreviewCount;
         });
+        if (guestPreviewCard) guestPreviewCard.hidden = false;
         quizPagination.innerHTML = '';
         quizPagination.hidden = true;
         if (quizLibraryToolbar) quizLibraryToolbar.hidden = true;
         return;
     }
 
+    if (guestPreviewCard) guestPreviewCard.hidden = true;
     quizPagination.hidden = false;
     if (quizLibraryToolbar) quizLibraryToolbar.hidden = false;
 
@@ -3764,17 +3810,20 @@ function renderLabsPagination() {
     if (!labsPagination || !labCards.length) return;
     const labsLibraryToolbar = document.getElementById('labsLibraryToolbar');
     const cardsPerPage = getQuizCardsPerPage();
+    const guestPreviewCard = getGuestPreviewCard('labs');
 
     if (!isLoggedIn()) {
         labCards.forEach((card) => {
             card.hidden = false;
         });
+        if (guestPreviewCard) guestPreviewCard.hidden = false;
         labsPagination.innerHTML = '';
         labsPagination.hidden = true;
         if (labsLibraryToolbar) labsLibraryToolbar.hidden = true;
         return;
     }
 
+    if (guestPreviewCard) guestPreviewCard.hidden = true;
     const totalPages = Math.max(totalLabPages, Math.ceil(labCards.length / cardsPerPage));
     currentLabPage = Math.min(Math.max(currentLabPage, 1), totalPages);
 

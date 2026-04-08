@@ -609,7 +609,7 @@ function getGradeFromRiskScore(riskScore) {
 }
 
 function getStatusClass(prediction, riskScore) {
-    if (prediction === 'Phishing' || riskScore > 60) return 'high';
+    if (riskScore > 60) return 'high';
     if (riskScore > 25) return 'medium';
     return 'low';
 }
@@ -665,6 +665,7 @@ function updateIndicators(indicators = []) {
             text.includes('uses a trusted domain name') ||
             text.includes('uses a secure connection') ||
             text.includes('a secure connection is established') ||
+            text.includes('trusted domain on our safe-site list') ||
             text.includes('uses a normal website name') ||
             text.includes('did not redirect') ||
             text.includes('does not use a known shortened url service') ||
@@ -675,7 +676,8 @@ function updateIndicators(indicators = []) {
             text.includes('does not appear to ask for a password') ||
             text.includes('no password fields are detected') ||
             text.includes('forms appear to stay within the same site') ||
-            text.includes('no hidden lookalike-domain pattern was detected')
+            text.includes('no hidden lookalike-domain pattern was detected') ||
+            text.includes('no hidden lookalike-domain pattern was found')
         ) {
             return { label: 'Good Sign', tone: 'safe' };
         }
@@ -791,7 +793,7 @@ function renderScanResult(data) {
     const riskScore = Number(data.riskScore) || 0;
     const grade = data.grade || getGradeFromRiskScore(riskScore);
     const statusClass = data.riskClass || getStatusClass(data.prediction, riskScore);
-    const statusLabel = data.prediction === 'Phishing' ? 'High Risk' : (data.riskLevel || 'Low Risk');
+    const statusLabel = data.riskLevel || (riskScore > 60 ? 'High Risk' : (riskScore > 25 ? 'Medium Risk' : 'Low Risk'));
     const featureData = data.features || {};
 
     setStatusBadge(statusLabel, statusClass);

@@ -91,57 +91,57 @@ function buildIndicators(features, riskScore, heuristicReasons = [], modelRiskSc
 
   if (features.localDatasetFlagged) {
     const datasetTarget = features.localDatasetTarget ? ` targeting ${features.localDatasetTarget}` : '';
-    indicators.unshift(`Local phishing dataset warning: This URL matched a known phishing entry${datasetTarget}.`);
+    indicators.unshift(`This link matched a known phishing entry${datasetTarget}.`);
   }
 
   if (features.reputationFlagged) {
     const threatTypes = Array.isArray(features.reputationThreatTypes) && features.reputationThreatTypes.length > 0
       ? ` (${features.reputationThreatTypes.join(', ').toLowerCase().replace(/_/g, ' ')})`
       : '';
-    indicators.unshift(`Browser-style reputation warning: A threat-intelligence service flagged this URL as unsafe${threatTypes}.`);
+    indicators.unshift(`A trusted security source flagged this link as unsafe${threatTypes}.`);
   }
 
   if (features.knownLegitimateDomain) {
     indicators.push(
       features.usesHttps
-        ? 'This website matches a domain from the trusted site list.'
-        : 'This website matches a recognized domain, but the current page is not using a secure connection.'
+        ? 'This website matches a trusted domain on our safe-site list.'
+        : 'This website matches a trusted domain, but the current page is not using a secure connection.'
     );
   }
-  indicators.push(features.usesHttps ? 'The site uses a secure connection.' : 'The site does not appear to use a secure connection.');
-  indicators.push(features.hasIpAddressInUrl ? 'The link uses a raw IP address instead of a normal website name.' : 'The link uses a normal website name.');
-  indicators.push(features.hasPasswordField ? `This page asks for a password in ${features.passwordFieldCount} field(s).` : 'This page does not appear to ask for a password.');
-  indicators.push(features.hasExternalFormAction ? `Some form actions send data outside the current site (${features.externalFormActionCount} found).` : 'The forms appear to stay within the same site.');
-  indicators.push(features.redirected ? `The link redirected ${features.redirectCount} time(s) before reaching the final page.` : 'The link did not redirect to another page.');
-  indicators.push(features.hasShortenerDomain ? 'The link uses a shortened URL service.' : 'The link does not use a known shortened URL service.');
-  indicators.push(features.hasPunycode ? 'The website name contains characters that can hide a lookalike domain.' : 'No hidden lookalike-domain pattern was detected in the website name.');
-  indicators.push(features.suspiciousTld ? 'The site uses a domain ending that is more often seen in risky links.' : 'The domain ending does not match the higher-risk list.');
-  indicators.push(`The link structure has ${features.pathDepth} path level(s) and ${features.queryParamCount} extra parameter(s).`);
-  indicators.push(`Encoded link characters found: ${features.encodedPathCount + features.encodedQueryCount}.`);
-  indicators.push(`Suspicious link clues found in the URL: ${features.suspiciousPathKeywordHits + features.suspiciousQueryKeywordHits}, with ${features.sensitiveQueryParamHits} sensitive parameter clue(s).`);
-  indicators.push(features.finalDomainDiffersFromInput ? 'The final website name is different from the one you originally entered.' : 'The final website name matches the one you entered.');
-  indicators.push(features.dnsResolves ? 'The website name could be reached normally.' : 'The website name could not be reached normally during the scan.');
-  indicators.push(features.mxRecordExists ? 'Basic domain records were found for this site.' : 'Some expected domain records were not found for this site.');
-  indicators.push(`Detected ${features.nameserverCount} nameserver record(s) for the domain.`);
+  indicators.push(features.usesHttps ? 'The site uses a secure connection (HTTPS).' : 'The site does not appear to use a secure connection.');
+  indicators.push(features.hasIpAddressInUrl ? 'The link uses an IP address instead of a normal website name.' : 'The link uses a normal website name.');
+  indicators.push(features.hasPasswordField ? `This page asks for a password in ${features.passwordFieldCount} field(s).` : 'No password field was detected.');
+  indicators.push(features.hasExternalFormAction ? `Some forms may send your information to another website (${features.externalFormActionCount} found).` : 'Forms appear to stay within the same website.');
+  indicators.push(features.redirected ? `This link redirected ${features.redirectCount} time(s) before reaching the final page.` : 'The link did not redirect to another page.');
+  indicators.push(features.hasShortenerDomain ? 'This link uses a shortened URL service.' : 'This link does not use a known shortened URL service.');
+  indicators.push(features.hasPunycode ? 'The website name contains hidden characters that may be trying to imitate a real site.' : 'No hidden lookalike-domain pattern was found in the website name.');
+  indicators.push(features.suspiciousTld ? 'This site uses a domain ending that appears more often in risky links.' : 'The domain ending does not match our higher-risk list.');
+  indicators.push(`The link has ${features.pathDepth} path level(s) and ${features.queryParamCount} extra parameter(s).`);
+  indicators.push(`Encoded characters found in the link: ${features.encodedPathCount + features.encodedQueryCount}.`);
+  indicators.push(`The link includes ${features.suspiciousPathKeywordHits + features.suspiciousQueryKeywordHits} suspicious URL clue(s) and ${features.sensitiveQueryParamHits} sensitive parameter clue(s).`);
+  indicators.push(features.finalDomainDiffersFromInput ? 'The final website name is different from the one you first entered.' : 'The final website name matches the one you entered.');
+  indicators.push(features.dnsResolves ? 'The website could be reached during the scan.' : 'The website could not be reached normally during the scan.');
+  indicators.push(features.mxRecordExists ? 'Basic domain records were found for this website.' : 'Some expected domain records were not found for this website.');
+  indicators.push(`The domain has ${features.nameserverCount} nameserver record(s).`);
   indicators.push(features.domainAge !== 'Unavailable' ? `Estimated domain age: ${features.domainAge}.` : 'The scanner could not confirm how old this domain is.');
   if (features.registrar) {
     indicators.push('Registrar information is available for this domain.');
   }
-  indicators.push(`Page structure found: ${features.iframeCount} embedded frame(s), ${features.externalLinkCount} outside link(s), and ${features.externalScriptCount} outside script(s).`);
+  indicators.push(`The page includes ${features.iframeCount} embedded frame(s), ${features.externalLinkCount} outside link(s), and ${features.externalScriptCount} outside script(s).`);
   indicators.push(`Other page elements found: ${features.emptyLinkCount} empty link(s) and ${features.mailtoLinkCount} email link(s).`);
 
   if (features.suspiciousKeywordHits > 0) {
-    indicators.push(`Words often seen in phishing pages were found: ${features.matchedKeywords.join(', ')}.`);
+    indicators.push(`The page uses words often seen in phishing attempts: ${features.matchedKeywords.join(', ')}.`);
   } else {
     indicators.push('No obvious phishing-related words were found on the page.');
   }
 
   if (aiDrivenPhishingRisk) {
-    indicators.unshift('AI model warning: The visible page checks looked mostly normal, but the AI model still flagged this URL as high risk.');
+    indicators.unshift('The page looked mostly normal in basic checks, but the AI model still flagged this URL as high risk.');
   } else if (modelRiskScore >= 70) {
-    indicators.push('AI model warning: The AI model found suspicious phishing-like patterns in this URL.');
+    indicators.push('The AI model found strong phishing-like patterns in this URL.');
   } else if (modelRiskScore >= 45 && riskScore >= 35) {
-    indicators.push('AI model note: The AI model found moderate risk patterns in this URL.');
+    indicators.push('The AI model found some risk patterns in this URL.');
   }
 
   indicators.push(`The page contains ${features.formCount} form(s), ${features.inputCount} input field(s), and ${features.hiddenInputCount} hidden input(s).`);
@@ -153,11 +153,11 @@ function buildIndicators(features, riskScore, heuristicReasons = [], modelRiskSc
 
 function buildSummary(prediction, features, riskScore, behaviorAssessment, modelRiskScore) {
   if (features.localDatasetFlagged) {
-    return 'This URL matched a known phishing entry in the local phishing dataset, so it should be treated as a high-risk phishing warning.';
+    return 'This link matched a known phishing entry in our local dataset, so it should be treated as high risk.';
   }
 
   if (features.reputationFlagged) {
-    return 'A browser-style reputation service flagged this URL as unsafe, so it should be treated as a high-risk phishing or malware-related warning.';
+    return 'A trusted security source already flagged this link as unsafe, so it should be treated as high risk.';
   }
 
   const aiDrivenPhishingRisk =
@@ -172,32 +172,44 @@ function buildSummary(prediction, features, riskScore, behaviorAssessment, model
 
   if (prediction === 'Phishing') {
     if (aiDrivenPhishingRisk) {
-      return 'The visible page checks looked mostly normal, but the AI model still flagged this URL as high risk, so the result should be treated as an AI-driven warning.';
+      return 'The page looked mostly normal in basic checks, but the AI model still flagged this URL as high risk.';
     }
-    return 'This URL shows multiple phishing-like signals from both the AI model and the rule-based scan, so it should be treated as risky.';
+    return 'This link showed several warning signs, so it should be treated as risky.';
   }
 
   if (features.knownLegitimateDomain && modelRiskScore <= 20 && behaviorAssessment.score <= 10) {
-    return 'This URL matches a trusted legitimate-domain pattern, and the scan did not find strong phishing behavior on the page.';
+    return 'This link matches a trusted domain pattern, and the scan did not find strong phishing signs on the page.';
+  }
+
+  if (
+    features.knownLegitimateDomain &&
+    features.usesHttps &&
+    features.hasPasswordField &&
+    !features.hasExternalFormAction &&
+    !features.reputationFlagged &&
+    !features.localDatasetFlagged &&
+    riskScore <= 30
+  ) {
+    return 'This link points to a trusted website. The login page and redirects can be normal for a sign-in flow, but it is still smart to double-check the address before entering your password.';
   }
 
   if (riskScore >= 35 || behaviorAssessment.score >= 35 || features.hasPasswordField || features.hasExternalFormAction) {
-    return 'The URL is not classified as phishing, but the scanner still found signals that deserve caution.';
+    return 'This link was not classified as phishing, but the scanner still found a few signs that deserve caution.';
   }
 
-  return 'The scanned page looks relatively safe based on the current URL and HTML checks.';
+  return 'The scanned page looks relatively safe based on the current link and page checks.';
 }
 
 function buildRecommendation(prediction, riskScore) {
   if (prediction === 'Phishing') {
-    return 'Do not enter credentials or personal information. Close the page and verify the link through an official source.';
+    return 'Do not enter passwords or personal information. Close the page and verify the link through an official source.';
   }
 
   if (riskScore >= 35) {
-    return 'Proceed carefully. Double-check the domain and avoid logging in unless you trust the source.';
+    return 'You can visit this site, but stay careful with any form or page that asks for information.';
   }
 
-  return 'The site appears safer than typical phishing pages, but it is still best to verify the URL before sharing sensitive data.';
+  return 'This site looks safer than a typical phishing page, but it is still best to verify the link before sharing sensitive information.';
 }
 
 function cleanExcerpt(value, maxLength = 120) {
@@ -245,10 +257,10 @@ function buildPageOverview(features) {
 function buildPageOverviewWithRiskContext(features, prediction, riskScore, behaviorAssessment, modelRiskScore) {
   const baseOverview = buildPageOverview(features);
   if (features.localDatasetFlagged) {
-    return 'The scanned page may look normal, but this URL matched a known phishing record in the local phishing dataset.';
+    return 'This page may look normal, but the link matched a known phishing record in our local dataset.';
   }
   if (features.reputationFlagged) {
-    return 'The scanned page may look normal, but a browser-style reputation service has already flagged this URL as unsafe.';
+    return 'This page may look normal, but a trusted security source has already flagged this link as unsafe.';
   }
   const aiDrivenPhishingRisk =
     prediction === 'Phishing' &&
@@ -261,11 +273,11 @@ function buildPageOverviewWithRiskContext(features, prediction, riskScore, behav
     !features.suspiciousTld;
 
   if (aiDrivenPhishingRisk) {
-    return 'The scanned page looks normal on visible checks, but the AI model still treated this URL as high risk.';
+    return 'The page looked normal in basic checks, but the AI model still treated this link as high risk.';
   }
 
   if (prediction === 'Phishing' && riskScore >= 70) {
-    return 'The scanned page shows multiple suspicious signs that match a high-risk phishing-style result.';
+    return 'The page shows several suspicious signs that match a high-risk phishing result.';
   }
 
   return baseOverview;
@@ -273,11 +285,11 @@ function buildPageOverviewWithRiskContext(features, prediction, riskScore, behav
 
 function buildRecommendationWithRiskContext(prediction, riskScore, features, behaviorAssessment, modelRiskScore) {
   if (features.localDatasetFlagged) {
-    return 'Avoid interacting with this URL and do not enter any sensitive information. Treat it as a known phishing warning and verify through an official source.';
+    return 'Avoid this link and do not enter any sensitive information. Treat it as a known phishing warning and verify through an official source.';
   }
 
   if (features.reputationFlagged) {
-    return 'Avoid interacting with this URL and do not enter any sensitive information. Verify it through an official source before visiting again.';
+    return 'Avoid this link and do not enter any sensitive information. Verify it through an official source before visiting again.';
   }
 
   const aiDrivenPhishingRisk =
@@ -291,7 +303,30 @@ function buildRecommendationWithRiskContext(prediction, riskScore, features, beh
     !features.suspiciousTld;
 
   if (aiDrivenPhishingRisk) {
-    return 'Proceed carefully and verify the URL through an official source before interacting with the page or sharing any sensitive information.';
+    return 'Be careful and verify the link through an official source before using the page or sharing any sensitive information.';
+  }
+
+  if (
+    features.knownLegitimateDomain &&
+    features.usesHttps &&
+    features.hasPasswordField &&
+    !features.hasExternalFormAction &&
+    !features.reputationFlagged &&
+    !features.localDatasetFlagged &&
+    riskScore <= 30
+  ) {
+    return 'This appears to be a trusted login page, but you should still confirm the website address before entering your password.';
+  }
+
+  if (
+    prediction === 'Safe' &&
+    riskScore >= 35 &&
+    features.hasExternalFormAction &&
+    !features.hasPasswordField &&
+    !features.reputationFlagged &&
+    !features.localDatasetFlagged
+  ) {
+    return 'You can visit this site, but stay careful with any form that sends information outside the website.';
   }
 
   return buildRecommendation(prediction, riskScore);
@@ -300,7 +335,20 @@ function buildRecommendationWithRiskContext(prediction, riskScore, features, beh
 async function scanUrl(url) {
   const response = await fetchWebsite(url);
   const { features, modelFeatures } = await extractFeatures({ inputUrl: url, response });
-  const localDatasetAssessment = lookupLocalPhishingDataset(features.finalUrl || url);
+  const rawLocalDatasetAssessment = lookupLocalPhishingDataset(features.finalUrl || url);
+  const suppressBroadLegitimateDatasetHit =
+    Boolean(features.knownLegitimateDomain) &&
+    rawLocalDatasetAssessment.flagged &&
+    rawLocalDatasetAssessment.target === 'Other' &&
+    rawLocalDatasetAssessment.matchType === 'host-path';
+  const localDatasetAssessment = suppressBroadLegitimateDatasetHit
+    ? {
+        ...rawLocalDatasetAssessment,
+        flagged: false,
+        matchType: null,
+        target: null
+      }
+    : rawLocalDatasetAssessment;
   const reputationAssessment = await lookupUrlReputation(features.finalUrl || url);
   features.localDatasetChecked = Boolean(localDatasetAssessment.checked);
   features.localDatasetFlagged = Boolean(localDatasetAssessment.flagged);
@@ -338,10 +386,10 @@ async function scanUrl(url) {
 
   const indicators = buildIndicators(features, riskScore, behaviorAssessment.reasons, modelRiskScore, prediction);
   if (aiFallback?.used) {
-    indicators.push('Scanner note: The AI prediction service was temporarily unavailable, so this result used the rule-based scan fallback.');
+    indicators.push('Scanner note: The AI service was temporarily unavailable, so this result used the scanner fallback instead.');
   }
   if (reputationAssessment.enabled && !reputationAssessment.checked && reputationAssessment.error) {
-    indicators.push('Scanner note: The browser-style reputation lookup was unavailable, so the result relied on the scanner logic only.');
+    indicators.push('Scanner note: The extra reputation check was unavailable, so the result relied on the scanner only.');
   }
 
   return {
