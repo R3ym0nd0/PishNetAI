@@ -2204,6 +2204,7 @@ const quizProfileBest = document.getElementById('quizProfileBest');
 const quizProfileRank = document.getElementById('quizProfileRank');
 const quizProfileRankProgressFill = document.getElementById('quizProfileRankProgressFill');
 const quizProfileRankProgressText = document.getElementById('quizProfileRankProgressText');
+const quizAchievementStack = document.getElementById('quizAchievementStack');
 const quizProfileCompletedSets = document.getElementById('quizProfileCompletedSets');
 const quizProfileNoteInput = document.getElementById('quizProfileNoteInput');
 const quizProfileNoteCount = document.getElementById('quizProfileNoteCount');
@@ -2276,6 +2277,10 @@ let selectedAnswerIndex = null;
 let score = 0;
 let answers = [];
 let signedInQuizAttempts = [];
+let hasInitializedBadgeUnlocks = false;
+let unlockedBadgeSnapshot = new Set();
+let achievementToastQueue = [];
+let activeAchievementToast = null;
 let currentQuizPage = 1;
 let currentLabPage = 1;
 let lockedQuizSidebarScrollY = 0;
@@ -2430,6 +2435,13 @@ async function handleQuizLogout() {
     }
 
     clearStoredAuth();
+    hasInitializedBadgeUnlocks = false;
+    unlockedBadgeSnapshot = new Set();
+    achievementToastQueue = [];
+    if (activeAchievementToast) {
+        activeAchievementToast.remove();
+        activeAchievementToast = null;
+    }
     closePublicQuizProfile();
     resetQuizWorkspace();
     applyQuizPageState();
@@ -3100,6 +3112,7 @@ async function loadSignedInQuizData() {
         }
 
         signedInQuizAttempts = Array.isArray(attemptData?.attempts) ? attemptData.attempts : [];
+        syncBadgeUnlockToasts(signedInQuizAttempts);
         renderQuizHistory(signedInQuizAttempts, {
             listElement: quizHistoryList,
             emptyElement: quizHistoryEmpty,
@@ -3117,6 +3130,8 @@ async function loadSignedInQuizData() {
     } catch (error) {
         console.warn('Quiz dashboard data fallback:', error.message || error);
         signedInQuizAttempts = [];
+        hasInitializedBadgeUnlocks = false;
+        unlockedBadgeSnapshot = new Set();
         renderQuizHistory([], {
             listElement: quizHistoryList,
             emptyElement: quizHistoryEmpty,
@@ -3501,6 +3516,76 @@ function getQuizBadgeIconMarkup(badgeId = '') {
     };
 
     return iconMap[badgeId] || '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2 4 5v6c0 5.55 3.84 10.74 8 12 4.16-1.26 8-6.45 8-12V5l-8-3Z"/></svg>';
+}
+
+function getUnlockedBadgeMap(attempts = []) {
+    return new Map(
+        getQuizBadgeDefinitions(attempts)
+            .filter((badge) => badge.earned)
+            .map((badge) => [badge.id, badge])
+    );
+}
+
+function showNextAchievementToast() {
+    if (!quizAchievementStack || activeAchievementToast || !achievementToastQueue.length) return;
+
+    const badge = achievementToastQueue.shift();
+    const toast = document.createElement('article');
+    toast.className = 'quiz-achievement-toast';
+    toast.innerHTML = `
+        <div class="quiz-achievement-icon" aria-hidden="true">${badge.icon || getQuizBadgeIconMarkup(badge.id)}</div>
+        <div class="quiz-achievement-copy">
+            <span class="quiz-achievement-kicker">Badge Unlocked</span>
+            <strong>${badge.title}</strong>
+            <p>${badge.detail}</p>
+        </div>
+    `;
+
+    quizAchievementStack.appendChild(toast);
+    activeAchievementToast = toast;
+
+    requestAnimationFrame(() => {
+        toast.classList.add('is-visible');
+    });
+
+    window.setTimeout(() => {
+        toast.classList.remove('is-visible');
+        window.setTimeout(() => {
+            toast.remove();
+            if (activeAchievementToast === toast) {
+                activeAchievementToast = null;
+            }
+            showNextAchievementToast();
+        }, 220);
+    }, 4200);
+}
+
+function queueBadgeUnlockToasts(badges = []) {
+    if (!Array.isArray(badges) || !badges.length) return;
+    achievementToastQueue.push(...badges);
+    showNextAchievementToast();
+}
+
+function syncBadgeUnlockToasts(attempts = []) {
+    const unlockedBadgeMap = getUnlockedBadgeMap(attempts);
+    const currentUnlockedIds = new Set(unlockedBadgeMap.keys());
+
+    if (!hasInitializedBadgeUnlocks) {
+        unlockedBadgeSnapshot = currentUnlockedIds;
+        hasInitializedBadgeUnlocks = true;
+        return;
+    }
+
+    const newlyUnlockedBadges = [...currentUnlockedIds]
+        .filter((badgeId) => !unlockedBadgeSnapshot.has(badgeId))
+        .map((badgeId) => unlockedBadgeMap.get(badgeId))
+        .filter(Boolean);
+
+    unlockedBadgeSnapshot = currentUnlockedIds;
+
+    if (newlyUnlockedBadges.length) {
+        queueBadgeUnlockToasts(newlyUnlockedBadges);
+    }
 }
 
 function createPlaceholderQuizCards() {

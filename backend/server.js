@@ -692,7 +692,7 @@ app.get('/api/quiz/public-leaderboard', async (_req, res) => {
   return res.json({
     ok: true,
     minimumAttempts: 2,
-    leaderboard: await getQuizLeaderboard(3)
+    leaderboard: await getQuizLeaderboard()
   });
 });
 
