@@ -2288,7 +2288,7 @@ const loginPageLabCorrectSpots = new Set(['domain', 'urgency', 'support']);
 let quizSidebarTouchStartY = 0;
 const guestQuizCardsPreviewCount = 6;
 const maxAdaptiveQuizCardsPerPage = 6;
-const totalQuizPages = 5;
+const totalQuizPages = 10;
 const totalLabPages = 1;
 
 function getGuestPreviewCard(gridType = 'quizzes') {
@@ -3636,31 +3636,64 @@ function createPlaceholderQuizCards() {
 
     const desiredCardCount = totalQuizPages * maxAdaptiveQuizCardsPerPage;
     const placeholdersNeeded = Math.max(0, desiredCardCount - quizCards.length);
-    const placeholderSeries = [
-        'Skill Builder Series',
-        'Skill Builder Series',
-        'Challenger Series',
-        'Challenger Series',
-        'Advanced Series',
-        'Mastery Series'
-    ];
+    const placeholderSeries = Array.from({ length: placeholdersNeeded }, (_, index) => (
+        index < 6
+            ? {
+                label: 'Elite Series',
+                accentClass: 'is-elite',
+                title: 'Elite Set',
+                difficulty: 'Elite'
+            }
+            : index < 12
+            ? {
+                label: 'Expert Series',
+                accentClass: 'is-expert',
+                title: 'Expert Set',
+                difficulty: 'Expert'
+            }
+            : index < 18
+            ? {
+                label: 'Pro Series',
+                accentClass: 'is-pro',
+                title: 'Pro Set',
+                difficulty: 'Pro'
+            }
+            : index < 24
+            ? {
+                label: 'Legend Series',
+                accentClass: 'is-legend',
+                title: 'Legend Set',
+                difficulty: 'Legend'
+            }
+            : {
+                label: 'Apex Series',
+                accentClass: 'is-apex',
+                title: 'Apex Set',
+                difficulty: 'Apex'
+            }
+    ));
 
     for (let index = 0; index < placeholdersNeeded; index += 1) {
-        const seriesLabel = placeholderSeries[index] || 'Coming Soon';
+        const seriesConfig = placeholderSeries[index] || {
+            label: 'Coming Soon',
+            accentClass: '',
+            title: 'Upcoming Quiz Set',
+            difficulty: 'Soon'
+        };
         const placeholderId = `placeholder-extra-${index + 1}`;
         const card = document.createElement('article');
-        card.className = 'quiz-card quiz-card-placeholder is-locked';
+        card.className = `quiz-card quiz-card-placeholder is-locked ${seriesConfig.accentClass}`.trim();
         card.dataset.quizCard = placeholderId;
         card.innerHTML = `
             <div class="quiz-card-header">
-                <span class="quiz-badge">${seriesLabel}</span>
+                <span class="quiz-badge">${seriesConfig.label}</span>
             </div>
-            <h3>Upcoming Quiz Set ${index + 1}</h3>
-            <p>More phishing awareness quizzes will appear here as we expand the learning path with new scenarios and practice sets.</p>
+            <h3>${seriesConfig.title} ${index + 1}</h3>
+            <p>Higher-tier phishing challenge sets will appear here as the training path expands into tougher, prestige-level stages.</p>
             <div class="quiz-meta">
                 <span>New Set</span>
                 <span>Preview</span>
-                <span class="difficulty">Soon</span>
+                <span class="difficulty">${seriesConfig.difficulty}</span>
             </div>
             <button type="button" class="quiz-start-btn" disabled>Coming Soon</button>
         `;
