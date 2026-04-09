@@ -3470,9 +3470,11 @@ body.quiz-signed-in .quiz-library-toolbar {
 }
 
 .quiz-card.is-apex::before {
-    background: linear-gradient(90deg, #1f1308, #9a3412, #f97316, #fff7ed, #1f1308);
-    background-size: 300% 100%;
-    animation: quizApexStripeSurge 0.72s linear infinite;
+    background:
+        linear-gradient(90deg, rgba(255, 255, 255, 0.1), transparent 18%, transparent 82%, rgba(255, 255, 255, 0.1)),
+        linear-gradient(90deg, #050507 0%, #0b0615 18%, #2e1065 42%, #7c3aed 70%, #ddd6fe 88%, #050507 100%);
+    background-size: 220% 100%, 280% 100%;
+    animation: quizApexStripeRush 0.72s linear infinite;
 }
 
 .quiz-card.is-pro {
@@ -3514,26 +3516,24 @@ body.quiz-signed-in .quiz-library-toolbar {
 
 .quiz-card.is-apex {
     background:
-        radial-gradient(circle at top right, rgba(251, 146, 60, 0.18), transparent 30%),
-        radial-gradient(circle at bottom left, rgba(254, 215, 170, 0.18), transparent 36%),
-        linear-gradient(180deg, #fffdfa 0%, #fff7f1 100%);
-    border-color: rgba(243, 199, 168, 0.98);
+        radial-gradient(circle at top right, rgba(124, 58, 237, 0.14), transparent 30%),
+        radial-gradient(circle at bottom left, rgba(67, 56, 202, 0.12), transparent 36%),
+        linear-gradient(180deg, #ffffff 0%, #faf8ff 100%);
+    border-color: rgba(222, 214, 247, 0.96);
     box-shadow:
-        0 22px 42px rgba(3, 21, 37, 0.14),
-        0 0 38px rgba(249, 115, 22, 0.14),
+        0 18px 36px rgba(16, 10, 14, 0.12),
+        0 0 28px rgba(124, 58, 237, 0.1),
         0 0 0 1px rgba(255, 255, 255, 0.78) inset,
         inset 0 1px 0 rgba(255, 255, 255, 0.95);
-    animation:
-        quizCardReveal 0.55s ease-out both,
-        quizApexCardFlare 1.22s ease-in-out infinite;
+    animation: quizCardReveal 0.55s ease-out both;
 }
 
 .quiz-card.is-apex:hover {
     transform: none;
     box-shadow:
-        0 28px 48px rgba(3, 21, 37, 0.18),
-        0 0 46px rgba(249, 115, 22, 0.18),
-        0 0 24px rgba(251, 146, 60, 0.14),
+        0 26px 44px rgba(16, 10, 14, 0.14),
+        0 0 34px rgba(124, 58, 237, 0.14),
+        0 0 16px rgba(139, 92, 246, 0.1),
         0 0 0 1px rgba(255, 255, 255, 0.84) inset,
         inset 0 1px 0 rgba(255, 255, 255, 0.98);
 }
@@ -3541,18 +3541,14 @@ body.quiz-signed-in .quiz-library-toolbar {
 .quiz-card.is-apex::after {
     content: "";
     position: absolute;
-    inset: -20% -16%;
-    border-radius: 34px;
+    inset: -8%;
+    border-radius: 28px;
     background:
-        radial-gradient(ellipse at 4% 20%, rgba(249, 115, 22, 0.34), transparent 18%),
-        radial-gradient(ellipse at 2% 46%, rgba(251, 146, 60, 0.32), transparent 20%),
-        radial-gradient(ellipse at 5% 76%, rgba(254, 215, 170, 0.28), transparent 18%),
-        radial-gradient(ellipse at 96% 18%, rgba(254, 215, 170, 0.34), transparent 18%),
-        radial-gradient(ellipse at 98% 50%, rgba(249, 115, 22, 0.32), transparent 20%),
-        radial-gradient(ellipse at 95% 80%, rgba(251, 191, 36, 0.26), transparent 18%);
+        radial-gradient(ellipse at left center, rgba(124, 58, 237, 0.14), transparent 42%),
+        radial-gradient(ellipse at right center, rgba(67, 56, 202, 0.14), transparent 42%);
     filter: blur(18px);
-    opacity: 0.82;
-    animation: quizApexOuterFlames 0.86s ease-in-out infinite;
+    opacity: 0.54;
+    transform-origin: center center;
     pointer-events: none;
     z-index: -2;
 }
@@ -3646,13 +3642,13 @@ body.quiz-signed-in .quiz-library-toolbar {
 }
 
 .quiz-card.is-apex h3 {
-    color: #7c2d12;
+    color: #4c1d95;
     letter-spacing: -0.018em;
-    text-shadow: 0 0 14px rgba(249, 115, 22, 0.12);
+    text-shadow: 0 0 12px rgba(124, 58, 237, 0.1);
 }
 
 .quiz-card.is-apex p {
-    color: #6f4f42;
+    color: #625b76;
 }
 
 /* Quiz Badge */
@@ -3706,10 +3702,10 @@ body.quiz-signed-in .quiz-library-toolbar {
 .quiz-card.is-elite .quiz-badge {
     position: relative;
     overflow: hidden;
-    background: linear-gradient(135deg, #f59e0b, #facc15, #f59e0b);
+    background: linear-gradient(135deg, #a87700, #d4a400, #efbd10);
     background-size: 200% 200%;
-    color: #4a2600;
-    box-shadow: 0 10px 20px rgba(245, 158, 11, 0.22);
+    color: #ffffff;
+    box-shadow: 0 10px 20px rgba(184, 134, 0, 0.25);
     animation: quizEliteBadgeGlow 2.8s ease-in-out infinite, quizEliteBadgeShift 3.2s linear infinite;
 }
 
@@ -3720,6 +3716,15 @@ body.quiz-signed-in .quiz-library-toolbar {
     background: linear-gradient(120deg, transparent 24%, rgba(255, 255, 255, 0.58) 50%, transparent 76%);
     transform: translateX(-135%);
     animation: quizEliteBadgeSweep 2.4s ease-in-out infinite;
+}
+
+.quiz-card.is-elite .quiz-badge::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(300deg, transparent 24%, rgba(255, 248, 200, 0.44) 50%, transparent 76%);
+    transform: translateX(135%);
+    animation: quizEliteBadgeSweepReverse 2.9s ease-in-out infinite;
 }
 
 .quiz-card.is-elite .difficulty {
@@ -3865,47 +3870,46 @@ body.quiz-signed-in .quiz-library-toolbar {
 .quiz-card.is-apex .quiz-badge {
     position: relative;
     overflow: hidden;
-    background: linear-gradient(135deg, #2b1408, #9a3412 42%, #f97316 72%, #fff7ed);
-    background-size: 280% 280%;
-    color: #f8fffd;
+    background:
+        radial-gradient(circle at 18% 24%, rgba(255, 255, 255, 0.28), transparent 26%),
+        radial-gradient(circle at 82% 78%, rgba(255, 237, 213, 0.18), transparent 28%),
+        linear-gradient(120deg, #07070a 0%, #120a1f 18%, #312e81 44%, #7c3aed 72%, #ddd6fe 100%);
+    background-size: auto, auto, 220% 220%;
+    color: #fff7f7;
     box-shadow:
-        0 16px 30px rgba(3, 21, 37, 0.24),
-        0 0 32px rgba(249, 115, 22, 0.2),
+        0 12px 22px rgba(18, 10, 14, 0.24),
+        0 0 24px rgba(124, 58, 237, 0.16),
         0 0 0 1px rgba(255, 255, 255, 0.14) inset;
     animation:
-        quizApexBadgeShift 0.74s linear infinite,
-        quizApexBadgeGlow 0.8s ease-in-out infinite;
+        quizApexBadgeShift 0.9s linear infinite,
+        quizApexBadgeGlow 1.15s ease-in-out infinite;
 }
 
 .quiz-card.is-apex .quiz-badge::before {
     content: "";
     position: absolute;
-    inset: -12px -10px;
+    inset: 0;
     background:
-        radial-gradient(ellipse at 0% 50%, rgba(249, 115, 22, 0.34), transparent 36%),
-        radial-gradient(ellipse at 100% 50%, rgba(251, 191, 36, 0.34), transparent 36%);
-    filter: blur(10px);
-    opacity: 0.88;
-    animation: quizApexBadgeFlame 0.68s ease-in-out infinite;
+        linear-gradient(120deg, transparent 0%, rgba(255, 255, 255, 0.2) 14%, transparent 28%),
+        radial-gradient(circle at 76% 42%, rgba(196, 181, 253, 0.22), transparent 26%);
+    opacity: 0.66;
+    animation: quizApexBadgeFlash 1.08s ease-in-out infinite;
     pointer-events: none;
 }
 
 .quiz-card.is-apex .quiz-badge::after {
     content: "";
     position: absolute;
-    inset: 0;
-    background:
-        linear-gradient(90deg, transparent 6%, rgba(255, 255, 255, 0.22) 50%, transparent 94%),
-        radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.12), transparent 58%);
-    mix-blend-mode: screen;
-    animation: quizApexPulseFlash 0.74s ease-in-out infinite;
+    inset: 1px;
+    border-radius: inherit;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18);
     pointer-events: none;
 }
 
 .quiz-card.is-apex .difficulty {
-    color: #9a3412;
-    background: #ffedd5;
-    box-shadow: 0 0 0 1px rgba(249, 115, 22, 0.14) inset;
+    color: #6d28d9;
+    background: #ede9fe;
+    box-shadow: 0 0 0 1px rgba(124, 58, 237, 0.14) inset;
 }
 
 @keyframes quizEliteStripeShift {
@@ -3928,6 +3932,13 @@ body.quiz-signed-in .quiz-library-toolbar {
     26% { opacity: 1; }
     58% { transform: translateX(135%); opacity: 1; }
     100% { transform: translateX(135%); opacity: 0; }
+}
+
+@keyframes quizEliteBadgeSweepReverse {
+    0%, 20% { transform: translateX(135%); opacity: 0; }
+    30% { opacity: 0.85; }
+    62% { transform: translateX(-135%); opacity: 0.85; }
+    100% { transform: translateX(-135%); opacity: 0; }
 }
 
 @keyframes quizExpertStripePulse {
@@ -4080,29 +4091,42 @@ body.quiz-signed-in .quiz-library-toolbar {
 @keyframes quizApexCardFlare {
     0%, 100% {
         box-shadow:
-            0 22px 42px rgba(3, 21, 37, 0.14),
-            0 0 38px rgba(249, 115, 22, 0.14),
+            0 22px 42px rgba(24, 7, 12, 0.18),
+            0 0 38px rgba(185, 28, 28, 0.16),
+            0 0 14px rgba(249, 115, 22, 0.08),
             0 0 0 1px rgba(255, 255, 255, 0.78) inset,
             inset 0 1px 0 rgba(255, 255, 255, 0.95);
     }
-    50% {
+    40% {
         box-shadow:
-            0 26px 48px rgba(3, 21, 37, 0.18),
-            0 0 50px rgba(249, 115, 22, 0.2),
-            0 0 26px rgba(251, 146, 60, 0.16),
+            0 26px 48px rgba(24, 7, 12, 0.22),
+            0 0 46px rgba(185, 28, 28, 0.2),
+            0 0 20px rgba(249, 115, 22, 0.12),
             0 0 0 1px rgba(255, 255, 255, 0.84) inset,
             inset 0 1px 0 rgba(255, 255, 255, 0.98);
+    }
+    62% {
+        box-shadow:
+            0 23px 44px rgba(24, 7, 12, 0.2),
+            0 0 44px rgba(127, 29, 29, 0.22),
+            0 0 10px rgba(255, 255, 255, 0.04),
+            0 0 0 1px rgba(255, 255, 255, 0.82) inset,
+            inset 0 1px 0 rgba(255, 255, 255, 0.97);
     }
 }
 
 @keyframes quizApexOuterFlames {
     0%, 100% {
-        transform: scaleX(0.96) scaleY(0.96);
-        opacity: 0.56;
+        transform: scaleX(0.98) scaleY(0.98) translateY(0);
+        opacity: 0.42;
     }
-    50% {
-        transform: scaleX(1.08) scaleY(1.08);
-        opacity: 0.92;
+    35% {
+        transform: scaleX(1.03) scaleY(1.05) translateY(-1px);
+        opacity: 0.64;
+    }
+    68% {
+        transform: scaleX(1) scaleY(1.02) translateY(1px);
+        opacity: 0.5;
     }
 }
 
@@ -4114,16 +4138,42 @@ body.quiz-signed-in .quiz-library-toolbar {
 @keyframes quizApexBadgeGlow {
     0%, 100% {
         box-shadow:
-            0 16px 30px rgba(3, 21, 37, 0.24),
-            0 0 32px rgba(249, 115, 22, 0.2),
+            0 16px 30px rgba(18, 10, 14, 0.28),
+            0 0 32px rgba(124, 58, 237, 0.22),
+            0 0 10px rgba(139, 92, 246, 0.1),
             0 0 0 1px rgba(255, 255, 255, 0.14) inset;
     }
     50% {
         box-shadow:
-            0 20px 36px rgba(3, 21, 37, 0.28),
-            0 0 42px rgba(249, 115, 22, 0.24),
-            0 0 22px rgba(251, 191, 36, 0.16),
+            0 18px 34px rgba(18, 10, 14, 0.3),
+            0 0 38px rgba(124, 58, 237, 0.24),
+            0 0 14px rgba(167, 139, 250, 0.12),
             0 0 0 1px rgba(255, 255, 255, 0.18) inset;
+    }
+}
+
+@keyframes quizApexStripeRush {
+    0% { background-position: 0% 50%, 0% 50%; }
+    100% { background-position: 220% 50%, 280% 50%; }
+}
+
+@keyframes quizApexBadgeShift {
+    0% { background-position: 0% 0%, 0% 0%, 0% 50%; }
+    100% { background-position: 0% 0%, 0% 0%, 220% 50%; }
+}
+
+@keyframes quizApexBadgeFlash {
+    0%, 100% {
+        opacity: 0.34;
+        transform: scale(0.99);
+    }
+    45% {
+        opacity: 0.74;
+        transform: scale(1.02);
+    }
+    62% {
+        opacity: 0.46;
+        transform: scale(1);
     }
 }
 

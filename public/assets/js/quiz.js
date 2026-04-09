@@ -2289,7 +2289,7 @@ let quizSidebarTouchStartY = 0;
 const guestQuizCardsPreviewCount = 6;
 const maxAdaptiveQuizCardsPerPage = 6;
 const totalQuizPages = 10;
-const totalLabPages = 1;
+const totalLabPages = 10;
 
 function getGuestPreviewCard(gridType = 'quizzes') {
     const grid = gridType === 'labs' ? labsGrid : quizGrid;
@@ -2348,6 +2348,7 @@ function escapeHtml(value) {
 }
 
 createPlaceholderQuizCards();
+createPlaceholderLabCards();
 reorderQuizCardsForPagination();
 updateQuizCardTierLabels();
 renderQuizPagination();
@@ -3702,6 +3703,131 @@ function createPlaceholderQuizCards() {
     }
 }
 
+function createPlaceholderLabCards() {
+    if (!labsGrid) return;
+
+    const cardsPerPage = maxAdaptiveQuizCardsPerPage;
+    const desiredCardCount = totalLabPages * cardsPerPage;
+    const placeholdersNeeded = Math.max(0, desiredCardCount - labCards.length);
+    const placeholderSeries = Array.from({ length: placeholdersNeeded }, (_, index) => {
+        if (index < 5) {
+            return {
+                label: 'Core Lab',
+                accentClass: 'is-core',
+                title: 'Upcoming Core Lab',
+                difficulty: 'Beginner'
+            };
+        }
+
+        if (index < 11) {
+            return {
+                label: 'Skill Builder Lab',
+                accentClass: 'is-skill-builder',
+                title: 'Upcoming Skill Builder Lab',
+                difficulty: 'Intermediate'
+            };
+        }
+
+        if (index < 17) {
+            return {
+                label: 'Challenger Lab',
+                accentClass: 'is-challenger',
+                title: 'Upcoming Challenger Lab',
+                difficulty: 'Hard'
+            };
+        }
+
+        if (index < 23) {
+            return {
+                label: 'Advanced Lab',
+                accentClass: 'is-advanced',
+                title: 'Upcoming Advanced Lab',
+                difficulty: 'Advanced'
+            };
+        }
+
+        if (index < 29) {
+            return {
+                label: 'Mastery Lab',
+                accentClass: 'is-mastery',
+                title: 'Upcoming Mastery Lab',
+                difficulty: 'Mastery'
+            };
+        }
+
+        if (index < 35) {
+            return {
+                label: 'Elite Lab',
+                accentClass: 'is-elite',
+                title: 'Upcoming Elite Lab',
+                difficulty: 'Elite'
+            };
+        }
+
+        if (index < 41) {
+            return {
+                label: 'Expert Lab',
+                accentClass: 'is-expert',
+                title: 'Upcoming Expert Lab',
+                difficulty: 'Expert'
+            };
+        }
+
+        if (index < 47) {
+            return {
+                label: 'Pro Lab',
+                accentClass: 'is-pro',
+                title: 'Upcoming Pro Lab',
+                difficulty: 'Pro'
+            };
+        }
+
+        if (index < 53) {
+            return {
+                label: 'Legend Lab',
+                accentClass: 'is-legend',
+                title: 'Upcoming Legend Lab',
+                difficulty: 'Legend'
+            };
+        }
+
+        return {
+            label: 'Apex Lab',
+            accentClass: 'is-apex',
+            title: 'Upcoming Apex Lab',
+            difficulty: 'Apex'
+        };
+    });
+
+    for (let index = 0; index < placeholdersNeeded; index += 1) {
+        const seriesConfig = placeholderSeries[index] || {
+            label: 'Lab Coming Soon',
+            accentClass: '',
+            title: 'Upcoming Lab',
+            difficulty: 'Soon'
+        };
+        const placeholderId = `placeholder-lab-${index + 1}`;
+        const card = document.createElement('article');
+        card.className = `quiz-card quiz-card-placeholder is-locked ${seriesConfig.accentClass}`.trim();
+        card.dataset.labCard = placeholderId;
+        card.innerHTML = `
+            <div class="quiz-card-header">
+                <span class="quiz-badge">${seriesConfig.label}</span>
+            </div>
+            <h3>${seriesConfig.title} ${index + 1}</h3>
+            <p>More hands-on phishing labs will appear here as we expand the practical training path with guided scenarios and inspection challenges.</p>
+            <div class="quiz-meta">
+                <span>New Lab</span>
+                <span>Preview</span>
+                <span class="difficulty ${seriesConfig.difficulty.toLowerCase().replace(/\s+/g, '-')}">${seriesConfig.difficulty}</span>
+            </div>
+            <button type="button" class="quiz-start-btn" disabled>Coming Soon</button>
+        `;
+        labsGrid.appendChild(card);
+        labCards.push(card);
+    }
+}
+
 function reorderQuizCardsForPagination() {
     if (!quizGrid || !quizCards.length) return;
 
@@ -3846,8 +3972,8 @@ function renderLabsPagination() {
     const guestPreviewCard = getGuestPreviewCard('labs');
 
     if (!isLoggedIn()) {
-        labCards.forEach((card) => {
-            card.hidden = false;
+        labCards.forEach((card, index) => {
+            card.hidden = index >= guestQuizCardsPreviewCount;
         });
         if (guestPreviewCard) guestPreviewCard.hidden = false;
         labsPagination.innerHTML = '';
