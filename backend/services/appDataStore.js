@@ -71,7 +71,42 @@ const QUIZ_POINT_VALUES = {
   'financial-approval-fraud': 280,
   'cross-channel-takeovers': 290,
   'best-practices': 320,
-  'lab-login-page-check': 100
+  'vendor-portal-breaches': 340,
+  'identity-chain-spoofs': 350,
+  'cloud-consent-traps': 360,
+  'incident-response-bait': 370,
+  'multi-actor-escalations': 380,
+  'trust-layer-collisions': 390,
+  'zero-trust-breakpoints': 410,
+  'live-session-hijacks': 420,
+  'delegated-access-fraud': 430,
+  'forensic-cover-stories': 440,
+  'approval-chain-poisoning': 450,
+  'adaptive-impersonation-loops': 460,
+  'supply-chain-shadowing': 480,
+  'federated-login-pivots': 490,
+  'trust-graph-manipulation': 500,
+  'incident-command-spoofs': 510,
+  'recovery-delegation-loops': 520,
+  'environment-poisoning-cases': 530,
+  'cross-tenant-bleedthrough': 550,
+  'response-playbook-subversion': 560,
+  'consent-laundering-rings': 570,
+  'governance-theater-attacks': 580,
+  'identity-weathering-loops': 590,
+  'signal-fog-exploitation': 600,
+  'trust-collapse-scenarios': 620,
+  'operator-blend-intrusions': 630,
+  'decision-fatigue-breaches': 640,
+  'control-plane-misdirection': 650,
+  'cognitive-overlap-attacks': 660,
+  'irrecoverable-trust-failures': 670,
+  'lab-login-page-check': 100,
+  'lab-email-header-clues': 110,
+  'lab-qr-poster-check': 120,
+  'lab-file-share-trap': 130,
+  'lab-password-reset-sms': 140,
+  'lab-delivery-scam-chat': 150
 };
 
 function getCompletedQuizIdsFromAttempts(attempts = []) {
@@ -622,7 +657,7 @@ async function getQuizAttemptById(userId, attemptId) {
   };
 }
 
-async function getQuizLeaderboard(limit = 10) {
+async function buildQuizLeaderboardEntries() {
   const result = await query(
     `
       SELECT
@@ -687,11 +722,23 @@ async function getQuizLeaderboard(limit = 10) {
       if (left.bestScore !== right.bestScore) return right.bestScore - left.bestScore;
       return String(right.lastAttemptAt).localeCompare(String(left.lastAttemptAt));
     })
-    .slice(0, Math.max(1, Math.min(Number(limit) || 10, 25)))
     .map((entry, index) => ({
       rank: index + 1,
       ...entry
     }));
+}
+
+async function getQuizLeaderboard(limit = 10) {
+  return (await buildQuizLeaderboardEntries())
+    .slice(0, Math.max(1, Math.min(Number(limit) || 10, 25)))
+}
+
+async function getQuizLeaderboardRankForUser(userId) {
+  if (!userId) return null;
+
+  const entries = await buildQuizLeaderboardEntries();
+  const match = entries.find((entry) => entry.userId === userId);
+  return match ? match.rank : null;
 }
 
 async function getPublicQuizProfile(userId) {
@@ -797,7 +844,37 @@ async function getPublicQuizProfile(userId) {
     'recovery-flow-attacks',
     'financial-approval-fraud',
     'cross-channel-takeovers',
-    'best-practices'
+    'best-practices',
+    'vendor-portal-breaches',
+    'identity-chain-spoofs',
+    'cloud-consent-traps',
+    'incident-response-bait',
+    'multi-actor-escalations',
+    'trust-layer-collisions',
+    'zero-trust-breakpoints',
+    'live-session-hijacks',
+    'delegated-access-fraud',
+    'forensic-cover-stories',
+    'approval-chain-poisoning',
+    'adaptive-impersonation-loops',
+    'supply-chain-shadowing',
+    'federated-login-pivots',
+    'trust-graph-manipulation',
+    'incident-command-spoofs',
+    'recovery-delegation-loops',
+    'environment-poisoning-cases',
+    'cross-tenant-bleedthrough',
+    'response-playbook-subversion',
+    'consent-laundering-rings',
+    'governance-theater-attacks',
+    'identity-weathering-loops',
+    'signal-fog-exploitation',
+    'trust-collapse-scenarios',
+    'operator-blend-intrusions',
+    'decision-fatigue-breaches',
+    'control-plane-misdirection',
+    'cognitive-overlap-attacks',
+    'irrecoverable-trust-failures'
   ];
   const coreQuizIds = [
     'url-basics',
@@ -928,6 +1005,7 @@ module.exports = {
   getQuizAttemptById,
   getPublicQuizProfile,
   getQuizLeaderboard,
+  getQuizLeaderboardRankForUser,
   getUserBySessionToken,
   listChatsForUser,
   listMessagesForChat,

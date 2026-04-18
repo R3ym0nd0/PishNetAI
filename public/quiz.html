@@ -452,6 +452,12 @@
                     <article class="quiz-card is-core" data-lab-card="login-page-check">
                         <div class="quiz-card-header">
                             <span class="quiz-badge recommended">Core Lab</span>
+                            <span class="quiz-complete-chip" id="labCompletedChip-login-page-check" hidden>
+                                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                    <path d="m9.55 18.2-4.9-4.9 1.4-1.4 3.5 3.5 8.4-8.4 1.4 1.4-9.8 9.8Z"/>
+                                </svg>
+                                <span>Completed</span>
+                            </span>
                         </div>
                         <h3>Login Page Check</h3>
                         <p>Inspect a realistic login page and decide whether it looks legitimate or suspicious before signing in.</p>
@@ -462,6 +468,82 @@
                         </div>
                         <button type="button" class="quiz-start-btn" data-start-lab="login-page-check">Start Lab</button>
                     </article>
+
+                    <article class="quiz-card is-core" data-lab-card="email-header-clues">
+                        <div class="quiz-card-header">
+                            <span class="quiz-badge recommended">Core Lab</span>
+                            <span class="quiz-complete-chip" id="labCompletedChip-email-header-clues" hidden>
+                                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                    <path d="m9.55 18.2-4.9-4.9 1.4-1.4 3.5 3.5 8.4-8.4 1.4 1.4-9.8 9.8Z"/>
+                                </svg>
+                                <span>Completed</span>
+                            </span>
+                        </div>
+                        <h3>Email Header Clues</h3>
+                        <p>Inspect a suspicious account notice and click the strongest clues before trusting the sender.</p>
+                        <div class="quiz-meta">
+                            <span>Message Review</span>
+                            <span>110 pts</span>
+                            <span class="difficulty easy">Beginner</span>
+                        </div>
+                        <button type="button" class="quiz-start-btn" data-start-lab="email-header-clues">Start Lab</button>
+                    </article>
+
+                    <article class="quiz-card is-core" data-lab-card="qr-poster-check">
+                        <div class="quiz-card-header">
+                            <span class="quiz-badge recommended">Core Lab</span>
+                        </div>
+                        <h3>QR Poster Check</h3>
+                        <p>More hands-on lab scenarios will appear here as the practical training path expands.</p>
+                        <div class="quiz-meta">
+                            <span>New Lab</span>
+                            <span>Preview</span>
+                            <span class="difficulty">Soon</span>
+                        </div>
+                        <button type="button" class="quiz-start-btn" disabled>Coming Soon</button>
+                    </article>
+
+                    <article class="quiz-card is-core" data-lab-card="file-share-trap">
+                        <div class="quiz-card-header">
+                            <span class="quiz-badge recommended">Core Lab</span>
+                        </div>
+                        <h3>File Share Trap</h3>
+                        <p>More hands-on lab scenarios will appear here as the practical training path expands.</p>
+                        <div class="quiz-meta">
+                            <span>New Lab</span>
+                            <span>Preview</span>
+                            <span class="difficulty">Soon</span>
+                        </div>
+                        <button type="button" class="quiz-start-btn" disabled>Coming Soon</button>
+                    </article>
+
+                    <article class="quiz-card is-core" data-lab-card="password-reset-sms">
+                        <div class="quiz-card-header">
+                            <span class="quiz-badge recommended">Core Lab</span>
+                        </div>
+                        <h3>Password Reset SMS</h3>
+                        <p>More hands-on lab scenarios will appear here as the practical training path expands.</p>
+                        <div class="quiz-meta">
+                            <span>New Lab</span>
+                            <span>Preview</span>
+                            <span class="difficulty">Soon</span>
+                        </div>
+                        <button type="button" class="quiz-start-btn" disabled>Coming Soon</button>
+                    </article>
+
+                    <article class="quiz-card is-core" data-lab-card="delivery-scam-chat">
+                        <div class="quiz-card-header">
+                            <span class="quiz-badge recommended">Core Lab</span>
+                        </div>
+                        <h3>Delivery Scam Chat</h3>
+                        <p>More hands-on lab scenarios will appear here as the practical training path expands.</p>
+                        <div class="quiz-meta">
+                            <span>New Lab</span>
+                            <span>Preview</span>
+                            <span class="difficulty">Soon</span>
+                        </div>
+                        <button type="button" class="quiz-start-btn" disabled>Coming Soon</button>
+                    </article>
                 </div>
             </section>
 
@@ -469,8 +551,8 @@
                 <div class="quiz-session-head lab-shell-head">
                     <div>
                         <p class="quiz-session-kicker">Hands-On Lab</p>
-                        <h2>Login Page Check</h2>
-                        <p class="quiz-session-desc">Inspect the fake login page and click the strongest red flags.</p>
+                        <h2 id="loginPageLabTitle">Login Page Check</h2>
+                        <p class="quiz-session-desc" id="loginPageLabDescription">Inspect the fake login page and click the strongest red flags.</p>
                     </div>
                     <button type="button" class="quiz-exit-btn lab-close-btn" id="loginPageLabClose" aria-label="Close lab">
                         <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -483,52 +565,114 @@
                     <div class="lab-login-stage">
                         <div class="lab-scenario-card quiz-question-card">
                             <div class="lab-scenario-meta">
-                                <span class="lab-brief-label">Incoming Message</span>
-                                <span class="lab-scenario-channel">Email Notice</span>
+                                <span class="lab-brief-label" id="loginPageLabBriefLabel">Incoming Message</span>
+                                <span class="lab-scenario-channel" id="loginPageLabChannel">Email Notice</span>
                             </div>
-                            <strong class="lab-scenario-title">Your campus email will be suspended unless you verify your account today.</strong>
-                            <p class="lab-scenario-body">
+                            <strong class="lab-scenario-title" id="loginPageLabScenarioTitle">Your campus email will be suspended unless you verify your account today.</strong>
+                            <p class="lab-scenario-body" id="loginPageLabScenarioBody">
                                 You receive a message that says your school account will be disabled in the next hour unless you log in through
                                 <span class="lab-inline-url">https://lcc-student-verify.helpdesk-login.net</span>.
                             </p>
                         </div>
 
                         <div class="lab-preview-card quiz-question-card">
-                            <div class="lab-browser-bar">
+                            <div class="lab-browser-bar" id="labBrowserBar">
                                 <span></span>
                                 <span></span>
                                 <span></span>
                             </div>
-                            <button type="button" class="lab-spot-target lab-url-pill" data-lab-spot="domain">https://lcc-student-verify.helpdesk-login.net</button>
+                            <button type="button" class="lab-spot-target lab-url-pill" data-lab-spot="domain" id="loginPageLabUrl">https://lcc-student-verify.helpdesk-login.net</button>
 
-                            <div class="lab-fake-login">
+                            <div class="lab-fake-login" id="labFakeLogin">
                                 <button type="button" class="lab-spot-target lab-fake-login-brand" data-lab-spot="brand">
                                     <img src="assets/images/logo.png" alt="PhishNet AI logo" class="lab-fake-login-logo">
                                     <div>
-                                        <strong>La Concepcion College Portal</strong>
-                                        <span>Student verification required</span>
+                                        <strong id="loginPageLabBrandTitle">La Concepcion College Portal</strong>
+                                        <span id="loginPageLabBrandSubtitle">Student verification required</span>
                                     </div>
                                 </button>
 
-                                <button type="button" class="lab-spot-target lab-fake-alert" data-lab-spot="urgency">
+                                <button type="button" class="lab-spot-target lab-fake-alert" data-lab-spot="urgency" id="loginPageLabAlert">
                                     Your account will be suspended today unless you confirm your credentials immediately.
                                 </button>
 
                                 <label class="lab-input-group">
-                                    <span>School email</span>
-                                    <input type="email" value="student@lcc.edu.ph" readonly>
+                                    <span id="loginPageLabPrimaryLabel">School email</span>
+                                    <input type="email" id="loginPageLabPrimaryValue" value="student@lcc.edu.ph" readonly>
                                 </label>
 
                                 <label class="lab-input-group">
-                                    <span>Password</span>
-                                    <input type="password" value="examplepassword" readonly>
+                                    <span id="loginPageLabSecondaryLabel">Password</span>
+                                    <input type="password" id="loginPageLabSecondaryValue" value="examplepassword" readonly>
                                 </label>
 
-                                <button type="button" class="lab-spot-target lab-submit-demo-btn" data-lab-spot="submit">Verify Account</button>
+                                <button type="button" class="lab-spot-target lab-submit-demo-btn" data-lab-spot="submit" id="loginPageLabSubmitLabel">Verify Account</button>
 
-                                <button type="button" class="lab-spot-target lab-page-note" data-lab-spot="support">
+                                <button type="button" class="lab-spot-target lab-page-note" data-lab-spot="support" id="loginPageLabSupport">
                                     Need help? Contact support@portal-helpdesk-login.net
                                 </button>
+                            </div>
+
+                            <div class="lab-email-preview" id="labEmailPreview" hidden>
+                                <div class="lab-email-toolbar">
+                                    <span>Inbox</span>
+                                    <span>Email View</span>
+                                </div>
+                                <div class="lab-email-card">
+                                    <button type="button" class="lab-spot-target lab-email-header-line" data-lab-spot="domain" id="labEmailSenderLine">
+                                        <strong>From:</strong> Registrar Office &lt;records@maildesk-center.net&gt;
+                                    </button>
+                                    <button type="button" class="lab-spot-target lab-email-header-line" data-lab-spot="support" id="labEmailReplyToLine">
+                                        <strong>Reply-To:</strong> registrar-update@maildesk-center.net
+                                    </button>
+                                    <div class="lab-email-header-line" id="labEmailSubjectLine">
+                                        <strong>Subject:</strong> Enrollment record needs confirmation today
+                                    </div>
+                                    <button type="button" class="lab-spot-target lab-email-banner" data-lab-spot="urgency" id="labEmailBanner">
+                                        Records close tonight. Confirm now to avoid processing delays.
+                                    </button>
+                                    <div class="lab-email-body" id="labEmailBody">
+                                        <p>Hello student,</p>
+                                        <p>Your enrollment details need same-day correction before records close. Review the account notice and confirm your information at once.</p>
+                                        <p>Use the button below to continue.</p>
+                                    </div>
+                                    <button type="button" class="lab-spot-target lab-email-cta" data-lab-spot="submit" id="labEmailCta">
+                                        Confirm Records
+                                    </button>
+                                    <button type="button" class="lab-spot-target lab-email-footer" data-lab-spot="brand" id="labEmailFooter">
+                                        Registrar Record Support • Student enrollment update
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="lab-poster-preview" id="labPosterPreview" hidden>
+                                <div class="lab-poster-board">
+                                    <div class="lab-poster-topline">
+                                        <span id="labPosterKicker">Campus Connect Notice</span>
+                                        <span id="labPosterChip">Public Poster</span>
+                                    </div>
+                                    <button type="button" class="lab-spot-target lab-poster-title" data-lab-spot="urgency" id="labPosterTitle">
+                                        Reconnect Student Wi-Fi Today
+                                    </button>
+                                    <div class="lab-poster-body" id="labPosterBody">
+                                        <p>Scan the code below to avoid interruption to your campus internet access.</p>
+                                    </div>
+                                    <div class="lab-poster-qr-wrap">
+                                        <button type="button" class="lab-spot-target lab-poster-qr" data-lab-spot="brand" id="labPosterQr">
+                                            <span>QR</span>
+                                        </button>
+                                        <div class="lab-poster-qr-copy">
+                                            <strong id="labPosterLabel">Student Wi-Fi Restore</strong>
+                                            <p id="labPosterSubcopy">Open the access page and sign in immediately.</p>
+                                        </div>
+                                    </div>
+                                    <button type="button" class="lab-spot-target lab-poster-url" data-lab-spot="domain" id="labPosterUrl">
+                                        https://lcc-wifi-reconnect.portal-device.help
+                                    </button>
+                                    <button type="button" class="lab-spot-target lab-poster-support" data-lab-spot="support" id="labPosterSupport">
+                                        Network help: wifi-fix@portal-device.help
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -536,8 +680,8 @@
                     <div class="lab-decision-card quiz-question-card">
                         <div class="lab-checklist-head">
                             <p class="quiz-question-kicker">Find The Red Flags</p>
-                            <h4>Click the 3 strongest warning signs</h4>
-                            <p>You only get 3 picks, so choose carefully.</p>
+                            <h4 id="loginPageLabChecklistTitle">Click the 3 strongest warning signs</h4>
+                            <p id="loginPageLabChecklistCopy">You only get 3 picks, so choose carefully.</p>
                         </div>
 
                         <div class="lab-progress-note">
@@ -1171,6 +1315,637 @@
                         <p class="quiz-unlock-note" id="quizUnlockNote-best-practices" hidden></p>
                         <button type="button" class="quiz-start-btn" data-quiz="best-practices">Start Set</button>
                     </article>
+
+                    <article class="quiz-card" data-quiz-card="vendor-portal-breaches">
+                        <div class="quiz-card-header">
+                            <span class="quiz-badge">Elite Series</span>
+                            <span class="quiz-complete-chip" id="quizCompletedChip-vendor-portal-breaches" hidden>
+                                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                    <path d="m9.55 18.2-4.9-4.9 1.4-1.4 3.5 3.5 8.4-8.4 1.4 1.4-9.8 9.8Z"/>
+                                </svg>
+                                <span>Completed</span>
+                            </span>
+                        </div>
+                        <h3>Vendor Portal Breaches</h3>
+                        <p>Assess supplier portals, invoice workflows, and login prompts that look legitimate at first glance.</p>
+                        <div class="quiz-meta">
+                            <span>5 Questions</span>
+                            <span>340 pts</span>
+                            <span class="difficulty is-elite">Elite</span>
+                        </div>
+                        <p class="quiz-unlock-note" id="quizUnlockNote-vendor-portal-breaches" hidden></p>
+                        <button type="button" class="quiz-start-btn" data-quiz="vendor-portal-breaches">Start Set</button>
+                    </article>
+
+                    <article class="quiz-card" data-quiz-card="identity-chain-spoofs">
+                        <div class="quiz-card-header">
+                            <span class="quiz-badge">Elite Series</span>
+                            <span class="quiz-complete-chip" id="quizCompletedChip-identity-chain-spoofs" hidden>
+                                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                    <path d="m9.55 18.2-4.9-4.9 1.4-1.4 3.5 3.5 8.4-8.4 1.4 1.4-9.8 9.8Z"/>
+                                </svg>
+                                <span>Completed</span>
+                            </span>
+                        </div>
+                        <h3>Identity Chain Spoofs</h3>
+                        <p>Work through attacks that reuse trusted names, old threads, and familiar roles to build trust.</p>
+                        <div class="quiz-meta">
+                            <span>5 Questions</span>
+                            <span>350 pts</span>
+                            <span class="difficulty is-elite">Elite</span>
+                        </div>
+                        <p class="quiz-unlock-note" id="quizUnlockNote-identity-chain-spoofs" hidden></p>
+                        <button type="button" class="quiz-start-btn" data-quiz="identity-chain-spoofs">Start Set</button>
+                    </article>
+
+                    <article class="quiz-card" data-quiz-card="cloud-consent-traps">
+                        <div class="quiz-card-header">
+                            <span class="quiz-badge">Elite Series</span>
+                            <span class="quiz-complete-chip" id="quizCompletedChip-cloud-consent-traps" hidden>
+                                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                    <path d="m9.55 18.2-4.9-4.9 1.4-1.4 3.5 3.5 8.4-8.4 1.4 1.4-9.8 9.8Z"/>
+                                </svg>
+                                <span>Completed</span>
+                            </span>
+                        </div>
+                        <h3>Cloud Consent Traps</h3>
+                        <p>Judge risky app permissions, shared workspace invites, and sign-in flows on real cloud platforms.</p>
+                        <div class="quiz-meta">
+                            <span>5 Questions</span>
+                            <span>360 pts</span>
+                            <span class="difficulty is-elite">Elite</span>
+                        </div>
+                        <p class="quiz-unlock-note" id="quizUnlockNote-cloud-consent-traps" hidden></p>
+                        <button type="button" class="quiz-start-btn" data-quiz="cloud-consent-traps">Start Set</button>
+                    </article>
+
+                    <article class="quiz-card" data-quiz-card="incident-response-bait">
+                        <div class="quiz-card-header">
+                            <span class="quiz-badge">Elite Series</span>
+                            <span class="quiz-complete-chip" id="quizCompletedChip-incident-response-bait" hidden>
+                                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                    <path d="m9.55 18.2-4.9-4.9 1.4-1.4 3.5 3.5 8.4-8.4 1.4 1.4-9.8 9.8Z"/>
+                                </svg>
+                                <span>Completed</span>
+                            </span>
+                        </div>
+                        <h3>Incident Response Bait</h3>
+                        <p>Evaluate fake security escalations that sound procedural and push you toward the wrong response.</p>
+                        <div class="quiz-meta">
+                            <span>5 Questions</span>
+                            <span>370 pts</span>
+                            <span class="difficulty is-elite">Elite</span>
+                        </div>
+                        <p class="quiz-unlock-note" id="quizUnlockNote-incident-response-bait" hidden></p>
+                        <button type="button" class="quiz-start-btn" data-quiz="incident-response-bait">Start Set</button>
+                    </article>
+
+                    <article class="quiz-card" data-quiz-card="multi-actor-escalations">
+                        <div class="quiz-card-header">
+                            <span class="quiz-badge">Elite Series</span>
+                            <span class="quiz-complete-chip" id="quizCompletedChip-multi-actor-escalations" hidden>
+                                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                    <path d="m9.55 18.2-4.9-4.9 1.4-1.4 3.5 3.5 8.4-8.4 1.4 1.4-9.8 9.8Z"/>
+                                </svg>
+                                <span>Completed</span>
+                            </span>
+                        </div>
+                        <h3>Multi-Actor Escalations</h3>
+                        <p>Analyze attacks where different roles and channels reinforce the same false request.</p>
+                        <div class="quiz-meta">
+                            <span>5 Questions</span>
+                            <span>380 pts</span>
+                            <span class="difficulty is-elite">Elite</span>
+                        </div>
+                        <p class="quiz-unlock-note" id="quizUnlockNote-multi-actor-escalations" hidden></p>
+                        <button type="button" class="quiz-start-btn" data-quiz="multi-actor-escalations">Start Set</button>
+                    </article>
+
+                    <article class="quiz-card" data-quiz-card="trust-layer-collisions">
+                        <div class="quiz-card-header">
+                            <span class="quiz-badge">Elite Series</span>
+                            <span class="quiz-complete-chip" id="quizCompletedChip-trust-layer-collisions" hidden>
+                                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                    <path d="m9.55 18.2-4.9-4.9 1.4-1.4 3.5 3.5 8.4-8.4 1.4 1.4-9.8 9.8Z"/>
+                                </svg>
+                                <span>Completed</span>
+                            </span>
+                        </div>
+                        <h3>Trust Layer Collisions</h3>
+                        <p>Break down advanced situations where branding, urgency, and technical signals conflict.</p>
+                        <div class="quiz-meta">
+                            <span>5 Questions</span>
+                            <span>390 pts</span>
+                            <span class="difficulty is-elite">Elite</span>
+                        </div>
+                        <p class="quiz-unlock-note" id="quizUnlockNote-trust-layer-collisions" hidden></p>
+                        <button type="button" class="quiz-start-btn" data-quiz="trust-layer-collisions">Start Set</button>
+                    </article>
+
+                    <article class="quiz-card is-expert" data-quiz-card="zero-trust-breakpoints">
+                        <div class="quiz-card-header">
+                            <span class="quiz-badge">Expert Series</span>
+                            <span class="quiz-complete-chip" id="quizCompletedChip-zero-trust-breakpoints" hidden>
+                                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                    <path d="m9.55 18.2-4.9-4.9 1.4-1.4 3.5 3.5 8.4-8.4 1.4 1.4-9.8 9.8Z"/>
+                                </svg>
+                                <span>Completed</span>
+                            </span>
+                        </div>
+                        <h3>Zero-Trust Breakpoints</h3>
+                        <p>Judge access requests that exploit trusted workflows, shared tenants, and internal policy gaps.</p>
+                        <div class="quiz-meta">
+                            <span>5 Questions</span>
+                            <span>410 pts</span>
+                            <span class="difficulty">Expert</span>
+                        </div>
+                        <p class="quiz-unlock-note" id="quizUnlockNote-zero-trust-breakpoints" hidden></p>
+                        <button type="button" class="quiz-start-btn" data-quiz="zero-trust-breakpoints">Start Set</button>
+                    </article>
+
+                    <article class="quiz-card is-expert" data-quiz-card="live-session-hijacks">
+                        <div class="quiz-card-header">
+                            <span class="quiz-badge">Expert Series</span>
+                            <span class="quiz-complete-chip" id="quizCompletedChip-live-session-hijacks" hidden>
+                                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                    <path d="m9.55 18.2-4.9-4.9 1.4-1.4 3.5 3.5 8.4-8.4 1.4 1.4-9.8 9.8Z"/>
+                                </svg>
+                                <span>Completed</span>
+                            </span>
+                        </div>
+                        <h3>Live Session Hijacks</h3>
+                        <p>Analyze real-time prompts, re-auth flows, and sign-in interruptions that steal active access.</p>
+                        <div class="quiz-meta">
+                            <span>5 Questions</span>
+                            <span>420 pts</span>
+                            <span class="difficulty">Expert</span>
+                        </div>
+                        <p class="quiz-unlock-note" id="quizUnlockNote-live-session-hijacks" hidden></p>
+                        <button type="button" class="quiz-start-btn" data-quiz="live-session-hijacks">Start Set</button>
+                    </article>
+
+                    <article class="quiz-card is-expert" data-quiz-card="delegated-access-fraud">
+                        <div class="quiz-card-header">
+                            <span class="quiz-badge">Expert Series</span>
+                            <span class="quiz-complete-chip" id="quizCompletedChip-delegated-access-fraud" hidden>
+                                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                    <path d="m9.55 18.2-4.9-4.9 1.4-1.4 3.5 3.5 8.4-8.4 1.4 1.4-9.8 9.8Z"/>
+                                </svg>
+                                <span>Completed</span>
+                            </span>
+                        </div>
+                        <h3>Delegated Access Fraud</h3>
+                        <p>Review approval rights, shared accounts, and delegated permissions used to widen compromise.</p>
+                        <div class="quiz-meta">
+                            <span>5 Questions</span>
+                            <span>430 pts</span>
+                            <span class="difficulty">Expert</span>
+                        </div>
+                        <p class="quiz-unlock-note" id="quizUnlockNote-delegated-access-fraud" hidden></p>
+                        <button type="button" class="quiz-start-btn" data-quiz="delegated-access-fraud">Start Set</button>
+                    </article>
+
+                    <article class="quiz-card is-expert" data-quiz-card="forensic-cover-stories">
+                        <div class="quiz-card-header">
+                            <span class="quiz-badge">Expert Series</span>
+                            <span class="quiz-complete-chip" id="quizCompletedChip-forensic-cover-stories" hidden>
+                                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                    <path d="m9.55 18.2-4.9-4.9 1.4-1.4 3.5 3.5 8.4-8.4 1.4 1.4-9.8 9.8Z"/>
+                                </svg>
+                                <span>Completed</span>
+                            </span>
+                        </div>
+                        <h3>Forensic Cover Stories</h3>
+                        <p>Break down fake investigation trails, evidence requests, and incident narratives meant to disarm checks.</p>
+                        <div class="quiz-meta">
+                            <span>5 Questions</span>
+                            <span>440 pts</span>
+                            <span class="difficulty">Expert</span>
+                        </div>
+                        <p class="quiz-unlock-note" id="quizUnlockNote-forensic-cover-stories" hidden></p>
+                        <button type="button" class="quiz-start-btn" data-quiz="forensic-cover-stories">Start Set</button>
+                    </article>
+
+                    <article class="quiz-card is-expert" data-quiz-card="approval-chain-poisoning">
+                        <div class="quiz-card-header">
+                            <span class="quiz-badge">Expert Series</span>
+                            <span class="quiz-complete-chip" id="quizCompletedChip-approval-chain-poisoning" hidden>
+                                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                    <path d="m9.55 18.2-4.9-4.9 1.4-1.4 3.5 3.5 8.4-8.4 1.4 1.4-9.8 9.8Z"/>
+                                </svg>
+                                <span>Completed</span>
+                            </span>
+                        </div>
+                        <h3>Approval Chain Poisoning</h3>
+                        <p>Test requests that abuse escalations, sign-off loops, and layered approvals to seem legitimate.</p>
+                        <div class="quiz-meta">
+                            <span>5 Questions</span>
+                            <span>450 pts</span>
+                            <span class="difficulty">Expert</span>
+                        </div>
+                        <p class="quiz-unlock-note" id="quizUnlockNote-approval-chain-poisoning" hidden></p>
+                        <button type="button" class="quiz-start-btn" data-quiz="approval-chain-poisoning">Start Set</button>
+                    </article>
+
+                    <article class="quiz-card is-expert" data-quiz-card="adaptive-impersonation-loops">
+                        <div class="quiz-card-header">
+                            <span class="quiz-badge">Expert Series</span>
+                            <span class="quiz-complete-chip" id="quizCompletedChip-adaptive-impersonation-loops" hidden>
+                                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                    <path d="m9.55 18.2-4.9-4.9 1.4-1.4 3.5 3.5 8.4-8.4 1.4 1.4-9.8 9.8Z"/>
+                                </svg>
+                                <span>Completed</span>
+                            </span>
+                        </div>
+                        <h3>Adaptive Impersonation Loops</h3>
+                        <p>Handle attackers who change tone, role, and pressure as your skepticism starts to rise.</p>
+                        <div class="quiz-meta">
+                            <span>5 Questions</span>
+                            <span>460 pts</span>
+                            <span class="difficulty">Expert</span>
+                        </div>
+                        <p class="quiz-unlock-note" id="quizUnlockNote-adaptive-impersonation-loops" hidden></p>
+                        <button type="button" class="quiz-start-btn" data-quiz="adaptive-impersonation-loops">Start Set</button>
+                    </article>
+
+                    <article class="quiz-card is-pro" data-quiz-card="supply-chain-shadowing">
+                        <div class="quiz-card-header">
+                            <span class="quiz-badge">Pro Series</span>
+                            <span class="quiz-complete-chip" id="quizCompletedChip-supply-chain-shadowing" hidden>
+                                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                    <path d="m9.55 18.2-4.9-4.9 1.4-1.4 3.5 3.5 8.4-8.4 1.4 1.4-9.8 9.8Z"/>
+                                </svg>
+                                <span>Completed</span>
+                            </span>
+                        </div>
+                        <h3>Supply Chain Shadowing</h3>
+                        <p>Assess partner-linked requests that piggyback on real vendors, invoices, and workflow timing.</p>
+                        <div class="quiz-meta">
+                            <span>5 Questions</span>
+                            <span>480 pts</span>
+                            <span class="difficulty">Pro</span>
+                        </div>
+                        <p class="quiz-unlock-note" id="quizUnlockNote-supply-chain-shadowing" hidden></p>
+                        <button type="button" class="quiz-start-btn" data-quiz="supply-chain-shadowing">Start Set</button>
+                    </article>
+
+                    <article class="quiz-card is-pro" data-quiz-card="federated-login-pivots">
+                        <div class="quiz-card-header">
+                            <span class="quiz-badge">Pro Series</span>
+                            <span class="quiz-complete-chip" id="quizCompletedChip-federated-login-pivots" hidden>
+                                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                    <path d="m9.55 18.2-4.9-4.9 1.4-1.4 3.5 3.5 8.4-8.4 1.4 1.4-9.8 9.8Z"/>
+                                </svg>
+                                <span>Completed</span>
+                            </span>
+                        </div>
+                        <h3>Federated Login Pivots</h3>
+                        <p>Judge identity hops that move across SSO, tenants, and app handoffs to hide the real risk.</p>
+                        <div class="quiz-meta">
+                            <span>5 Questions</span>
+                            <span>490 pts</span>
+                            <span class="difficulty">Pro</span>
+                        </div>
+                        <p class="quiz-unlock-note" id="quizUnlockNote-federated-login-pivots" hidden></p>
+                        <button type="button" class="quiz-start-btn" data-quiz="federated-login-pivots">Start Set</button>
+                    </article>
+
+                    <article class="quiz-card is-pro" data-quiz-card="trust-graph-manipulation">
+                        <div class="quiz-card-header">
+                            <span class="quiz-badge">Pro Series</span>
+                            <span class="quiz-complete-chip" id="quizCompletedChip-trust-graph-manipulation" hidden>
+                                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                    <path d="m9.55 18.2-4.9-4.9 1.4-1.4 3.5 3.5 8.4-8.4 1.4 1.4-9.8 9.8Z"/>
+                                </svg>
+                                <span>Completed</span>
+                            </span>
+                        </div>
+                        <h3>Trust Graph Manipulation</h3>
+                        <p>Read relationship-based attacks that misuse old contacts, overlapping teams, and shared history.</p>
+                        <div class="quiz-meta">
+                            <span>5 Questions</span>
+                            <span>500 pts</span>
+                            <span class="difficulty">Pro</span>
+                        </div>
+                        <p class="quiz-unlock-note" id="quizUnlockNote-trust-graph-manipulation" hidden></p>
+                        <button type="button" class="quiz-start-btn" data-quiz="trust-graph-manipulation">Start Set</button>
+                    </article>
+
+                    <article class="quiz-card is-pro" data-quiz-card="incident-command-spoofs">
+                        <div class="quiz-card-header">
+                            <span class="quiz-badge">Pro Series</span>
+                            <span class="quiz-complete-chip" id="quizCompletedChip-incident-command-spoofs" hidden>
+                                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                    <path d="m9.55 18.2-4.9-4.9 1.4-1.4 3.5 3.5 8.4-8.4 1.4 1.4-9.8 9.8Z"/>
+                                </svg>
+                                <span>Completed</span>
+                            </span>
+                        </div>
+                        <h3>Incident Command Spoofs</h3>
+                        <p>Handle crisis-style requests that imitate coordinated response teams, war rooms, and live escalation.</p>
+                        <div class="quiz-meta">
+                            <span>5 Questions</span>
+                            <span>510 pts</span>
+                            <span class="difficulty">Pro</span>
+                        </div>
+                        <p class="quiz-unlock-note" id="quizUnlockNote-incident-command-spoofs" hidden></p>
+                        <button type="button" class="quiz-start-btn" data-quiz="incident-command-spoofs">Start Set</button>
+                    </article>
+
+                    <article class="quiz-card is-pro" data-quiz-card="recovery-delegation-loops">
+                        <div class="quiz-card-header">
+                            <span class="quiz-badge">Pro Series</span>
+                            <span class="quiz-complete-chip" id="quizCompletedChip-recovery-delegation-loops" hidden>
+                                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                    <path d="m9.55 18.2-4.9-4.9 1.4-1.4 3.5 3.5 8.4-8.4 1.4 1.4-9.8 9.8Z"/>
+                                </svg>
+                                <span>Completed</span>
+                            </span>
+                        </div>
+                        <h3>Recovery Delegation Loops</h3>
+                        <p>Analyze chained recovery requests that mix approval handoffs, resets, and identity verification.</p>
+                        <div class="quiz-meta">
+                            <span>5 Questions</span>
+                            <span>520 pts</span>
+                            <span class="difficulty">Pro</span>
+                        </div>
+                        <p class="quiz-unlock-note" id="quizUnlockNote-recovery-delegation-loops" hidden></p>
+                        <button type="button" class="quiz-start-btn" data-quiz="recovery-delegation-loops">Start Set</button>
+                    </article>
+
+                    <article class="quiz-card is-pro" data-quiz-card="environment-poisoning-cases">
+                        <div class="quiz-card-header">
+                            <span class="quiz-badge">Pro Series</span>
+                            <span class="quiz-complete-chip" id="quizCompletedChip-environment-poisoning-cases" hidden>
+                                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                    <path d="m9.55 18.2-4.9-4.9 1.4-1.4 3.5 3.5 8.4-8.4 1.4 1.4-9.8 9.8Z"/>
+                                </svg>
+                                <span>Completed</span>
+                            </span>
+                        </div>
+                        <h3>Environment Poisoning Cases</h3>
+                        <p>Break down scenarios where settings, tools, and context are subtly altered before the phish lands.</p>
+                        <div class="quiz-meta">
+                            <span>5 Questions</span>
+                            <span>530 pts</span>
+                            <span class="difficulty">Pro</span>
+                        </div>
+                        <p class="quiz-unlock-note" id="quizUnlockNote-environment-poisoning-cases" hidden></p>
+                        <button type="button" class="quiz-start-btn" data-quiz="environment-poisoning-cases">Start Set</button>
+                    </article>
+
+                    <article class="quiz-card is-legend" data-quiz-card="cross-tenant-bleedthrough">
+                        <div class="quiz-card-header">
+                            <span class="quiz-badge">Legend Series</span>
+                            <span class="quiz-complete-chip" id="quizCompletedChip-cross-tenant-bleedthrough" hidden>
+                                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                    <path d="m9.55 18.2-4.9-4.9 1.4-1.4 3.5 3.5 8.4-8.4 1.4 1.4-9.8 9.8Z"/>
+                                </svg>
+                                <span>Completed</span>
+                            </span>
+                        </div>
+                        <h3>Cross-Tenant Bleedthrough</h3>
+                        <p>Judge ultra-subtle tenant confusion cases where trust leaks between real shared environments.</p>
+                        <div class="quiz-meta">
+                            <span>5 Questions</span>
+                            <span>550 pts</span>
+                            <span class="difficulty">Legend</span>
+                        </div>
+                        <p class="quiz-unlock-note" id="quizUnlockNote-cross-tenant-bleedthrough" hidden></p>
+                        <button type="button" class="quiz-start-btn" data-quiz="cross-tenant-bleedthrough">Start Set</button>
+                    </article>
+
+                    <article class="quiz-card is-legend" data-quiz-card="response-playbook-subversion">
+                        <div class="quiz-card-header">
+                            <span class="quiz-badge">Legend Series</span>
+                            <span class="quiz-complete-chip" id="quizCompletedChip-response-playbook-subversion" hidden>
+                                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                    <path d="m9.55 18.2-4.9-4.9 1.4-1.4 3.5 3.5 8.4-8.4 1.4 1.4-9.8 9.8Z"/>
+                                </svg>
+                                <span>Completed</span>
+                            </span>
+                        </div>
+                        <h3>Response Playbook Subversion</h3>
+                        <p>Break down attacks that twist familiar containment and recovery playbooks against the defender.</p>
+                        <div class="quiz-meta">
+                            <span>5 Questions</span>
+                            <span>560 pts</span>
+                            <span class="difficulty">Legend</span>
+                        </div>
+                        <p class="quiz-unlock-note" id="quizUnlockNote-response-playbook-subversion" hidden></p>
+                        <button type="button" class="quiz-start-btn" data-quiz="response-playbook-subversion">Start Set</button>
+                    </article>
+
+                    <article class="quiz-card is-legend" data-quiz-card="consent-laundering-rings">
+                        <div class="quiz-card-header">
+                            <span class="quiz-badge">Legend Series</span>
+                            <span class="quiz-complete-chip" id="quizCompletedChip-consent-laundering-rings" hidden>
+                                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                    <path d="m9.55 18.2-4.9-4.9 1.4-1.4 3.5 3.5 8.4-8.4 1.4 1.4-9.8 9.8Z"/>
+                                </svg>
+                                <span>Completed</span>
+                            </span>
+                        </div>
+                        <h3>Consent Laundering Rings</h3>
+                        <p>Analyze app approval flows that stay technically valid while hiding layered abuse paths.</p>
+                        <div class="quiz-meta">
+                            <span>5 Questions</span>
+                            <span>570 pts</span>
+                            <span class="difficulty">Legend</span>
+                        </div>
+                        <p class="quiz-unlock-note" id="quizUnlockNote-consent-laundering-rings" hidden></p>
+                        <button type="button" class="quiz-start-btn" data-quiz="consent-laundering-rings">Start Set</button>
+                    </article>
+
+                    <article class="quiz-card is-legend" data-quiz-card="governance-theater-attacks">
+                        <div class="quiz-card-header">
+                            <span class="quiz-badge">Legend Series</span>
+                            <span class="quiz-complete-chip" id="quizCompletedChip-governance-theater-attacks" hidden>
+                                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                    <path d="m9.55 18.2-4.9-4.9 1.4-1.4 3.5 3.5 8.4-8.4 1.4 1.4-9.8 9.8Z"/>
+                                </svg>
+                                <span>Completed</span>
+                            </span>
+                        </div>
+                        <h3>Governance Theater Attacks</h3>
+                        <p>Spot requests that weaponize audits, committees, and policy optics to force unsafe action.</p>
+                        <div class="quiz-meta">
+                            <span>5 Questions</span>
+                            <span>580 pts</span>
+                            <span class="difficulty">Legend</span>
+                        </div>
+                        <p class="quiz-unlock-note" id="quizUnlockNote-governance-theater-attacks" hidden></p>
+                        <button type="button" class="quiz-start-btn" data-quiz="governance-theater-attacks">Start Set</button>
+                    </article>
+
+                    <article class="quiz-card is-legend" data-quiz-card="identity-weathering-loops">
+                        <div class="quiz-card-header">
+                            <span class="quiz-badge">Legend Series</span>
+                            <span class="quiz-complete-chip" id="quizCompletedChip-identity-weathering-loops" hidden>
+                                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                    <path d="m9.55 18.2-4.9-4.9 1.4-1.4 3.5 3.5 8.4-8.4 1.4 1.4-9.8 9.8Z"/>
+                                </svg>
+                                <span>Completed</span>
+                            </span>
+                        </div>
+                        <h3>Identity Weathering Loops</h3>
+                        <p>Handle long-form attacks that slowly erode caution through repeated low-suspicion contact.</p>
+                        <div class="quiz-meta">
+                            <span>5 Questions</span>
+                            <span>590 pts</span>
+                            <span class="difficulty">Legend</span>
+                        </div>
+                        <p class="quiz-unlock-note" id="quizUnlockNote-identity-weathering-loops" hidden></p>
+                        <button type="button" class="quiz-start-btn" data-quiz="identity-weathering-loops">Start Set</button>
+                    </article>
+
+                    <article class="quiz-card is-legend" data-quiz-card="signal-fog-exploitation">
+                        <div class="quiz-card-header">
+                            <span class="quiz-badge">Legend Series</span>
+                            <span class="quiz-complete-chip" id="quizCompletedChip-signal-fog-exploitation" hidden>
+                                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                    <path d="m9.55 18.2-4.9-4.9 1.4-1.4 3.5 3.5 8.4-8.4 1.4 1.4-9.8 9.8Z"/>
+                                </svg>
+                                <span>Completed</span>
+                            </span>
+                        </div>
+                        <h3>Signal Fog Exploitation</h3>
+                        <p>Untangle cases where many weak signals combine until the wrong action feels justifiable.</p>
+                        <div class="quiz-meta">
+                            <span>5 Questions</span>
+                            <span>600 pts</span>
+                            <span class="difficulty">Legend</span>
+                        </div>
+                        <p class="quiz-unlock-note" id="quizUnlockNote-signal-fog-exploitation" hidden></p>
+                        <button type="button" class="quiz-start-btn" data-quiz="signal-fog-exploitation">Start Set</button>
+                    </article>
+
+                    <article class="quiz-card is-apex" data-quiz-card="trust-collapse-scenarios">
+                        <div class="quiz-card-header">
+                            <span class="quiz-badge">Apex Series</span>
+                            <span class="quiz-complete-chip" id="quizCompletedChip-trust-collapse-scenarios" hidden>
+                                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                    <path d="m9.55 18.2-4.9-4.9 1.4-1.4 3.5 3.5 8.4-8.4 1.4 1.4-9.8 9.8Z"/>
+                                </svg>
+                                <span>Completed</span>
+                            </span>
+                        </div>
+                        <h3>Trust Collapse Scenarios</h3>
+                        <p>Judge near-perfect cases where every familiar signal holds until one final trust boundary fails.</p>
+                        <div class="quiz-meta">
+                            <span>5 Questions</span>
+                            <span>620 pts</span>
+                            <span class="difficulty">Apex</span>
+                        </div>
+                        <p class="quiz-unlock-note" id="quizUnlockNote-trust-collapse-scenarios" hidden></p>
+                        <button type="button" class="quiz-start-btn" data-quiz="trust-collapse-scenarios">Start Set</button>
+                    </article>
+
+                    <article class="quiz-card is-apex" data-quiz-card="operator-blend-intrusions">
+                        <div class="quiz-card-header">
+                            <span class="quiz-badge">Apex Series</span>
+                            <span class="quiz-complete-chip" id="quizCompletedChip-operator-blend-intrusions" hidden>
+                                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                    <path d="m9.55 18.2-4.9-4.9 1.4-1.4 3.5 3.5 8.4-8.4 1.4 1.4-9.8 9.8Z"/>
+                                </svg>
+                                <span>Completed</span>
+                            </span>
+                        </div>
+                        <h3>Operator Blend Intrusions</h3>
+                        <p>Handle attacks where human behavior, platform logic, and context cues align too well to doubt.</p>
+                        <div class="quiz-meta">
+                            <span>5 Questions</span>
+                            <span>630 pts</span>
+                            <span class="difficulty">Apex</span>
+                        </div>
+                        <p class="quiz-unlock-note" id="quizUnlockNote-operator-blend-intrusions" hidden></p>
+                        <button type="button" class="quiz-start-btn" data-quiz="operator-blend-intrusions">Start Set</button>
+                    </article>
+
+                    <article class="quiz-card is-apex" data-quiz-card="decision-fatigue-breaches">
+                        <div class="quiz-card-header">
+                            <span class="quiz-badge">Apex Series</span>
+                            <span class="quiz-complete-chip" id="quizCompletedChip-decision-fatigue-breaches" hidden>
+                                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                    <path d="m9.55 18.2-4.9-4.9 1.4-1.4 3.5 3.5 8.4-8.4 1.4 1.4-9.8 9.8Z"/>
+                                </svg>
+                                <span>Completed</span>
+                            </span>
+                        </div>
+                        <h3>Decision Fatigue Breaches</h3>
+                        <p>Break down elite pressure stacks that rely on ambiguity, speed, and mental exhaustion.</p>
+                        <div class="quiz-meta">
+                            <span>5 Questions</span>
+                            <span>640 pts</span>
+                            <span class="difficulty">Apex</span>
+                        </div>
+                        <p class="quiz-unlock-note" id="quizUnlockNote-decision-fatigue-breaches" hidden></p>
+                        <button type="button" class="quiz-start-btn" data-quiz="decision-fatigue-breaches">Start Set</button>
+                    </article>
+
+                    <article class="quiz-card is-apex" data-quiz-card="control-plane-misdirection">
+                        <div class="quiz-card-header">
+                            <span class="quiz-badge">Apex Series</span>
+                            <span class="quiz-complete-chip" id="quizCompletedChip-control-plane-misdirection" hidden>
+                                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                    <path d="m9.55 18.2-4.9-4.9 1.4-1.4 3.5 3.5 8.4-8.4 1.4 1.4-9.8 9.8Z"/>
+                                </svg>
+                                <span>Completed</span>
+                            </span>
+                        </div>
+                        <h3>Control Plane Misdirection</h3>
+                        <p>Read cases where admin logic, recovery paths, and security controls are twisted into bait.</p>
+                        <div class="quiz-meta">
+                            <span>5 Questions</span>
+                            <span>650 pts</span>
+                            <span class="difficulty">Apex</span>
+                        </div>
+                        <p class="quiz-unlock-note" id="quizUnlockNote-control-plane-misdirection" hidden></p>
+                        <button type="button" class="quiz-start-btn" data-quiz="control-plane-misdirection">Start Set</button>
+                    </article>
+
+                    <article class="quiz-card is-apex" data-quiz-card="cognitive-overlap-attacks">
+                        <div class="quiz-card-header">
+                            <span class="quiz-badge">Apex Series</span>
+                            <span class="quiz-complete-chip" id="quizCompletedChip-cognitive-overlap-attacks" hidden>
+                                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                    <path d="m9.55 18.2-4.9-4.9 1.4-1.4 3.5 3.5 8.4-8.4 1.4 1.4-9.8 9.8Z"/>
+                                </svg>
+                                <span>Completed</span>
+                            </span>
+                        </div>
+                        <h3>Cognitive Overlap Attacks</h3>
+                        <p>Untangle scenarios where several believable explanations overlap until the wrong choice feels rational.</p>
+                        <div class="quiz-meta">
+                            <span>5 Questions</span>
+                            <span>660 pts</span>
+                            <span class="difficulty">Apex</span>
+                        </div>
+                        <p class="quiz-unlock-note" id="quizUnlockNote-cognitive-overlap-attacks" hidden></p>
+                        <button type="button" class="quiz-start-btn" data-quiz="cognitive-overlap-attacks">Start Set</button>
+                    </article>
+
+                    <article class="quiz-card is-apex" data-quiz-card="irrecoverable-trust-failures">
+                        <div class="quiz-card-header">
+                            <span class="quiz-badge">Apex Series</span>
+                            <span class="quiz-complete-chip" id="quizCompletedChip-irrecoverable-trust-failures" hidden>
+                                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                                    <path d="m9.55 18.2-4.9-4.9 1.4-1.4 3.5 3.5 8.4-8.4 1.4 1.4-9.8 9.8Z"/>
+                                </svg>
+                                <span>Completed</span>
+                            </span>
+                        </div>
+                        <h3>Irrecoverable Trust Failures</h3>
+                        <p>Evaluate final-form cases where one bad action could permanently widen access or exposure.</p>
+                        <div class="quiz-meta">
+                            <span>5 Questions</span>
+                            <span>670 pts</span>
+                            <span class="difficulty">Apex</span>
+                        </div>
+                        <p class="quiz-unlock-note" id="quizUnlockNote-irrecoverable-trust-failures" hidden></p>
+                        <button type="button" class="quiz-start-btn" data-quiz="irrecoverable-trust-failures">Start Set</button>
+                    </article>
+
                 </div>
             </section>
 

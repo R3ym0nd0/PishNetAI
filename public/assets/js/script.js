@@ -19,6 +19,7 @@ const aiForm = document.getElementById('aiForm');
 const aiInput = document.getElementById('aiInput');
 const aiMessages = document.getElementById('aiMessages');
 const aiFab = document.getElementById('aiFab');
+const aiSubmitButton = aiForm?.querySelector('button[type="submit"]') || null;
 const AI_HISTORY_LIMIT = 12;
 const aiConversationHistory = [];
 const authTokenKey = 'phish_ai_token';
@@ -965,6 +966,7 @@ let aiCooldownInterval = null;
 function startAiCooldown(seconds) {
     aiCooldown = seconds;
     aiInput.disabled = true;
+    if (aiSubmitButton) aiSubmitButton.disabled = true;
     const pendingEl = document.createElement('div');
     pendingEl.className = 'ai-msg bot pending';
     pendingEl.id = 'aiCooldownMsg';
@@ -980,6 +982,7 @@ function startAiCooldown(seconds) {
             aiCooldownInterval = null;
             pendingEl.remove();
             aiInput.disabled = false;
+            if (aiSubmitButton) aiSubmitButton.disabled = false;
             aiInput.focus();
         }
     }, 1000);
@@ -998,7 +1001,7 @@ if (aiForm) {
         aiConversationHistory.push({ role: 'user', content: v });
         aiInput.value = '';
 
-        const submitBtn = aiForm.querySelector('button[type="submit"]');
+        const submitBtn = aiSubmitButton;
         if (submitBtn) submitBtn.disabled = true;
         aiInput.disabled = true;
 
@@ -1137,9 +1140,8 @@ function disableFocusTrap(){
             });
 
             if (res.ok) {
-                feedback.textContent = 'Thanks — you are subscribed (or will be shortly).';
-                feedback.classList.remove('error'); feedback.classList.add('success');
                 feedback.textContent = 'Thanks. Your feedback has been sent.';
+                feedback.classList.remove('error'); feedback.classList.add('success');
                 messageInput.value = '';
                 const saved = JSON.parse(localStorage.getItem('phishnet_feedback') || '[]');
                 saved.push({ message, at: Date.now(), sent: true });

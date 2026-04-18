@@ -28,6 +28,7 @@ const {
   getPublicQuizProfile,
   destroySession,
   getQuizLeaderboard,
+  getQuizLeaderboardRankForUser,
   getUserBySessionToken,
   listChatsForUser,
   listMessagesForChat,
@@ -59,7 +60,7 @@ const allowedOrigins = new Set(
 );
 
 app.use(helmet({ contentSecurityPolicy: false }));
-app.use(express.json());
+app.use(express.json({ limit: '1mb' }));
 app.use(cors({
   origin(origin, callback) {
     if (!origin || allowedOrigins.has(origin)) {
@@ -70,7 +71,7 @@ app.use(cors({
   }
 }));
 
-app.use(express.static(projectRoot));
+app.use(express.static(publicDir, { index: false }));
 app.use('/assets', express.static(assetsDir));
 app.use('/public', express.static(publicDir));
 
@@ -700,11 +701,17 @@ app.get('/api/quiz/leaderboard', async (req, res) => {
   const user = await requireAuthenticatedUser(req, res);
   if (!user) return;
 
+  const [leaderboard, currentUserRank] = await Promise.all([
+    getQuizLeaderboard(),
+    getQuizLeaderboardRankForUser(user.id)
+  ]);
+
   return res.json({
     ok: true,
     minimumAttempts: 2,
     currentUserId: user.id,
-    leaderboard: await getQuizLeaderboard()
+    currentUserRank,
+    leaderboard
   });
 });
 
@@ -1087,6 +1094,35 @@ app.post('/api/ai-chat', async (req, res) => {
 
     return res.status(500).json({ ok: false, error: error.message || 'Something went wrong' });
   }
+});
+
+app.use((error, _req, res, next) => {
+  if (!error) {
+    return next();
+  }
+
+  if (res.headersSent) {
+    return next(error);
+  }
+
+  if (error instanceof SyntaxError && Object.prototype.hasOwnProperty.call(error, 'body')) {
+    return res.status(400).json({
+      ok: false,
+      error: 'Request body must be valid JSON.'
+    });
+  }
+
+  if (String(error.message || '').startsWith('Not allowed by CORS:')) {
+    return res.status(403).json({
+      ok: false,
+      error: 'This origin is not allowed to access the API.'
+    });
+  }
+
+  return res.status(error.statusCode || 500).json({
+    ok: false,
+    error: error.message || 'Unexpected server error.'
+  });
 });
 
 app.listen(PORT, () => {

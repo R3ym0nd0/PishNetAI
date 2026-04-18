@@ -46,6 +46,46 @@ const masterySeriesQuizIds = [
     'cross-channel-takeovers',
     'best-practices'
 ];
+const eliteSeriesQuizIds = [
+    'vendor-portal-breaches',
+    'identity-chain-spoofs',
+    'cloud-consent-traps',
+    'incident-response-bait',
+    'multi-actor-escalations',
+    'trust-layer-collisions'
+];
+const expertSeriesQuizIds = [
+    'zero-trust-breakpoints',
+    'live-session-hijacks',
+    'delegated-access-fraud',
+    'forensic-cover-stories',
+    'approval-chain-poisoning',
+    'adaptive-impersonation-loops'
+];
+const proSeriesQuizIds = [
+    'supply-chain-shadowing',
+    'federated-login-pivots',
+    'trust-graph-manipulation',
+    'incident-command-spoofs',
+    'recovery-delegation-loops',
+    'environment-poisoning-cases'
+];
+const legendSeriesQuizIds = [
+    'cross-tenant-bleedthrough',
+    'response-playbook-subversion',
+    'consent-laundering-rings',
+    'governance-theater-attacks',
+    'identity-weathering-loops',
+    'signal-fog-exploitation'
+];
+const apexSeriesQuizIds = [
+    'trust-collapse-scenarios',
+    'operator-blend-intrusions',
+    'decision-fatigue-breaches',
+    'control-plane-misdirection',
+    'cognitive-overlap-attacks',
+    'irrecoverable-trust-failures'
+];
 const masteryPrepQuizIds = masterySeriesQuizIds.filter((quizId) => quizId !== 'best-practices');
 const advancedQuizRules = {
     'sender-source-checks': {
@@ -145,6 +185,126 @@ const advancedQuizRules = {
     'cross-channel-takeovers': {
         requiresQuizIds: [...advancedSeriesQuizIds],
         label: 'Unlocks after you finish the Advanced Series.'
+    },
+    'vendor-portal-breaches': {
+        requiresQuizIds: [...masterySeriesQuizIds],
+        label: 'Finish Mastery Series first.'
+    },
+    'identity-chain-spoofs': {
+        requiresQuizIds: [...masterySeriesQuizIds],
+        label: 'Finish Mastery Series first.'
+    },
+    'cloud-consent-traps': {
+        requiresQuizIds: [...masterySeriesQuizIds],
+        label: 'Finish Mastery Series first.'
+    },
+    'incident-response-bait': {
+        requiresQuizIds: [...masterySeriesQuizIds],
+        label: 'Finish Mastery Series first.'
+    },
+    'multi-actor-escalations': {
+        requiresQuizIds: [...masterySeriesQuizIds],
+        label: 'Finish Mastery Series first.'
+    },
+    'trust-layer-collisions': {
+        requiresQuizIds: [...masterySeriesQuizIds],
+        label: 'Finish Mastery Series first.'
+    },
+    'zero-trust-breakpoints': {
+        requiresQuizIds: [...eliteSeriesQuizIds],
+        label: 'Finish Elite Series first.'
+    },
+    'live-session-hijacks': {
+        requiresQuizIds: [...eliteSeriesQuizIds],
+        label: 'Finish Elite Series first.'
+    },
+    'delegated-access-fraud': {
+        requiresQuizIds: [...eliteSeriesQuizIds],
+        label: 'Finish Elite Series first.'
+    },
+    'forensic-cover-stories': {
+        requiresQuizIds: [...eliteSeriesQuizIds],
+        label: 'Finish Elite Series first.'
+    },
+    'approval-chain-poisoning': {
+        requiresQuizIds: [...eliteSeriesQuizIds],
+        label: 'Finish Elite Series first.'
+    },
+    'adaptive-impersonation-loops': {
+        requiresQuizIds: [...eliteSeriesQuizIds],
+        label: 'Finish Elite Series first.'
+    },
+    'supply-chain-shadowing': {
+        requiresQuizIds: [...expertSeriesQuizIds],
+        label: 'Finish Expert Series first.'
+    },
+    'federated-login-pivots': {
+        requiresQuizIds: [...expertSeriesQuizIds],
+        label: 'Finish Expert Series first.'
+    },
+    'trust-graph-manipulation': {
+        requiresQuizIds: [...expertSeriesQuizIds],
+        label: 'Finish Expert Series first.'
+    },
+    'incident-command-spoofs': {
+        requiresQuizIds: [...expertSeriesQuizIds],
+        label: 'Finish Expert Series first.'
+    },
+    'recovery-delegation-loops': {
+        requiresQuizIds: [...expertSeriesQuizIds],
+        label: 'Finish Expert Series first.'
+    },
+    'environment-poisoning-cases': {
+        requiresQuizIds: [...expertSeriesQuizIds],
+        label: 'Finish Expert Series first.'
+    },
+    'cross-tenant-bleedthrough': {
+        requiresQuizIds: [...proSeriesQuizIds],
+        label: 'Finish Pro Series first.'
+    },
+    'response-playbook-subversion': {
+        requiresQuizIds: [...proSeriesQuizIds],
+        label: 'Finish Pro Series first.'
+    },
+    'consent-laundering-rings': {
+        requiresQuizIds: [...proSeriesQuizIds],
+        label: 'Finish Pro Series first.'
+    },
+    'governance-theater-attacks': {
+        requiresQuizIds: [...proSeriesQuizIds],
+        label: 'Finish Pro Series first.'
+    },
+    'identity-weathering-loops': {
+        requiresQuizIds: [...proSeriesQuizIds],
+        label: 'Finish Pro Series first.'
+    },
+    'signal-fog-exploitation': {
+        requiresQuizIds: [...proSeriesQuizIds],
+        label: 'Finish Pro Series first.'
+    },
+    'trust-collapse-scenarios': {
+        requiresQuizIds: [...legendSeriesQuizIds],
+        label: 'Finish Legend Series first.'
+    },
+    'operator-blend-intrusions': {
+        requiresQuizIds: [...legendSeriesQuizIds],
+        label: 'Finish Legend Series first.'
+    },
+    'decision-fatigue-breaches': {
+        requiresQuizIds: [...legendSeriesQuizIds],
+        label: 'Finish Legend Series first.'
+    },
+    'control-plane-misdirection': {
+        requiresQuizIds: [...legendSeriesQuizIds],
+        label: 'Finish Legend Series first.'
+    },
+    'cognitive-overlap-attacks': {
+        requiresQuizIds: [...legendSeriesQuizIds],
+        label: 'Finish Legend Series first.'
+    },
+    'irrecoverable-trust-failures': {
+        requiresQuizIds: [...legendSeriesQuizIds],
+        label: 'Finish Legend Series first.'
     }
 };
 
@@ -2128,6 +2288,1986 @@ const quizzes = {
                 explanation: 'A consistent habit of using the official site or app instead of message links reduces the chance of reacting to phishing pressure.'
             }
         ]
+    },
+    'vendor-portal-breaches': {
+        title: 'Vendor Portal Breaches',
+        description: 'Assess supplier portal changes, invoice workflows, and credential prompts that look operationally legitimate at first glance.',
+        questions: [
+            {
+                topic: 'Portal migration notice',
+                prompt: 'A supplier email says invoice access moved to a new portal today and includes a login link. The sender name matches an old thread, but the domain is slightly different from earlier billing messages. What is the safest first move?',
+                options: [
+                    'Open the portal in a separate browser profile and compare the dashboard after sign-in.',
+                    'Reply to the message asking whether the migration notice was meant for your department.',
+                    'Verify the portal change through a trusted vendor contact or prior procurement record.',
+                    'Forward the email to another teammate and wait for their judgment about the request.'
+                ],
+                answer: 2,
+                explanation: 'A believable migration story can still be phishing. The safest move is to verify the change through an existing trusted contact or workflow.'
+            },
+            {
+                topic: 'Invoice workflow pressure',
+                prompt: 'A portal page shows a real-looking purchase order reference and asks you to enter your full account password before invoice history will load. What is the strongest warning sign?',
+                options: [
+                    'The page asks for a secret that does not fit the task being described.',
+                    'The purchase order number appears detailed enough to come from a live project.',
+                    'The invoice history area remains hidden until one more step is completed.',
+                    'The portal layout looks newer than the version the team used last quarter.'
+                ],
+                answer: 0,
+                explanation: 'Attackers often mix true business context with unnecessary credential prompts. The request for a password is the strongest mismatch.'
+            },
+            {
+                topic: 'Trust signal overload',
+                prompt: 'A vendor notice includes the correct logo, your organization name, and a matching invoice amount, but the portal asks you to allow browser notifications before continuing. What should you conclude?',
+                options: [
+                    'The brand details outweigh the unrelated browser permission request on the page.',
+                    'The page may combine true context with an unrelated permission trap for access.',
+                    'The matching amount proves the portal is tied to a real invoice workflow already.',
+                    'The notification prompt is normal because invoice portals often push urgent updates.'
+                ],
+                answer: 1,
+                explanation: 'Advanced phishing pages often blend accurate business details with unrelated permission requests to build false confidence.'
+            },
+            {
+                topic: 'Forwarded validation',
+                prompt: 'A coworker forwards the portal link and says, "This seems like the new billing site, can you confirm?" What is the safest interpretation?',
+                options: [
+                    'The forwarded message is safe because it came from a known coworker account.',
+                    'The link is probably safe because the coworker only asked for confirmation first.',
+                    'The message still needs independent verification because trusted people can relay bad links.',
+                    'The safest move is to open the portal once and inspect the page from inside the session.'
+                ],
+                answer: 2,
+                explanation: 'A forwarded message from a known contact does not make the destination trustworthy. Coworkers can unknowingly pass along malicious links.'
+            },
+            {
+                topic: 'Operational urgency',
+                prompt: 'You are told the supplier account may be suspended by 5 PM unless the portal is activated today. Which response best protects workflow and security together?',
+                options: [
+                    'Activate the portal quickly, then rotate your password after the invoice batch clears.',
+                    'Use a saved bookmark to check the vendor account and confirm the request with procurement.',
+                    'Open the portal from a shared workstation so your own account stays outside the process.',
+                    'Continue only from the office network because internal traffic lowers phishing risk overall.'
+                ],
+                answer: 1,
+                explanation: 'Using a trusted entry point and confirming the request with the responsible team balances operational urgency with verification.'
+            }
+        ]
+    },
+    'identity-chain-spoofs': {
+        title: 'Identity Chain Spoofs',
+        description: 'Work through attack chains that reuse trusted names, quoted threads, and familiar roles to create false confidence.',
+        questions: [
+            {
+                topic: 'Forward chain trust',
+                prompt: 'You receive a forwarded thread that appears to include a dean, registrar staff, and student assistant discussing a document request. The newest message asks you to open a file and confirm access. What is the strongest concern?',
+                options: [
+                    'The chain may be staged even if the names and roles look familiar.',
+                    'The request is too detailed for phishing because several offices are referenced.',
+                    'The forwarded style is normal because teams often copy multiple people at once.',
+                    'The document request is acceptable as long as no password is requested directly.'
+                ],
+                answer: 0,
+                explanation: 'Attackers can reconstruct trust through names, quoted text, and believable roles. Familiar identities inside a thread are not enough.'
+            },
+            {
+                topic: 'Display name confusion',
+                prompt: 'A message displays the real name of a senior staff member, but the reply address uses a slightly altered domain and asks you to continue privately. What should matter most?',
+                options: [
+                    'The private follow-up is reasonable because urgent matters move off group threads.',
+                    'The displayed sender name matters more than minor domain differences in the address.',
+                    'The reply address and channel change both weaken the credibility of the request.',
+                    'The safest move is to answer briefly and ask whether a faster platform is preferred.'
+                ],
+                answer: 2,
+                explanation: 'A display name can be faked easily. A changed domain plus a shift to a more private channel is a major warning sign.'
+            },
+            {
+                topic: 'Quoted prior message',
+                prompt: 'An email quotes a real announcement from last month, then adds a new instruction to sign in through an attached access sheet. Why is this still suspicious?',
+                options: [
+                    'The older announcement proves the current attachment was probably generated internally.',
+                    'The new instruction can piggyback on true context even when the action is malicious.',
+                    'The quoted text means the sender copied an original internal thread automatically.',
+                    'The attachment is safe because the message reuses wording from a legitimate notice.'
+                ],
+                answer: 1,
+                explanation: 'Advanced phishing often reuses accurate old material to lower suspicion while inserting a new harmful step.'
+            },
+            {
+                topic: 'Role pressure',
+                prompt: 'A message says a department head is waiting on you and mentions your supervisor by name, but the link goes to a form asking for full credentials before showing the file. What is the best reading?',
+                options: [
+                    'The role references are reassuring because phishing rarely includes internal names correctly.',
+                    'The credential request outweighs the internal references and should trigger verification.',
+                    'The supervisor name confirms the sender has approved access to the workflow already.',
+                    'The message is safer than usual because it requests action only once without repeats.'
+                ],
+                answer: 1,
+                explanation: 'Accurate names can come from public pages or leaked context. The risky credential request remains the stronger signal.'
+            },
+            {
+                topic: 'Breaking the chain',
+                prompt: 'Which response best disrupts an identity-chain phishing attempt without slowing verification too much?',
+                options: [
+                    'Use a separately known contact method to confirm the request before opening the resource.',
+                    'Stay inside the same thread and ask for more detail about the expected timeline.',
+                    'Compare the tone of the message with how the sender usually writes in formal email.',
+                    'Open the file in preview mode first, then call only if the layout seems unusual.'
+                ],
+                answer: 0,
+                explanation: 'The safest move is to step outside the suspicious chain and verify through a trusted method you already know.'
+            }
+        ]
+    },
+    'cloud-consent-traps': {
+        title: 'Cloud Consent Traps',
+        description: 'Judge risky app permissions, shared workspace invites, and sign-in flows that abuse real cloud platforms instead of fake pages.',
+        questions: [
+            {
+                topic: 'Permission consent',
+                prompt: 'A real cloud login succeeds, but the next screen asks you to grant an app access to mail, files, and contacts so one shared document can open. What is the key problem?',
+                options: [
+                    'The permission scope is broader than what one shared document should require.',
+                    'The cloud brand is reliable enough that consent prompts are usually pre-reviewed.',
+                    'The document request is harmless because the sign-in already confirmed your identity.',
+                    'The mail and file permissions are expected when collaboration tools are involved.'
+                ],
+                answer: 0,
+                explanation: 'Consent phishing often uses real login pages and then asks for access that exceeds the stated task.'
+            },
+            {
+                topic: 'Shared workspace lure',
+                prompt: 'You are asked to join a shared workspace to review emergency policy changes. The invite opens a real platform, but the owner is unfamiliar and the permissions include persistent access. What is safest?',
+                options: [
+                    'Join the workspace but avoid posting anything until the owner identity is clearer later.',
+                    'Treat the invite as risky until the owner and access need are verified independently.',
+                    'Accept the invite because the platform itself enforces strong baseline security checks.',
+                    'Use a second browser profile so the main account remains less exposed overall.'
+                ],
+                answer: 1,
+                explanation: 'A legitimate platform does not make a request legitimate. Ownership and permission scope still need verification.'
+            },
+            {
+                topic: 'Single sign-on comfort',
+                prompt: 'A colleague says, "It is safe because you never typed your password, it just used single sign-on." Why is that incomplete?',
+                options: [
+                    'Single sign-on removes most credential risk, so the remaining issue is usually only spam.',
+                    'Single sign-on matters less because unsafe apps cannot run on major cloud platforms anyway.',
+                    'Single sign-on can still expose data if the app receives permissions it should not have.',
+                    'Single sign-on is suspicious by itself because real teams avoid cloud integrations now.'
+                ],
+                answer: 2,
+                explanation: 'Consent phishing often avoids password theft and instead steals access through broad permissions.'
+            },
+            {
+                topic: 'App legitimacy check',
+                prompt: 'Which detail gives the strongest reason to pause before approving a cloud app request?',
+                options: [
+                    'The app icon is simple and the permission prompt uses a very clean layout.',
+                    'The app requests durable permissions that do not match the described task.',
+                    'The request appears after a normal sign-in flow on a recognized login screen.',
+                    'The app claims it will speed up collaboration and reduce manual review steps.'
+                ],
+                answer: 1,
+                explanation: 'Permission mismatch is one of the strongest clues in a consent trap, especially when access persists beyond the immediate task.'
+            },
+            {
+                topic: 'Safer workflow',
+                prompt: 'You truly need the shared file today, but the consent flow feels wrong. Which response is best?',
+                options: [
+                    'Approve the app once, download the file, then revoke the permission later if needed.',
+                    'Ask the sender to share the file through an approved channel or verified location.',
+                    'Finish the approval from a guest browser session to reduce the account exposure.',
+                    'Continue if the tenant branding and profile photo match your normal sign-in view.'
+                ],
+                answer: 1,
+                explanation: 'A safer alternative is to use a verified existing channel instead of granting suspicious new access rights.'
+            }
+        ]
+    },
+    'incident-response-bait': {
+        title: 'Incident Response Bait',
+        description: 'Evaluate fake security escalations that sound procedural, reference real events, and push you toward the wrong containment step.',
+        questions: [
+            {
+                topic: 'Security ticket scare',
+                prompt: 'A message claims your account triggered an impossible-travel alert and says you must confirm identity through a rapid containment form. What makes this especially dangerous?',
+                options: [
+                    'The alert may use a realistic security concept to push you into a bad response path.',
+                    'The impossible-travel wording is too technical for attackers and likely reflects a real alert.',
+                    'The containment form is acceptable because incidents require immediate user confirmation.',
+                    'The urgency is normal because all incident handling needs quick credential confirmation.'
+                ],
+                answer: 0,
+                explanation: 'Attackers often borrow legitimate security language to lower suspicion. The unsafe response path is the real danger.'
+            },
+            {
+                topic: 'Containment instructions',
+                prompt: 'A supposed security analyst asks you to disable multifactor authentication temporarily so the incident can be isolated faster. What should you infer?',
+                options: [
+                    'The request may be valid because MFA sometimes blocks urgent investigation access.',
+                    'The analyst is probably rushed and only needs confirmation of your role first.',
+                    'The request conflicts with safe containment practice and needs outside verification.',
+                    'The message is likely real because attackers usually ask for data instead of settings.'
+                ],
+                answer: 2,
+                explanation: 'A request to weaken protective controls during an alleged incident is a major red flag and should be verified through a trusted route.'
+            },
+            {
+                topic: 'Call-back manipulation',
+                prompt: 'A caller references the same ticket number shown in the email and asks you to read a one-time code aloud to close the case. Why is this still suspicious?',
+                options: [
+                    'Matching ticket numbers can be staged if one actor controls both the email and call.',
+                    'One-time codes are less sensitive during incident handling because they expire quickly.',
+                    'Security teams often ask for verbal code confirmation during remote containment work.',
+                    'The call is safer than the email because voice communication lowers phishing risk.'
+                ],
+                answer: 0,
+                explanation: 'Coordinated email and phone follow-ups are common escalation tactics. The one-time code can still be used to seize access.'
+            },
+            {
+                topic: 'Partial truth',
+                prompt: 'The message correctly mentions a recent service outage your organization actually experienced. What is the best conclusion?',
+                options: [
+                    'Recent real outages make related security messages more trustworthy by default.',
+                    'Accurate context can strengthen a deceptive request and should not replace verification.',
+                    'A real outage means normal verification steps are usually relaxed for faster recovery.',
+                    'Any message tied to a known event should be opened first before the window expires.'
+                ],
+                answer: 1,
+                explanation: 'Real events are often used as bait. Accurate background context does not validate the requested action.'
+            },
+            {
+                topic: 'Best defensive move',
+                prompt: 'Which action best handles a message that sounds like urgent incident response but may be phishing?',
+                options: [
+                    'Use a known security contact channel or internal portal to confirm the case first.',
+                    'Stay in the same thread and ask for more technical detail before deciding what to do.',
+                    'Open the linked form but avoid typing anything until the layout feels familiar enough.',
+                    'Wait silently for another follow-up because real incidents usually escalate again.'
+                ],
+                answer: 0,
+                explanation: 'Independent verification through a trusted security channel is the strongest way to break a fake escalation attempt.'
+            }
+        ]
+    },
+    'multi-actor-escalations': {
+        title: 'Multi-Actor Escalations',
+        description: 'Analyze attacks where different roles and channels reinforce the same false request across several believable follow-ups.',
+        questions: [
+            {
+                topic: 'Role stacking',
+                prompt: 'You receive an email from "Support," then a chat message from a "team lead," and later a text from a supposed vendor contact, all pushing the same account request. What pattern matters most?',
+                options: [
+                    'Multiple roles agreeing on one task usually means the process is already approved.',
+                    'The repeated request across channels may be building false trust through pressure.',
+                    'The vendor message lowers the phishing risk because outsiders would not know the request.',
+                    'The support email remains the safest source because it arrived before the others.'
+                ],
+                answer: 1,
+                explanation: 'Attackers may deliberately use several identities and channels to manufacture trust around a harmful action.'
+            },
+            {
+                topic: 'Escalation timing',
+                prompt: 'The second and third follow-ups arrive minutes apart and reference your delayed response. Why does that matter?',
+                options: [
+                    'Fast cross-channel escalation can pressure you into skipping careful verification.',
+                    'Fast follow-ups are typical of efficient operations and usually signal legitimacy.',
+                    'Quick timing matters less than whether the final message includes a formal signature.',
+                    'Quick timing mostly shows automation, which lowers the odds of malicious intent.'
+                ],
+                answer: 0,
+                explanation: 'Short-gap follow-ups are often used to create urgency and overwhelm normal review habits.'
+            },
+            {
+                topic: 'Different instructions',
+                prompt: 'Each actor describes the issue a little differently, but all push you toward the same sign-in page. What is the strongest interpretation?',
+                options: [
+                    'Different wording is normal because each role understands the process differently.',
+                    'The sign-in page becomes safer because several parties reached the same resolution.',
+                    'Small inconsistencies can reveal a coordinated script built around one bad action.',
+                    'The issue is probably real because attackers usually repeat the exact same wording.'
+                ],
+                answer: 2,
+                explanation: 'When several actors converge on one risky action, the destination matters more than surface wording differences.'
+            },
+            {
+                topic: 'Policy override',
+                prompt: 'A supposed manager tells you to skip the usual verification because another team already confirmed the request. What is safest?',
+                options: [
+                    'Skip your own verification because duplicated checks slow down urgent work.',
+                    'Follow the instruction if the message includes your real department and project code.',
+                    'Keep the normal verification step because claimed approval can be part of the trap.',
+                    'Proceed if the sign-in page shows a valid certificate and expected tenant branding.'
+                ],
+                answer: 2,
+                explanation: 'A request to bypass established checks is itself a warning sign, especially in a coordinated multi-actor attack.'
+            },
+            {
+                topic: 'Breaking the chain',
+                prompt: 'Which response best disrupts a coordinated multi-actor phishing attempt?',
+                options: [
+                    'Answer only the most senior-sounding person because they are closest to the decision.',
+                    'Pause the chain and confirm through a trusted owner or official internal workflow.',
+                    'Open the link from the earliest message because later follow-ups are more suspicious.',
+                    'Ask each sender the same question and continue if two replies sound professional.'
+                ],
+                answer: 1,
+                explanation: 'The safest approach is to step outside the coordinated chain and verify through a trusted owner or official process.'
+            }
+        ]
+    },
+    'trust-layer-collisions': {
+        title: 'Trust Layer Collisions',
+        description: 'Break down advanced situations where branding, workflow context, urgency, and technical signals point in conflicting directions.',
+        questions: [
+            {
+                topic: 'Mixed signals',
+                prompt: 'A page uses the correct brand, HTTPS, and believable message history, but the requested action does not fit the business task being described. Which clue should carry the most weight?',
+                options: [
+                    'The action mismatch matters more because the request does not fit the stated purpose.',
+                    'The correct brand and HTTPS status outweigh the smaller workflow inconsistency.',
+                    'The believable message history is stronger because it reflects a trusted context chain.',
+                    'The safest move is to trust the page if at least two major trust signals look real.'
+                ],
+                answer: 0,
+                explanation: 'When trust cues conflict, the requested action and whether it fits the stated task is one of the strongest signals.'
+            },
+            {
+                topic: 'Technical versus behavioral cues',
+                prompt: 'A link resolves normally, uses a familiar login framework, and does not look obviously fake, yet the message insists you must act before discussing it with anyone. What should you prioritize?',
+                options: [
+                    'The normal technical behavior because phishing usually fails on visible technical checks.',
+                    'The secrecy pressure because manipulation can outweigh normal-looking technical signals.',
+                    'The familiar framework because attackers avoid copying enterprise login experiences.',
+                    'The DNS behavior because a reachable site is less risky than a broken destination.'
+                ],
+                answer: 1,
+                explanation: 'Advanced phishing can look technically normal. Behavioral manipulation like secrecy and isolation is still a major warning sign.'
+            },
+            {
+                topic: 'Conflicting endorsement',
+                prompt: 'A coworker says the page seems fine, but your checks reveal an unusual permission request and inconsistent support address. What is the best conclusion?',
+                options: [
+                    'The coworker approval should outweigh the smaller inconsistencies you noticed.',
+                    'The page is probably safe because the coworker would have noticed bigger issues.',
+                    'The support mismatch and permission problem still justify verification before action.',
+                    'The page is safe enough to test if you avoid entering your password at first.'
+                ],
+                answer: 2,
+                explanation: 'A colleague opinion should not override concrete warning signs like mismatched support details or unnecessary permissions.'
+            },
+            {
+                topic: 'Decision under uncertainty',
+                prompt: 'You cannot prove the request is malicious, but several moderate concerns remain and the requested action could expose account access if wrong. What is the best decision rule?',
+                options: [
+                    'Proceed carefully because uncertain cases should be treated as legitimate by default.',
+                    'Delay the action and verify through a trusted path when the impact could be high.',
+                    'Use a less important account first because low-privilege testing is more efficient.',
+                    'Continue if the request includes enough real organizational detail to feel grounded.'
+                ],
+                answer: 1,
+                explanation: 'When uncertainty remains and the downside is serious, verification before action is the safer rule.'
+            },
+            {
+                topic: 'Hardest judgment call',
+                prompt: 'Which situation is most likely to fool careful users and therefore deserves the slowest, most deliberate review?',
+                options: [
+                    'A plain message with spelling errors asking for a password through a short link.',
+                    'A realistic request combining true context, real infrastructure, and one subtle mismatch.',
+                    'An obvious fake page using poor layout, a strange domain, and a lockout threat.',
+                    'A generic alert with no internal detail, no clear sender, and no follow-up pressure.'
+                ],
+                answer: 1,
+                explanation: 'The hardest cases are the ones that mix real context and legitimate-looking infrastructure with only one or two subtle mismatches.'
+            }
+        ]
+    },
+    'zero-trust-breakpoints': {
+        title: 'Zero-Trust Breakpoints',
+        description: 'Judge access requests that exploit trusted workflows, shared tenants, and internal policy gaps.',
+        questions: [
+            {
+                topic: 'Conditional access bait',
+                prompt: 'A message says a shared tenant policy blocked your usual access, so you must approve a temporary exception through a linked sign-in flow. Which clue deserves the most attention?',
+                options: [
+                    'The request is asking you to weaken a security control through an untrusted path.',
+                    'The tenant language sounds technical enough to match a real access platform.',
+                    'The message references a real project workspace you used earlier this week.',
+                    'The sign-in prompt appears inside a familiar browser-based identity screen.'
+                ],
+                answer: 0,
+                explanation: 'The highest-risk detail is the attempt to bypass a control through a message-driven workflow instead of a trusted admin path.'
+            },
+            {
+                topic: 'Shared workspace abuse',
+                prompt: 'A collaborator says a protected folder cannot be opened until you re-accept a trust relationship for the workspace. What is the safest interpretation first?',
+                options: [
+                    'A shared workspace problem is being turned into a request for new trust you did not initiate.',
+                    'The collaboration platform probably refreshed its internal trust agreements overnight.',
+                    'The folder owner likely changed a setting that now requires everyone to rejoin manually.',
+                    'The safest move is to continue if the folder name and team labels still look correct.'
+                ],
+                answer: 0,
+                explanation: 'Attackers often reframe a normal workspace issue into a fake trust or access ceremony that collects sensitive actions.'
+            },
+            {
+                topic: 'Policy mismatch',
+                prompt: 'An access page asks for approval because "zero-trust is causing friction," yet your organization normally routes those requests through a ticketed admin process. What should guide your decision?',
+                options: [
+                    'The familiar zero-trust wording because policy changes often create temporary workarounds.',
+                    'The usual internal process because attackers rely on exceptions that skip the real workflow.',
+                    'The urgency of the blocked task because business impact should outweigh process delays.',
+                    'The legitimacy of the interface because phishing pages rarely mimic enterprise access tools well.'
+                ],
+                answer: 1,
+                explanation: 'When the request contradicts the known internal process, the process mismatch matters more than polished security language.'
+            },
+            {
+                topic: 'Scope escalation',
+                prompt: 'A one-time exception page says it will only restore one blocked file, but the permission request would grant broad directory access. What is the strongest conclusion?',
+                options: [
+                    'The broad permission suggests the action does not match the narrow business reason being offered.',
+                    'The platform may need a wider grant temporarily before it narrows access after synchronization.',
+                    'The request is probably standard because enterprise tools often present broad labels for simple tasks.',
+                    'The mismatch is acceptable if the request expires automatically at the end of the session.'
+                ],
+                answer: 0,
+                explanation: 'A narrow stated purpose paired with a broad permission grant is a classic mismatch that should trigger verification.'
+            },
+            {
+                topic: 'Best expert response',
+                prompt: 'Which response best handles a sophisticated zero-trust themed phishing attempt without creating more risk?',
+                options: [
+                    'Verify the block through the real admin route and refuse message-driven exception links.',
+                    'Use the exception flow once, then revoke the access if the result feels suspicious later.',
+                    'Ask the sender to shorten the process so the emergency work can resume more quickly.',
+                    'Approve the request from a low-privilege account first to limit any possible damage.'
+                ],
+                answer: 0,
+                explanation: 'The safest move is to confirm the issue through the real administrative route instead of using a link supplied inside the message.'
+            }
+        ]
+    },
+    'live-session-hijacks': {
+        title: 'Live Session Hijacks',
+        description: 'Analyze real-time prompts, re-auth flows, and sign-in interruptions that steal active access.',
+        questions: [
+            {
+                topic: 'Mid-session interruption',
+                prompt: 'While already signed in, a page abruptly says your session risk changed and you must re-enter credentials before the current work can be saved. What matters most?',
+                options: [
+                    'A sudden re-auth demand during pressure is a common way to exploit an active session.',
+                    'A live session warning is normal because risk engines constantly revise user trust levels.',
+                    'The save pressure is acceptable when the message appears inside a known cloud platform.',
+                    'The safest move is to comply if the screen keeps the same branding and tenant name.'
+                ],
+                answer: 0,
+                explanation: 'Live-session hijacks often appear in moments of urgency and use continuity with the real session to lower suspicion.'
+            },
+            {
+                topic: 'Prompt fatigue',
+                prompt: 'A phone approval request appears seconds after a message tells you to expect a "security challenge" while reviewing a document. Which clue should carry the most weight?',
+                options: [
+                    'The pre-conditioning message may be trying to normalize an approval you did not start.',
+                    'The close timing proves the document platform is connected correctly to your identity system.',
+                    'The security challenge is more credible because it arrived through a separate device channel.',
+                    'The request is probably harmless if the notification text contains your real email address.'
+                ],
+                answer: 0,
+                explanation: 'Attackers often prepare the victim with a believable message so an unexpected approval prompt feels expected.'
+            },
+            {
+                topic: 'Session continuity trap',
+                prompt: 'A re-auth page returns you to the exact document view you were using right after sign-in. Why can that still be dangerous?',
+                options: [
+                    'Restoring the same context can be part of a relay flow built to hide the credential capture.',
+                    'Returning to the same page confirms that the original sign-in interruption was legitimate.',
+                    'The smooth restoration means the page is using the same backend session as the real service.',
+                    'The safest move is to trust the flow because attackers usually cannot preserve session context.'
+                ],
+                answer: 0,
+                explanation: 'A convincing phishing relay can return the user to the original context precisely to remove suspicion after the theft.'
+            },
+            {
+                topic: 'Repeated challenge loop',
+                prompt: 'A flow asks for password, then code, then another approval, even though the first challenge should have completed the login. What is the best conclusion?',
+                options: [
+                    'The flow may be harvesting several factors because the repeated challenges exceed the stated goal.',
+                    'The platform is likely refreshing multiple security layers because the account has higher privileges.',
+                    'The second approval probably exists because the first prompt did not sync across all devices yet.',
+                    'The repeated requests are acceptable if each screen keeps the same logo and policy language.'
+                ],
+                answer: 0,
+                explanation: 'Repeated factor collection beyond what the task should require is a strong sign of a multi-step hijack attempt.'
+            },
+            {
+                topic: 'Best defensive move',
+                prompt: 'Which response best disrupts a real-time session hijack once you notice the flow feels wrong?',
+                options: [
+                    'Close the flow, return through a trusted bookmark, and check recent sign-in activity directly.',
+                    'Finish the current prompt quickly so you can inspect the account after the urgent task ends.',
+                    'Reply to the sender and ask whether the second approval was expected before deciding further.',
+                    'Switch to a private browser window and restart the same process to compare the screens again.'
+                ],
+                answer: 0,
+                explanation: 'Breaking the live flow and checking the account from a trusted entry point is safer than continuing inside the attacker-controlled sequence.'
+            }
+        ]
+    },
+    'delegated-access-fraud': {
+        title: 'Delegated Access Fraud',
+        description: 'Review approval rights, shared accounts, and delegated permissions used to widen compromise.',
+        questions: [
+            {
+                topic: 'Delegate request mismatch',
+                prompt: 'A message claims a senior staff member temporarily delegated you access rights for a single review task, but the approval screen would let you act across several unrelated resources. What stands out?',
+                options: [
+                    'The permission scope is too broad for the small task being used to justify the request.',
+                    'The request is more trustworthy because it comes from a higher-privilege delegated workflow.',
+                    'The extra resources are probably bundled because the platform groups related approvals together.',
+                    'The safest move is to proceed if the named staff member usually handles similar access reviews.'
+                ],
+                answer: 0,
+                explanation: 'A small stated purpose should not require a broad delegation grant across unrelated resources.'
+            },
+            {
+                topic: 'Shared mailbox abuse',
+                prompt: 'A shared mailbox notice asks you to reconnect access by approving a link from another team because the owner is currently unavailable. What is the best first reading?',
+                options: [
+                    'The request is using shared ownership to reduce accountability for a risky approval step.',
+                    'The mailbox owner probably set an emergency fallback that now routes through a nearby team.',
+                    'The access issue is likely legitimate because shared inboxes often break during staff absences.',
+                    'The reconnection is safe enough if the notice includes the correct display name and alias.'
+                ],
+                answer: 0,
+                explanation: 'Shared resources are useful phishing cover because responsibility feels blurred and no single owner is immediately confirming the action.'
+            },
+            {
+                topic: 'Approval relay',
+                prompt: 'One coworker asks you to approve on behalf of another because they are in a meeting, and the linked page already shows the target account preselected. Why is that risky?',
+                options: [
+                    'The preselected target can mask a permission handoff you did not independently verify.',
+                    'The coworker is helping reduce delay by routing the approval through someone available.',
+                    'The prefilled account proves the underlying delegation workflow is already authenticated.',
+                    'The action is low risk because the requester is only trying to save time during a meeting.'
+                ],
+                answer: 0,
+                explanation: 'Preselected targets and time-saving pressure can hide the fact that the approval path was never independently confirmed.'
+            },
+            {
+                topic: 'Delegation versus impersonation',
+                prompt: 'A request insists it is not asking for credentials, only for delegated approval to "speed up handling." What should you remember?',
+                options: [
+                    'Delegated approvals can be just as dangerous as credential theft when they expand attacker reach.',
+                    'Approvals are safer than passwords because delegated actions remain tied to your real identity.',
+                    'The request is lower risk because it avoids collecting any secret or one-time verification code.',
+                    'Delegated access is acceptable when the message explains how the business delay would be resolved.'
+                ],
+                answer: 0,
+                explanation: 'Attackers do not always need passwords directly if they can trick someone into granting access or acting on their behalf.'
+            },
+            {
+                topic: 'Best escalation path',
+                prompt: 'Which response is strongest when a delegation-themed request seems plausible but the approval scope feels wider than expected?',
+                options: [
+                    'Confirm the business need with the true owner and use the official approval route only.',
+                    'Approve it once, then ask the owner to review the delegation history after the task ends.',
+                    'Reject the current link but ask the same sender to issue a shorter and simpler request instead.',
+                    'Use a secondary account first so the delegated workflow cannot affect your main workspace.'
+                ],
+                answer: 0,
+                explanation: 'A direct confirmation with the true owner and the official workflow is safer than negotiating inside the suspicious request chain.'
+            }
+        ]
+    },
+    'forensic-cover-stories': {
+        title: 'Forensic Cover Stories',
+        description: 'Break down fake investigation trails, evidence requests, and incident narratives meant to disarm checks.',
+        questions: [
+            {
+                topic: 'Investigation framing',
+                prompt: 'A message says an internal forensic review found traces connected to your account, so you must upload logs and verify your sign-in details through a secure case portal. What is the strongest warning sign?',
+                options: [
+                    'The incident story is being used to justify a portal that requests information through an unverified route.',
+                    'The forensic terminology makes the request more credible because it sounds specific and technical.',
+                    'The secure case portal is likely legitimate because investigations usually centralize evidence gathering.',
+                    'The message is safer if it includes dates, timestamps, and references to recent activity patterns.'
+                ],
+                answer: 0,
+                explanation: 'A detailed investigation narrative can still be phishing if it funnels you into an untrusted collection portal.'
+            },
+            {
+                topic: 'Evidence urgency',
+                prompt: 'A supposed response lead says evidence must be preserved immediately, so you should not contact local support until after you submit the requested material. Why is that dangerous?',
+                options: [
+                    'The isolation rule tries to keep you inside the attacker narrative and away from trusted verification.',
+                    'Evidence collection often requires secrecy because too many teams could overwrite useful traces.',
+                    'Local support is probably excluded because the case belongs to a higher and more specialized team.',
+                    'The preservation urgency is acceptable if the response lead uses the correct department naming style.'
+                ],
+                answer: 0,
+                explanation: 'A request that blocks independent verification is a major warning sign even when it uses incident-response language.'
+            },
+            {
+                topic: 'Attachment credibility',
+                prompt: 'An attachment contains believable screenshots of login history and claims they prove compromise, but the next step is a linked revalidation form. What should drive your decision?',
+                options: [
+                    'The demanded action matters more because convincing evidence can be staged to force a bad next step.',
+                    'The screenshots make the compromise story stronger because attackers rarely include usable proof.',
+                    'The form is probably legitimate if the evidence file uses real dates and recognizable account fields.',
+                    'The response should depend on whether the screenshots look recent and technically consistent enough.'
+                ],
+                answer: 0,
+                explanation: 'A believable evidence package can still be bait if it leads to a credential or approval trap.'
+            },
+            {
+                topic: 'Case portal mismatch',
+                prompt: 'A case page asks for file uploads, account confirmation, and a backup contact method, even though the message claimed the investigation was only about one suspicious sign-in. What does that suggest?',
+                options: [
+                    'The portal is collecting broader access than the stated incident scope reasonably requires.',
+                    'The investigation is probably expanding because response teams often gather everything at once.',
+                    'The backup contact field is harmless because investigations need multiple communication options.',
+                    'The portal is normal if the page explains each field with formal incident-handling language.'
+                ],
+                answer: 0,
+                explanation: 'When the requested data expands beyond the described incident scope, the portal may be harvesting information rather than investigating.'
+            },
+            {
+                topic: 'Safest expert habit',
+                prompt: 'Which habit best protects you from a well-written forensic cover story that feels specific and urgent?',
+                options: [
+                    'Initiate contact with the real security team through a known channel before sharing anything.',
+                    'Review the evidence carefully first because technical detail is the clearest trust signal.',
+                    'Comply with the first step only, then decide whether the later requests still feel suspicious.',
+                    'Wait for a second message because genuine investigations usually send several official reminders.'
+                ],
+                answer: 0,
+                explanation: 'Independent contact through a known security channel is safer than trusting the case narrative or the collection portal inside the message.'
+            }
+        ]
+    },
+    'approval-chain-poisoning': {
+        title: 'Approval Chain Poisoning',
+        description: 'Test requests that abuse escalations, sign-off loops, and layered approvals to seem legitimate.',
+        questions: [
+            {
+                topic: 'Layered endorsement',
+                prompt: 'An approval request appears to include notes from finance, procurement, and operations, all nudging you toward the same linked confirmation page. What is the best interpretation?',
+                options: [
+                    'Several endorsements can be staged together to create false legitimacy around one risky action.',
+                    'Cross-team notes make the request safer because multiple departments would catch a fake process.',
+                    'The request is probably legitimate because attackers usually do not imitate several teams at once.',
+                    'The page is acceptable if the listed teams match the kind of purchase being discussed there.'
+                ],
+                answer: 0,
+                explanation: 'A chain of endorsements can be part of the deception rather than proof that the request is real.'
+            },
+            {
+                topic: 'Sign-off fatigue',
+                prompt: 'A thread says only one final sign-off remains, and that sign-off requires you to authenticate through a special approval portal outside the normal workflow. What should concern you most?',
+                options: [
+                    'The last-step framing is being used to push a new authentication path outside the normal process.',
+                    'The final sign-off is naturally more sensitive and often uses a more secure external approval page.',
+                    'The message is safer because it waits until the end of the process before asking for confirmation.',
+                    'The portal is probably valid if the approval references previous real steps from the same project.'
+                ],
+                answer: 0,
+                explanation: 'Attackers often wait until the process feels nearly complete before inserting the malicious approval step.'
+            },
+            {
+                topic: 'Approval chain mismatch',
+                prompt: 'A request claims all earlier approvers already cleared it, but none of the referenced approval IDs can be found in the actual system. What does that indicate?',
+                options: [
+                    'The request may be borrowing the language of governance while bypassing the real approval records.',
+                    'The IDs probably disappeared because completed approvals are archived before the last sign-off.',
+                    'The process is still safe because the human approver names match people from the real departments.',
+                    'The missing IDs matter less if the request still explains the business reason in full detail.'
+                ],
+                answer: 0,
+                explanation: 'When a request cites a process trail that cannot be verified in the actual system, the approval story itself becomes unreliable.'
+            },
+            {
+                topic: 'Escalation pressure',
+                prompt: 'A note warns that rejecting the current link will restart the full chain and delay an urgent deadline for several teams. Why is that effective phishing pressure?',
+                options: [
+                    'It turns process cost and team inconvenience into leverage for unsafe approval behavior.',
+                    'It proves the approval chain is real because only real workflows create multi-team disruption.',
+                    'It reduces suspicion because the sender is transparent about the consequences of a rejection.',
+                    'It makes the request lower risk because attackers rarely understand internal process bottlenecks.'
+                ],
+                answer: 0,
+                explanation: 'Phishing often weaponizes delay, inconvenience, and fear of blocking others to push risky approval actions.'
+            },
+            {
+                topic: 'Strongest response',
+                prompt: 'Which response best handles a poisoned approval chain when the process details feel partly real but the final action path is off?',
+                options: [
+                    'Pause the chain and verify it inside the real approval system before acting on any link.',
+                    'Approve the request if only the last screen seems unusual and the earlier details still match.',
+                    'Ask the sender to move the same approval link into a fresh thread with cleaner formatting.',
+                    'Wait for a senior approver to remind you again because that would make the final step clearer.'
+                ],
+                answer: 0,
+                explanation: 'Verification should happen inside the real approval system, not inside the suspicious chain that is asking for the action.'
+            }
+        ]
+    },
+    'adaptive-impersonation-loops': {
+        title: 'Adaptive Impersonation Loops',
+        description: 'Handle attackers who change tone, role, and pressure as your skepticism starts to rise.',
+        questions: [
+            {
+                topic: 'Role shifting',
+                prompt: 'A sender starts as support, then follows up as compliance, then later writes as a manager forwarding the same issue. What should you infer first?',
+                options: [
+                    'The changing roles may be an adaptive script designed to overcome each layer of your skepticism.',
+                    'Several teams are probably involved because the issue has become more serious over time.',
+                    'The thread is more trustworthy because each new role adds another independent perspective.',
+                    'The escalation is normal if each message keeps the same ticket reference and department tone.'
+                ],
+                answer: 0,
+                explanation: 'Adaptive impersonation often changes the messenger when the original story fails to secure compliance.'
+            },
+            {
+                topic: 'Tone adjustment',
+                prompt: 'After you ignore the first urgent message, the next one becomes calmer, more detailed, and more respectful while asking for the same risky action. Why is that still suspicious?',
+                options: [
+                    'The calmer tone may be a refinement tactic, not proof that the underlying request is safer.',
+                    'The better wording shows the earlier message was just poorly written by a legitimate sender.',
+                    'The respectful follow-up is more credible because attackers usually stay aggressive throughout.',
+                    'The request is safer if the second message includes additional business context and courtesy.'
+                ],
+                answer: 0,
+                explanation: 'Attackers adjust tone when urgency fails, but the risky destination or action often remains unchanged.'
+            },
+            {
+                topic: 'Feedback exploitation',
+                prompt: 'You ask one clarifying question, and the next reply directly addresses that concern while steering you back to the same approval page. What is the key lesson?',
+                options: [
+                    'A responsive answer can still be scripted to remove friction without changing the actual threat.',
+                    'The specific reply proves the sender has real knowledge of the workflow and should be trusted.',
+                    'The page is now safer because the concern was answered before any credentials were requested.',
+                    'The exchange becomes legitimate once the sender adapts the explanation to your exact question.'
+                ],
+                answer: 0,
+                explanation: 'Good phishing adapts to your questions precisely so you feel heard while still moving toward the attacker goal.'
+            },
+            {
+                topic: 'Multi-channel persistence',
+                prompt: 'The same issue appears by email, then chat, then text, each time with a slightly different explanation but the same final link. What should matter most?',
+                options: [
+                    'The repeated destination matters more than the changing explanations across channels.',
+                    'The multi-channel follow-up confirms the issue because real teams use every path when urgent.',
+                    'The different wording lowers risk because attackers normally reuse identical language each time.',
+                    'The safest move is to trust the channel that sounds the most formal and internally specific.'
+                ],
+                answer: 0,
+                explanation: 'Changing explanations do not make the request safer when every version points back to the same risky destination.'
+            },
+            {
+                topic: 'Best expert defense',
+                prompt: 'Which habit most reliably defeats adaptive impersonation once the attacker starts changing style to match your reactions?',
+                options: [
+                    'Judge the requested action by trusted process and destination, not by the sender’s changing tone.',
+                    'Keep asking more questions until the attacker eventually gives an obviously inconsistent answer.',
+                    'Wait for the most senior identity used in the chain before deciding how much to trust it.',
+                    'Continue the conversation from one channel only so the sender cannot vary the message format.'
+                ],
+                answer: 0,
+                explanation: 'The safest anchor is the trusted process and destination, because tone and role can be adjusted to fit your reactions.'
+            }
+        ]
+    },
+    'supply-chain-shadowing': {
+        title: 'Supply Chain Shadowing',
+        description: 'Assess partner-linked requests that piggyback on real vendors, invoices, and workflow timing.',
+        questions: [
+            {
+                topic: 'Vendor familiarity trap',
+                prompt: 'A request references a real supplier, correct invoice style, and a believable renewal window, but the approval link routes through a new partner portal nobody mentioned before. What matters most?',
+                options: [
+                    'The new portal matters most because the risky action path changed even if the business details stayed real.',
+                    'The real supplier context should outweigh the portal change because attackers rarely match invoice timing so closely.',
+                    'The renewal window makes the request safer because vendor phishing usually arrives outside normal contract cycles.',
+                    'The invoice style is the strongest signal because copied branding is harder than building a fake portal quickly.'
+                ],
+                answer: 0,
+                explanation: 'The business context can be real while the action path is still attacker-controlled, so the new portal deserves the most scrutiny.'
+            },
+            {
+                topic: 'Shadow process',
+                prompt: 'A procurement contact says finance now wants confirmations through a supplier-side portal instead of the internal workflow to reduce delays. What is the safest reading?',
+                options: [
+                    'A parallel approval path may be a shadow process designed to bypass your known verification controls.',
+                    'A supplier-side portal is more trustworthy because it sits closer to the billing and fulfillment records.',
+                    'The process is likely real because cross-company workflows often replace slower internal approval systems.',
+                    'The request is acceptable if the portal uses HTTPS and includes the supplier branding you expect there.'
+                ],
+                answer: 0,
+                explanation: 'The biggest risk is the attempt to move you off the known workflow into a new approval path justified by convenience.'
+            },
+            {
+                topic: 'Thread inheritance',
+                prompt: 'An invoice follow-up appears inside a thread that previously contained legitimate vendor discussions, but the newest message changes the destination for document review. What should guide your decision?',
+                options: [
+                    'The changed destination matters more because inherited trust from an older thread can be abused.',
+                    'The older legitimate discussion should dominate because attackers usually start completely fresh threads instead.',
+                    'The mixed thread is probably safe because it contains enough historic context to reveal any obvious mismatch.',
+                    'The destination change is low risk if the requester keeps the same tone and project details as earlier there.'
+                ],
+                answer: 0,
+                explanation: 'Old thread context can be repurposed to lower suspicion, so a changed destination still needs independent verification.'
+            },
+            {
+                topic: 'Supplier urgency framing',
+                prompt: 'A vendor warning says shipment timing will slip unless you complete a portal verification today, yet the requested access would expose more than the shipment status. What is the strongest conclusion?',
+                options: [
+                    'The narrow shipping issue is being used to justify broader access than the stated need supports.',
+                    'The broader access may be standard because logistics and billing systems often connect behind one portal.',
+                    'The same-day pressure proves the supplier is dealing with a live operational issue rather than phishing.',
+                    'The safest move is to continue if the shipment number and project code both match your records there.'
+                ],
+                answer: 0,
+                explanation: 'A small operational issue should not require a broad grant of access or identity confirmation beyond the stated purpose.'
+            },
+            {
+                topic: 'Best pro response',
+                prompt: 'Which response best handles a supply-chain themed phishing case when the partner and timing both look convincing?',
+                options: [
+                    'Verify the request through the known internal owner or saved supplier contact before using any new portal.',
+                    'Use the portal once, then compare the invoice details afterward if anything feels inconsistent later.',
+                    'Reply inside the same thread and continue if the sender repeats the same invoice references correctly.',
+                    'Proceed from a less important workstation first because vendor-facing workflows usually involve lower account risk.'
+                ],
+                answer: 0,
+                explanation: 'The safest move is to verify the action through a trusted owner or saved supplier contact rather than the new portal in the message.'
+            }
+        ]
+    },
+    'federated-login-pivots': {
+        title: 'Federated Login Pivots',
+        description: 'Judge identity hops that move across SSO, tenants, and app handoffs to hide the real risk.',
+        questions: [
+            {
+                topic: 'SSO handoff mismatch',
+                prompt: 'A page begins with a normal SSO screen, then hands you to a second tenant-branded prompt asking for extra confirmation beyond the original app login. What should stand out?',
+                options: [
+                    'The second identity hop may be a pivot that extends the flow beyond the original sign-in purpose.',
+                    'A second tenant prompt is safer because federated systems often split trust decisions across providers.',
+                    'The flow is probably normal because enterprise apps rarely work through a single identity step only.',
+                    'The extra confirmation is expected if the second prompt still shows your correct organization domain.'
+                ],
+                answer: 0,
+                explanation: 'The danger is the extra identity pivot that asks for more trust than the original app access should require.'
+            },
+            {
+                topic: 'Tenant confusion',
+                prompt: 'A collaborator invite lands you in a real cloud service, but the sign-in flow quietly switches to an unfamiliar tenant before asking for approval. Why is that risky?',
+                options: [
+                    'The tenant switch can hide a trust transfer to a context you did not intend to authorize.',
+                    'The unfamiliar tenant is normal because shared workspaces often borrow the owner’s identity domain.',
+                    'The approval is safer because the service stayed inside the same cloud platform the whole time.',
+                    'The switch is low risk if the app name and document title still match the original invitation.'
+                ],
+                answer: 0,
+                explanation: 'A federated service can still be abused if the tenant context changes in a way that expands trust without clear justification.'
+            },
+            {
+                topic: 'Prompt sequencing',
+                prompt: 'A sign-in flow asks for account selection, then password, then tenant consent, then another password-like field labeled "reauthorization token." What is the best reading?',
+                options: [
+                    'The layered prompts may be using federated complexity to hide unnecessary credential collection.',
+                    'The flow is likely secure because extra identity steps usually mean stronger protection was applied.',
+                    'The token field is normal because federated apps often rename passwords for downstream providers.',
+                    'The repeated prompts are acceptable if each screen uses polished branding and consistent typography.'
+                ],
+                answer: 0,
+                explanation: 'Federated complexity can make users tolerate unnecessary prompts, which is exactly why attackers exploit it.'
+            },
+            {
+                topic: 'App legitimacy versus action path',
+                prompt: 'An invitation comes from a real app marketplace entry, but the final approval screen grants permissions to a differently named service principal. What should you trust least?',
+                options: [
+                    'The mismatch between the app you expected and the entity receiving consent at the end.',
+                    'The marketplace listing because reputable app directories rarely include any risky integrations there.',
+                    'The permission detail because legitimate apps often use internal service names that look unfamiliar.',
+                    'The final consent step because it appears later than the original marketplace context and feels separate.'
+                ],
+                answer: 0,
+                explanation: 'The receiving entity at the final approval step matters more than the reassuring entry point used to bring you there.'
+            },
+            {
+                topic: 'Best pro response',
+                prompt: 'Which response best disrupts a federated-login phishing case that hides behind real identity infrastructure?',
+                options: [
+                    'Restart from a trusted app entry point and verify tenant, app, and consent target before approving.',
+                    'Proceed until the last consent screen so you can compare every identity hop in one continuous flow.',
+                    'Approve the request if the first login screen was real because later pivots usually inherit that trust.',
+                    'Use the flow from a guest browser session first because federated prompts are easier to isolate there.'
+                ],
+                answer: 0,
+                explanation: 'A trusted entry point and careful verification of the tenant and consent target is safer than continuing inside a suspicious pivot chain.'
+            }
+        ]
+    },
+    'trust-graph-manipulation': {
+        title: 'Trust Graph Manipulation',
+        description: 'Read relationship-based attacks that misuse old contacts, overlapping teams, and shared history.',
+        questions: [
+            {
+                topic: 'Relationship layering',
+                prompt: 'A request does not come from your closest teammate, but from someone two relationships away who references shared people, projects, and past decisions accurately. What is the main risk?',
+                options: [
+                    'Accurate social context can be used to simulate trust even when the requester is outside your normal verification path.',
+                    'A wider relationship chain is safer because several overlapping connections make impersonation much harder to sustain.',
+                    'The request is likely legitimate because outsiders usually cannot map project and people details this precisely.',
+                    'The shared context is enough to trust the request if the action stays inside tools your organization already uses.'
+                ],
+                answer: 0,
+                explanation: 'The core risk is using real relationship data to lower suspicion while avoiding the direct trusted owner of the request.'
+            },
+            {
+                topic: 'Borrowed familiarity',
+                prompt: 'A sender references an old internal joke and prior meeting outcome before asking for a sensitive approval step. Why is that still dangerous?',
+                options: [
+                    'Personal familiarity can be borrowed to smooth over a request that still needs proper verification.',
+                    'Shared personal context makes the request safer because attackers focus on technical detail instead of social memory.',
+                    'The meeting reference proves the sender belongs to the actual group handling the approval in question.',
+                    'The approval is lower risk if the message uses the same phrasing your team normally uses with each other.'
+                ],
+                answer: 0,
+                explanation: 'Even genuine social familiarity does not replace the need to verify a risky action through the right process.'
+            },
+            {
+                topic: 'Network overlap trap',
+                prompt: 'A colleague from another department asks for help "because we both report into the same leadership chain" and sends a link to confirm a decision. What should guide you?',
+                options: [
+                    'Leadership overlap is weak trust evidence compared with the actual process behind the requested action.',
+                    'The shared reporting line makes the request more legitimate because both teams answer to the same authority.',
+                    'The link is probably safe because cross-department approvals often depend on loose organizational alignment.',
+                    'The message is acceptable if it references the right leader names and the timing fits a real reporting cycle.'
+                ],
+                answer: 0,
+                explanation: 'Organizational proximity is not the same as process legitimacy, especially when the request includes a risky link.'
+            },
+            {
+                topic: 'Trust graph overload',
+                prompt: 'A message stacks names of mutual contacts, related projects, and departmental dependencies until the request feels socially costly to question. What is happening?',
+                options: [
+                    'The sender may be using social density to discourage the exact verification the request still needs.',
+                    'The request is safer because a dense network of mutual contacts naturally reduces the chance of deception.',
+                    'The social detail is a sign of transparency because legitimate requests usually include all relationship context.',
+                    'The message becomes low risk if you personally recognize at least half of the people mentioned there.'
+                ],
+                answer: 0,
+                explanation: 'A dense trust graph can make skepticism feel impolite, which is exactly why it is effective in social-engineering attacks.'
+            },
+            {
+                topic: 'Best pro defense',
+                prompt: 'Which habit best defeats relationship-heavy phishing when the social context is detailed and believable?',
+                options: [
+                    'Route the request back to the true owner or system of record instead of trusting the relationship map itself.',
+                    'Ask one mutual contact for their opinion and proceed if they say the sender is probably legitimate.',
+                    'Judge the request mostly by how much shared history and cross-team detail the message can reproduce there.',
+                    'Continue if the request avoids asking for a password and only asks for one small confirmation action.'
+                ],
+                answer: 0,
+                explanation: 'The most reliable defense is to move the action back to the real owner or system of record rather than trusting social proximity.'
+            }
+        ]
+    },
+    'incident-command-spoofs': {
+        title: 'Incident Command Spoofs',
+        description: 'Handle crisis-style requests that imitate coordinated response teams, war rooms, and live escalation.',
+        questions: [
+            {
+                topic: 'War-room authority',
+                prompt: 'A crisis thread claims an active war room already validated the issue and now needs your quick confirmation through a side portal to keep containment moving. Which clue matters most?',
+                options: [
+                    'The side portal matters most because urgent command language can be used to bypass the real incident workflow.',
+                    'The war-room wording makes the request more credible because only real response teams use that coordination style.',
+                    'The containment urgency lowers risk because response teams must move faster than ordinary approval processes.',
+                    'The thread is likely safe if several incident roles are named consistently across the escalation messages there.'
+                ],
+                answer: 0,
+                explanation: 'Command language can be copied, but a new action path outside the trusted workflow is still a strong warning sign.'
+            },
+            {
+                topic: 'Containment theater',
+                prompt: 'A responder tells you a system cannot be isolated until you sign in and acknowledge a live mitigation plan from a link they sent privately. Why is that risky?',
+                options: [
+                    'The private sign-in request turns operational urgency into leverage for a suspicious access step.',
+                    'The private link is safer because responders often move sensitive containment work away from public channels.',
+                    'The mitigation plan is likely legitimate because incident responders need acknowledgements from several owners quickly.',
+                    'The sign-in is acceptable if the link arrives after a public thread already described the same incident there.'
+                ],
+                answer: 0,
+                explanation: 'A private sign-in step tied to containment pressure is a strong sign that the urgency is being weaponized.'
+            },
+            {
+                topic: 'Role choreography',
+                prompt: 'One person frames the threat, another confirms urgency, and a third sends the action link. What is the best conclusion?',
+                options: [
+                    'The role choreography may be staged to make the final link feel independently validated.',
+                    'The three-role pattern is safer because incident response naturally splits duties across different specialists.',
+                    'The action link is more trustworthy because it was not sent by the person who raised the original alarm.',
+                    'The sequence is low risk if each participant uses the correct terminology for their supposed incident role.'
+                ],
+                answer: 0,
+                explanation: 'Splitting the story across several roles can create false consensus around the one step the attacker wants you to take.'
+            },
+            {
+                topic: 'Command override',
+                prompt: 'A message says standard approval gates are suspended during the incident and only the command link should be used for immediate action. What should you remember?',
+                options: [
+                    'Crisis language is often used to justify bypassing the very controls that would expose the phish.',
+                    'Approval suspension is normal because emergencies always replace formal controls with faster manual paths.',
+                    'The command link is probably legitimate if it arrives after an alert that mentioned real impacted systems.',
+                    'The request becomes safer when it explicitly admits that normal controls are being skipped there.'
+                ],
+                answer: 0,
+                explanation: 'Attackers frequently claim normal rules are suspended because verification steps are exactly what they want removed.'
+            },
+            {
+                topic: 'Best pro response',
+                prompt: 'Which response best handles a convincing incident-command spoof when the scenario feels high stakes and time pressured?',
+                options: [
+                    'Verify the incident through the known response channel and use only the established command workflow.',
+                    'Complete the first requested action quickly so the response team can keep moving, then verify later.',
+                    'Reply in-thread and ask for one more sign of legitimacy before deciding whether to use the link there.',
+                    'Follow the command link if the message names systems that are genuinely important to your environment.'
+                ],
+                answer: 0,
+                explanation: 'The safest path is to anchor on the known response channel and trusted workflow rather than the urgent link in the message.'
+            }
+        ]
+    },
+    'recovery-delegation-loops': {
+        title: 'Recovery Delegation Loops',
+        description: 'Analyze chained recovery requests that mix approval handoffs, resets, and identity verification.',
+        questions: [
+            {
+                topic: 'Recovery handoff',
+                prompt: 'A recovery request starts with a locked-account warning, then shifts into a delegated approval flow because the owner is supposedly unavailable. What is the main danger?',
+                options: [
+                    'The recovery story may be a pretext for shifting control to someone who was never meant to authorize it.',
+                    'The delegated step is safer because unavailable owners often need trusted backups to restore access quickly.',
+                    'The handoff is probably legitimate because recovery processes commonly change path when the primary user is absent.',
+                    'The request is low risk if the owner name, account alias, and recovery deadline all match known records there.'
+                ],
+                answer: 0,
+                explanation: 'Changing from recovery into delegated approval can quietly expand the attack from account restoration into unauthorized access transfer.'
+            },
+            {
+                topic: 'Looped verification',
+                prompt: 'A flow says the first recovery attempt failed, so you must confirm identity again through a second page sent by another team. What should stand out?',
+                options: [
+                    'The second page may be using failure as a reason to collect another layer of trust or access.',
+                    'The second team makes the recovery safer because independent verification reduces the chance of error.',
+                    'The repeat check is normal because recovery systems often escalate to manual review after one failed step.',
+                    'The extra page is acceptable if it arrives quickly and reuses the same case number from the first notice.'
+                ],
+                answer: 0,
+                explanation: 'Attackers often turn a supposed failed recovery into justification for another credential or approval collection step.'
+            },
+            {
+                topic: 'Owner absence pressure',
+                prompt: 'A message says the real owner cannot respond soon enough, so a backup approver must finish the recovery chain today. Why is that effective phishing pressure?',
+                options: [
+                    'It uses urgency plus unavailable ownership to make unsafe delegation feel like the only practical option.',
+                    'It proves the recovery is legitimate because urgent access restoration always requires alternate approvers.',
+                    'The backup approver path is safer because it keeps the business moving despite temporary user absence.',
+                    'The request is more trustworthy if the message names the owner, backup, and expected downtime impact there.'
+                ],
+                answer: 0,
+                explanation: 'Unavailable ownership is powerful pressure because it makes bypassing direct verification seem unavoidable.'
+            },
+            {
+                topic: 'Recovery scope drift',
+                prompt: 'A reset request that began with mailbox access now asks you to approve identity updates affecting several linked services. What is the strongest conclusion?',
+                options: [
+                    'The scope has drifted beyond recovery into a broader takeover path that needs to be questioned.',
+                    'The wider service impact is normal because modern recovery systems unify several accounts in one flow.',
+                    'The approval remains safe because linked-service updates are just part of a complete reset operation.',
+                    'The request is acceptable if every service listed belongs to the same general organization environment.'
+                ],
+                answer: 0,
+                explanation: 'When a narrow recovery case expands into broad identity changes, the request may be moving toward full takeover rather than simple restoration.'
+            },
+            {
+                topic: 'Best pro defense',
+                prompt: 'Which habit best breaks a sophisticated recovery-delegation loop before it turns into an account takeover?',
+                options: [
+                    'Reconfirm the case through the official recovery channel and verify the true owner before any approval.',
+                    'Complete the minimum recovery step first so the locked user can regain access and sort details later.',
+                    'Use the delegated path only if the requester avoids asking for passwords or one-time codes directly.',
+                    'Wait for one more escalation message because legitimate recoveries usually grow clearer over time.'
+                ],
+                answer: 0,
+                explanation: 'The strongest defense is to re-anchor the case in the official recovery channel and verify the true owner before approving anything.'
+            }
+        ]
+    },
+    'environment-poisoning-cases': {
+        title: 'Environment Poisoning Cases',
+        description: 'Break down scenarios where settings, tools, and context are subtly altered before the phish lands.',
+        questions: [
+            {
+                topic: 'Context shaping',
+                prompt: 'You notice a message feels unusually believable because recent settings, notifications, and app behavior all seem to support it. What is the expert concern?',
+                options: [
+                    'The environment itself may have been shaped first so the later phishing step feels more natural.',
+                    'The consistency across tools proves the message is part of a legitimate coordinated workflow there.',
+                    'The message is safer because attackers usually cannot influence enough surrounding context to feel realistic.',
+                    'The supporting signals matter more than the link destination because context is harder to fake than pages.'
+                ],
+                answer: 0,
+                explanation: 'Advanced attacks can alter or exploit surrounding context so the final phish appears to fit what the user is already seeing.'
+            },
+            {
+                topic: 'Notification pollution',
+                prompt: 'A suspicious approval request arrives shortly after several real notifications trained you to expect urgent admin prompts that day. Why is that dangerous?',
+                options: [
+                    'The real notifications may have primed you to accept a malicious prompt without the usual scrutiny.',
+                    'The sequence is safer because malicious prompts rarely appear close to real administrative notifications.',
+                    'The admin timing proves the approval request belongs to the same genuine maintenance event there.',
+                    'The prompt is lower risk if its wording is slightly different from the earlier notifications you saw.'
+                ],
+                answer: 0,
+                explanation: 'Priming through surrounding notifications can reduce skepticism and make a malicious prompt blend into the day’s expected noise.'
+            },
+            {
+                topic: 'Tool familiarity weaponized',
+                prompt: 'A fake page does not invent a new workflow, it only nudges you to use a familiar internal tool in a slightly different way than normal. What should you notice?',
+                options: [
+                    'A small deviation inside a trusted tool can be more dangerous than a completely unfamiliar page.',
+                    'A familiar tool is safer because attackers usually need new websites to capture credentials effectively.',
+                    'The workflow change is acceptable if the tool branding and navigation still match the real interface.',
+                    'The request is probably legitimate because subtle changes usually come from product updates rather than phishing.'
+                ],
+                answer: 0,
+                explanation: 'Minor deviations inside familiar tools are powerful because users often relax their scrutiny when the environment looks routine.'
+            },
+            {
+                topic: 'Sequence poisoning',
+                prompt: 'A message makes sense only because several earlier small events nudged you toward one expected action. What is the key lesson?',
+                options: [
+                    'Phishing can be designed as a sequence of setup steps rather than one obviously malicious message.',
+                    'The sequence proves legitimacy because coordinated events are difficult for attackers to align correctly.',
+                    'The final request is safe if each earlier event looked harmless enough on its own before the message.',
+                    'The setup pattern matters less than whether the final page uses HTTPS and proper organizational colors.'
+                ],
+                answer: 0,
+                explanation: 'Some attacks work by shaping expectations gradually, so judging only the final message can miss the broader manipulation.'
+            },
+            {
+                topic: 'Best pro response',
+                prompt: 'Which response best handles a case where the surrounding environment itself may be helping the phish feel legitimate?',
+                options: [
+                    'Step out of the current sequence and verify the request from a clean, trusted starting point.',
+                    'Continue carefully because environmental consistency usually means the request belongs to a real workflow.',
+                    'Focus only on the last message because earlier context is too indirect to matter in the decision there.',
+                    'Use the same path one more time later to see whether the environment still pushes you to the same action.'
+                ],
+                answer: 0,
+                explanation: 'The safest move is to break out of the manipulated sequence and verify the action from a trusted independent starting point.'
+            }
+        ]
+    },
+    'cross-tenant-bleedthrough': {
+        title: 'Cross-Tenant Bleedthrough',
+        description: 'Judge ultra-subtle tenant confusion cases where trust leaks between real shared environments.',
+        questions: [
+            {
+                topic: 'Shared boundary leak',
+                prompt: 'A workflow stays inside real cloud infrastructure, but one approval quietly grants trust to an adjacent tenant that only partially overlaps with the intended workspace. What is the key danger?',
+                options: [
+                    'A small tenant boundary shift can transfer trust farther than the business task ever required.',
+                    'A partially overlapping tenant is safer because shared infrastructure naturally reduces identity mismatch.',
+                    'The grant is probably legitimate because adjacent tenants often support one collaborative workstream.',
+                    'The approval is low risk if the destination still belongs to the same broad vendor ecosystem.'
+                ],
+                answer: 0,
+                explanation: 'The subtle shift in trust boundary matters more than the familiar infrastructure around it.'
+            },
+            {
+                topic: 'Trust bleed',
+                prompt: 'A user thinks they are restoring access to one shared app, but the consent chain also exposes profile and directory context to another tenant-controlled object. What should guide the decision?',
+                options: [
+                    'The extra trust target matters because mixed boundaries can hide a much broader exposure path.',
+                    'The access is acceptable because federated systems often bundle profile context with shared app login.',
+                    'The chain is safe if the app title and branding still match the original collaboration request.',
+                    'The directory exposure is harmless because it only appears after a legitimate app handoff there.'
+                ],
+                answer: 0,
+                explanation: 'When several trust targets are bundled into one flow, the least expected one often signals the real risk.'
+            },
+            {
+                topic: 'Near-correct environment',
+                prompt: 'Everything looks right except one environment detail feels slightly off, and the requested action would be high impact if mis-scoped. What is the safest rule?',
+                options: [
+                    'Treat a near-correct environment as high risk when one wrong boundary could expand access significantly.',
+                    'Proceed because near-correct environments usually reflect harmless admin variation rather than active abuse.',
+                    'Continue if the task urgency seems real enough to justify resolving the subtle mismatch later.',
+                    'Trust the flow if at least two technical indicators still confirm the core service is authentic there.'
+                ],
+                answer: 0,
+                explanation: 'A small environment mismatch can matter enormously when the action affects trust boundaries.'
+            },
+            {
+                topic: 'Collaboration mirage',
+                prompt: 'An invite relies on real cross-organization collaboration patterns, but the final trust grant lands just beyond the minimum needed scope. What should you conclude?',
+                options: [
+                    'Real collaboration context can still be used to normalize a trust grant that exceeds the actual need.',
+                    'The grant is legitimate because real collaboration always needs extra trust for future flexibility there.',
+                    'The flow is safer because attackers usually avoid nuanced cross-organization context this deep.',
+                    'The scope drift matters less if the invite references a real project and a believable document title.'
+                ],
+                answer: 0,
+                explanation: 'A believable collaboration story does not justify trust that exceeds the specific business need.'
+            },
+            {
+                topic: 'Legend response',
+                prompt: 'Which response best handles a suspected cross-tenant bleedthrough without relying on surface familiarity?',
+                options: [
+                    'Verify the exact tenant, target object, and minimum scope from a trusted admin or saved entry point.',
+                    'Approve the request once, then inspect the tenant relationship afterward if nothing obviously breaks.',
+                    'Continue if the platform remains inside a genuine provider ecosystem and avoids asking for passwords.',
+                    'Ask the sender to simplify the consent language so the cross-tenant flow becomes easier to read.'
+                ],
+                answer: 0,
+                explanation: 'The right defense is to validate the exact trust target and scope from a trusted path before approving.'
+            }
+        ]
+    },
+    'response-playbook-subversion': {
+        title: 'Response Playbook Subversion',
+        description: 'Break down attacks that twist familiar containment and recovery playbooks against the defender.',
+        questions: [
+            {
+                topic: 'Playbook inversion',
+                prompt: 'A message borrows the exact language of your incident playbook, but the requested action subtly skips the verification checkpoint normally used before containment. What matters most?',
+                options: [
+                    'The missing checkpoint matters most because borrowed playbook language can hide a dangerous shortcut.',
+                    'The request is safer because attackers rarely reproduce internal response wording this precisely.',
+                    'The containment step is legitimate because emergency actions often drop one checkpoint under time pressure.',
+                    'The playbook match is enough to trust the request if the named systems really are business critical there.'
+                ],
+                answer: 0,
+                explanation: 'The safest signal is whether the flow preserves the real checkpoint structure, not whether the language sounds familiar.'
+            },
+            {
+                topic: 'Containment abuse',
+                prompt: 'A responder says the account must be isolated immediately, and your normal validation should wait until after the urgent action succeeds. Why is that effective deception?',
+                options: [
+                    'It frames the protective control itself as the obstacle so you disable the very check that would catch the scam.',
+                    'It proves legitimacy because true containment always outruns administrative validation during an active case.',
+                    'The guidance is safe if the responder explains the business impact of waiting for ordinary review there.',
+                    'The request is lower risk because isolation actions usually expose less data than recovery or consent flows.'
+                ],
+                answer: 0,
+                explanation: 'A common trick is to portray verification as the thing preventing safety, even when skipping it creates the real danger.'
+            },
+            {
+                topic: 'Recovery camouflage',
+                prompt: 'A reset sequence follows your known response steps closely until one later stage asks for a manual approval route your team never uses in that scenario. What should you infer?',
+                options: [
+                    'The attacker may be hiding inside the playbook by changing only the one step that delivers access or approval.',
+                    'The change is probably legitimate because real incidents often create one-off exceptions near the end of recovery.',
+                    'The flow is safe because the earlier accurate steps prove the actor already knows the real response process.',
+                    'The manual approval is acceptable if the reset case number and event timeline still look technically coherent.'
+                ],
+                answer: 0,
+                explanation: 'High-end phishing often copies most of the routine and modifies only the step that gains control.'
+            },
+            {
+                topic: 'Authority through procedure',
+                prompt: 'Several messages do not sound emotional at all, but use calm procedural certainty to steer you into one unsafe step. Why is that dangerous?',
+                options: [
+                    'Procedure itself can create authority, making a harmful action feel responsible instead of suspicious.',
+                    'A calm procedural tone is safer because phishing depends mostly on urgency and emotional manipulation.',
+                    'The request is legitimate because formal language usually comes from trained responders, not attackers.',
+                    'The action is acceptable if the process map sounds detailed enough to match a real internal response flow.'
+                ],
+                answer: 0,
+                explanation: 'Advanced attacks do not always use panic; sometimes they weaponize calm process confidence instead.'
+            },
+            {
+                topic: 'Legend response',
+                prompt: 'Which response best defeats a playbook-subversion attempt when the procedure looks almost exactly right?',
+                options: [
+                    'Anchor on the required checkpoints of the real playbook and reject any message-driven shortcut around them.',
+                    'Complete the step if the process is at least ninety percent accurate and only the timing feels unusual there.',
+                    'Ask the sender for a cleaner summary and proceed once the flow becomes easier to compare with memory.',
+                    'Wait for a second responder to confirm the same step because duplicate procedure language increases trust.'
+                ],
+                answer: 0,
+                explanation: 'The defense is to preserve the real checkpoints rather than trusting the overall resemblance of the procedure.'
+            }
+        ]
+    },
+    'consent-laundering-rings': {
+        title: 'Consent Laundering Rings',
+        description: 'Analyze app approval flows that stay technically valid while hiding layered abuse paths.',
+        questions: [
+            {
+                topic: 'Valid but unsafe',
+                prompt: 'An app consent request is technically legitimate, signed, and hosted on a real platform, but the business reason feels thinner than the permissions being granted. What should drive your choice?',
+                options: [
+                    'The mismatch between business need and permission scope matters more than the technical validity of the flow.',
+                    'The request is safe because real platform consent screens and signed apps remove the usual phishing risk.',
+                    'The business reason is enough if the app operates in a category commonly used by your team already there.',
+                    'The grant is acceptable because layered permissions often look broader on screen than in real operation.'
+                ],
+                answer: 0,
+                explanation: 'A flow can be technically valid and still inappropriate or abusive if the scope exceeds the real need.'
+            },
+            {
+                topic: 'Scope laundering',
+                prompt: 'A harmless-looking app introduces a second integration later that inherits broad access through the original trust. Why is that hard to spot?',
+                options: [
+                    'The initial low-risk appearance can launder trust for later access the user never meant to authorize.',
+                    'The inherited access is normal because connected enterprise apps always share one trusted permission pool.',
+                    'The pattern is safe because later integrations still depend on the original platform safeguards to operate.',
+                    'The second integration is low risk if the first app has already been used by others in the organization there.'
+                ],
+                answer: 0,
+                explanation: 'The danger is not always the first consent itself, but the trust it enables for later linked behavior.'
+            },
+            {
+                topic: 'Indirect abuse',
+                prompt: 'No single permission looks catastrophic alone, but together they could support strong surveillance and future impersonation. What is the best conclusion?',
+                options: [
+                    'Combined permissions can be dangerous even when each individual line item looks ordinary on its own.',
+                    'The request is safe because platform review would block any permission set that could combine harmfully.',
+                    'The grant is acceptable if none of the permissions explicitly mention password access or account takeover.',
+                    'The risk is low because ordinary users should judge app consent only by the most alarming single scope.'
+                ],
+                answer: 0,
+                explanation: 'Sophisticated abuse often emerges from combinations of ordinary permissions rather than one dramatic request.'
+            },
+            {
+                topic: 'Trust relay',
+                prompt: 'A consent flow is recommended by a respected app already inside your environment, but the new target has a different owner and a looser business justification. What should stand out?',
+                options: [
+                    'Borrowed trust from one respected app can be used to normalize a weaker and riskier follow-on consent.',
+                    'The chain is safer because a respected app would not route users toward an untrustworthy follow-up there.',
+                    'The owner difference matters less if both apps still appear inside the same enterprise integration ecosystem.',
+                    'The request is acceptable because the first app has effectively pre-vetted the second one for your team.'
+                ],
+                answer: 0,
+                explanation: 'A trusted referral path does not remove the need to evaluate the new owner and business purpose independently.'
+            },
+            {
+                topic: 'Legend response',
+                prompt: 'Which response best handles a technically valid but business-questionable consent ring?',
+                options: [
+                    'Evaluate the minimum necessary scope and verified owner before granting any platform-valid consent.',
+                    'Approve it if every screen remains inside the official platform and no password is requested anywhere.',
+                    'Use the app briefly first and revoke it later if the resulting behavior feels broader than expected there.',
+                    'Continue if the recommendation came from another already trusted integration used by your organization.'
+                ],
+                answer: 0,
+                explanation: 'Technical validity is not enough; the owner, business need, and minimum scope still have to make sense.'
+            }
+        ]
+    },
+    'governance-theater-attacks': {
+        title: 'Governance Theater Attacks',
+        description: 'Spot requests that weaponize audits, committees, and policy optics to force unsafe action.',
+        questions: [
+            {
+                topic: 'Committee pressure',
+                prompt: 'A message claims a governance committee is already reviewing your delay and that one final confirmation link is needed before they can mark you compliant. What is the main warning sign?',
+                options: [
+                    'Governance pressure is being used to create urgency around an unsafe link-driven confirmation step.',
+                    'Committee escalation makes the request safer because policy bodies usually require stronger evidence before acting.',
+                    'The review is probably legitimate because attackers avoid using governance language that sounds dry and formal.',
+                    'The confirmation is acceptable if the committee title and policy references match real documents in your org.'
+                ],
+                answer: 0,
+                explanation: 'Governance language can make a bad action feel responsible, but the link-driven confirmation is still the real risk.'
+            },
+            {
+                topic: 'Audit optics',
+                prompt: 'A request focuses more on demonstrating compliance quickly than on explaining why the action is needed operationally. What should you infer?',
+                options: [
+                    'The message may be exploiting compliance optics to make a weak business reason feel mandatory.',
+                    'The action is safer because audit-facing tasks often prioritize documentation over technical explanation.',
+                    'The request is legitimate because compliance work naturally sounds more formal than operational work there.',
+                    'The weak operational reason matters less if the request references a credible audit window and deadline.'
+                ],
+                answer: 0,
+                explanation: 'When optics become the main driver, attackers may be using governance theater to bypass substantive scrutiny.'
+            },
+            {
+                topic: 'Policy citation abuse',
+                prompt: 'A message cites real policy sections accurately, but the action being requested does not actually follow the process defined there. What should you trust?',
+                options: [
+                    'The real process should outweigh the policy quotation because attackers can cite rules they do not intend to follow.',
+                    'The accurate citations are enough because only legitimate senders usually bother matching policy language so closely.',
+                    'The request is safe if the quoted policy sections are recent and still visible on the internal portal there.',
+                    'The process gap is low risk because policies often leave room for practical shortcuts during busy periods.'
+                ],
+                answer: 0,
+                explanation: 'Accurate policy citation does not prove the requested action is actually policy-compliant.'
+            },
+            {
+                topic: 'Status shame tactic',
+                prompt: 'The message hints that failure to act may make your team appear non-compliant in front of leadership, even though the requested action bypasses the normal review route. Why is that effective?',
+                options: [
+                    'It converts reputational pressure into leverage for a shortcut that your team would usually reject.',
+                    'It shows legitimacy because only real compliance teams care about leadership-facing status in that way.',
+                    'The reputational pressure is acceptable if the request arrives during a real reporting deadline there.',
+                    'The action is lower risk because status-oriented requests usually involve paperwork rather than access changes.'
+                ],
+                answer: 0,
+                explanation: 'Fear of appearing irresponsible can push people past the very process that would reveal the deception.'
+            },
+            {
+                topic: 'Legend response',
+                prompt: 'Which response best handles a governance-theater phishing attempt without getting trapped by policy optics?',
+                options: [
+                    'Validate the request inside the real governance workflow instead of complying with the message path.',
+                    'Approve it if the policy references are accurate and the sender uses the expected compliance vocabulary.',
+                    'Reply with a request for more documentation and continue if the message becomes more detailed afterward.',
+                    'Wait for leadership to repeat the request because that would confirm the governance escalation is real.'
+                ],
+                answer: 0,
+                explanation: 'The correct response is to go back to the actual governance workflow rather than follow the message path.'
+            }
+        ]
+    },
+    'identity-weathering-loops': {
+        title: 'Identity Weathering Loops',
+        description: 'Handle long-form attacks that slowly erode caution through repeated low-suspicion contact.',
+        questions: [
+            {
+                topic: 'Slow-burn conditioning',
+                prompt: 'A series of harmless-looking contacts over weeks gradually normalizes one identity, and only later introduces a risky request. What is the real attack pattern?',
+                options: [
+                    'The attacker is weathering your skepticism over time so the eventual request feels socially earned.',
+                    'The long timeline makes the request safer because phishing usually depends on short bursts of urgency.',
+                    'The identity is legitimate because long-term consistency is stronger evidence than any later process mismatch.',
+                    'The risky request is acceptable if earlier contacts never asked for anything sensitive before it appeared.'
+                ],
+                answer: 0,
+                explanation: 'Long-term familiarity can be manufactured so the final risky step feels deserved rather than suspicious.'
+            },
+            {
+                topic: 'Harmless precedents',
+                prompt: 'Several earlier interactions were genuine or low-risk, and now the next step asks for something much more consequential. Why is that dangerous?',
+                options: [
+                    'Past harmless interactions can create a precedent that hides a sudden jump in risk at the critical moment.',
+                    'The request is safer because attackers rarely invest time in several low-value steps before making a move.',
+                    'The escalation is normal because trust-based workflows naturally deepen after repeated successful exchanges.',
+                    'The change is acceptable if the new request still uses the same tone and conversational style as before.'
+                ],
+                answer: 0,
+                explanation: 'A gradual pattern of harmless steps can be exactly what makes a later high-risk ask easier to accept.'
+            },
+            {
+                topic: 'Consistency trap',
+                prompt: 'The sender’s identity never feels obviously wrong, but the request increasingly bends process as the relationship strengthens. What should guide you?',
+                options: [
+                    'Process integrity should guide you because consistent identity cues can still accompany a dangerous drift in asks.',
+                    'The request is legitimate because identity consistency matters more than small process changes over time there.',
+                    'The drift is low risk because trusted relationships often create shortcuts that save effort for both sides.',
+                    'The action is acceptable if the sender continues to reference shared history and prior successful exchanges.'
+                ],
+                answer: 0,
+                explanation: 'Even believable identity continuity should not justify a slow erosion of process safeguards.'
+            },
+            {
+                topic: 'Emotional inertia',
+                prompt: 'By the time the suspicious ask arrives, rejecting it feels awkward because so much normal interaction came first. Why is that powerful?',
+                options: [
+                    'The attacker is exploiting emotional inertia so social discomfort substitutes for real trust evidence.',
+                    'The discomfort is a sign the request is probably legitimate because authentic relationships naturally feel sticky.',
+                    'The ask is safer because awkwardness usually appears only when there is a real shared history between people.',
+                    'The situation is low risk if the request still avoids direct password or code collection there.'
+                ],
+                answer: 0,
+                explanation: 'Social discomfort can be weaponized so the victim avoids the verification that would break the spell.'
+            },
+            {
+                topic: 'Legend response',
+                prompt: 'Which habit best defeats an identity-weathering loop once the relationship feels familiar and established?',
+                options: [
+                    'Judge each risky action fresh against trusted process, not against the comfort built by previous contact.',
+                    'Accept the request if the relationship has been stable long enough to feel more human than procedural.',
+                    'Keep the relationship going but ask for one extra reassurance before taking the new step there.',
+                    'Proceed if the sender has never once used panic or authority pressure during the earlier interactions.'
+                ],
+                answer: 0,
+                explanation: 'Every high-risk action still has to stand on its own against the real process, regardless of prior familiarity.'
+            }
+        ]
+    },
+    'signal-fog-exploitation': {
+        title: 'Signal Fog Exploitation',
+        description: 'Untangle cases where many weak signals combine until the wrong action feels justifiable.',
+        questions: [
+            {
+                topic: 'No single smoking gun',
+                prompt: 'A case contains no single decisive red flag, but several moderate concerns align around one sensitive action. What is the strongest conclusion?',
+                options: [
+                    'The pattern of converging moderate risks can justify stopping even without one dramatic giveaway.',
+                    'The action is probably safe because serious phishing usually depends on at least one obvious signal there.',
+                    'The request is legitimate if no individual clue alone would be strong enough to support a firm rejection.',
+                    'The situation is low risk because uncertainty should be resolved in favor of workflow continuity first.'
+                ],
+                answer: 0,
+                explanation: 'Advanced cases often rely on uncertainty, so the combined risk pattern matters more than any single clue.'
+            },
+            {
+                topic: 'Cumulative ambiguity',
+                prompt: 'Each inconsistency seems explainable by itself, but together they create an uneasy picture around a high-impact approval. What should you prioritize?',
+                options: [
+                    'The cumulative picture matters more than giving every inconsistency its most charitable explanation.',
+                    'The approval is safe because independent explanations reduce the chance that the signals are connected.',
+                    'The request is legitimate if each separate clue has at least one plausible benign interpretation there.',
+                    'The safest move is to continue because ambiguity without certainty should not interrupt important work.'
+                ],
+                answer: 0,
+                explanation: 'When the action is high impact, the combined effect of several weak concerns is often enough reason to verify or stop.'
+            },
+            {
+                topic: 'Fog as strategy',
+                prompt: 'Why can an attacker benefit more from a fog of uncertainty than from an obvious dramatic lure?',
+                options: [
+                    'Uncertainty invites rationalization, making the victim finish the justification work for the attacker.',
+                    'A foggy case is safer because attackers depend on clarity to push users toward one exact response there.',
+                    'Ambiguity reduces risk because legitimate workflows are naturally more confusing than malicious ones.',
+                    'The strategy fails if the user notices at least one strong technical signal anywhere in the flow.'
+                ],
+                answer: 0,
+                explanation: 'A foggy scenario encourages the victim to explain away the concerns and keep moving.'
+            },
+            {
+                topic: 'Impact-sensitive judgment',
+                prompt: 'If the requested action could materially expose access or trust, how should uncertainty change your threshold?',
+                options: [
+                    'Higher impact should lower your tolerance for unresolved ambiguity before acting.',
+                    'Higher impact should raise your tolerance because important workflows are naturally more complex there.',
+                    'Impact matters less if the request stays within real infrastructure and a believable business setting.',
+                    'The action is acceptable when the uncertainty is mostly social rather than technical in appearance.'
+                ],
+                answer: 0,
+                explanation: 'The higher the downside, the less ambiguity you should tolerate before approving or complying.'
+            },
+            {
+                topic: 'Legend response',
+                prompt: 'Which response best handles a signal-fog case where many weak cues surround one risky action?',
+                options: [
+                    'Pause and verify from a trusted origin instead of forcing certainty inside the suspicious sequence.',
+                    'Proceed slowly because careful reading inside the same flow usually resolves most uncertainty there.',
+                    'Continue if the majority of visible signals still lean slightly toward legitimacy on balance overall.',
+                    'Wait for the sender to clarify the ambiguity because better wording often removes the real issue.'
+                ],
+                answer: 0,
+                explanation: 'The safest move is to step outside the fog and verify from a trusted starting point.'
+            }
+        ]
+    },
+    'trust-collapse-scenarios': {
+        title: 'Trust Collapse Scenarios',
+        description: 'Judge near-perfect cases where every familiar signal holds until one final trust boundary fails.',
+        questions: [
+            {
+                topic: 'Last-link failure',
+                prompt: 'A request survives domain checks, workflow checks, context checks, and relationship checks, but the final approval target is one level outside the exact trust boundary you expected. What should decide the outcome?',
+                options: [
+                    'The final trust boundary should decide the outcome because one wrong endpoint can invalidate the entire safe-looking chain.',
+                    'The request is safe because the many earlier correct signals outweigh a small mismatch at the very end there.',
+                    'The target drift is acceptable because real enterprise workflows often end one step outside the original context.',
+                    'The flow should be trusted if the final page still belongs to the same vendor and uses valid identity plumbing.'
+                ],
+                answer: 0,
+                explanation: 'Near-perfect flows often fail only at the final trust boundary, and that single failure still matters most.'
+            },
+            {
+                topic: 'Borrowed certainty',
+                prompt: 'Every earlier piece of evidence makes the final action feel inevitable, even though the last step cannot be independently justified on its own. What is the strongest conclusion?',
+                options: [
+                    'The earlier certainty may be borrowing trust for a final step that still lacks its own legitimate reason.',
+                    'The request is legitimate because strong upstream context usually settles whether the final action is safe there.',
+                    'The last step is low risk if the preceding chain was coherent enough to reduce the need for more verification.',
+                    'The safest choice is to continue because isolated doubt near the end usually comes from harmless interface variation.'
+                ],
+                answer: 0,
+                explanation: 'Apex-level phishing often uses perfect context to carry one unjustified final action across the line.'
+            },
+            {
+                topic: 'Terminal scope drift',
+                prompt: 'The business task appears narrow until the final confirmation introduces lasting access, not just temporary task completion. What should matter most?',
+                options: [
+                    'The lasting access matters most because final scope drift reveals the true risk hidden by the earlier task framing.',
+                    'The change is probably legitimate because lasting access is often needed to reduce repeated approval friction later.',
+                    'The request is safe if the task itself was real and the earlier workflow checkpoints all behaved normally there.',
+                    'The final grant is acceptable as long as the user journey never visibly left the expected product environment.'
+                ],
+                answer: 0,
+                explanation: 'When the ending scope becomes more durable than the stated task requires, the hidden objective is often broader access.'
+            },
+            {
+                topic: 'False inevitability',
+                prompt: 'Why can the most dangerous requests feel less suspicious precisely because they are the hardest to distinguish from normal work?',
+                options: [
+                    'They create a sense of inevitability, making scrutiny feel less reasonable even at the most critical step.',
+                    'They are safer because only legitimate enterprise flows can sustain that level of consistency end to end.',
+                    'They deserve trust because attackers usually rely on obvious pressure rather than long coherent workflows there.',
+                    'They are low risk if the only mismatch appears after the user has already crossed several earlier confirmations.'
+                ],
+                answer: 0,
+                explanation: 'The more inevitable a flow feels, the easier it becomes to stop evaluating the one step that matters most.'
+            },
+            {
+                topic: 'Apex response',
+                prompt: 'Which response best handles a trust-collapse scenario when almost every signal points toward legitimacy except the last boundary?',
+                options: [
+                    'Reject the final action until the exact target and minimum scope are independently verified from a trusted origin.',
+                    'Proceed because a single late-stage concern should not outweigh a fully coherent chain of earlier legitimacy signals.',
+                    'Complete the action once and monitor the resulting access later if the broader context still feels structurally sound.',
+                    'Ask the sender to restate the final step more clearly and continue if the explanation sounds technically precise.'
+                ],
+                answer: 0,
+                explanation: 'In apex scenarios, the exact final target still has to be independently justified no matter how convincing the lead-up felt.'
+            }
+        ]
+    },
+    'operator-blend-intrusions': {
+        title: 'Operator Blend Intrusions',
+        description: 'Handle attacks where human behavior, platform logic, and context cues align too well to doubt.',
+        questions: [
+            {
+                topic: 'Human plus system harmony',
+                prompt: 'A message, a system prompt, and a real operational deadline all point toward the same approval step with no obvious contradiction. Why is that especially dangerous?',
+                options: [
+                    'The harmony across people, platform, and timing can suppress doubt even when the final step is still wrong.',
+                    'The request is safer because attackers rarely synchronize human and system cues tightly enough to feel seamless there.',
+                    'The approval is legitimate because real deadlines and platform prompts would not naturally align inside a false flow.',
+                    'The flow should be trusted if each layer reinforces the same story without visible technical inconsistency.'
+                ],
+                answer: 0,
+                explanation: 'The most advanced attacks work precisely because every layer reinforces the same false action.'
+            },
+            {
+                topic: 'Blended authority',
+                prompt: 'The sender never demands anything dramatic, the platform never looks broken, and the workflow seems normal, but the resulting action would still widen trust significantly. What should guide you?',
+                options: [
+                    'The resulting trust expansion should guide you because calm delivery does not reduce the impact of the final action.',
+                    'The action is low risk because severe phishing almost always depends on visible urgency or platform breakage there.',
+                    'The request is legitimate if the surrounding behavior remains calm enough to avoid the usual social-engineering red flags.',
+                    'The flow is acceptable because normal workflow tone usually proves the action belongs to routine enterprise operations.'
+                ],
+                answer: 0,
+                explanation: 'A calm and seamless delivery can be more dangerous than panic because it lowers scrutiny around a high-impact step.'
+            },
+            {
+                topic: 'Seamless wrongness',
+                prompt: 'A flow feels too smooth to question, yet one small consequence would create durable cross-system access if you are wrong. What is the safest rule?',
+                options: [
+                    'Smoothness should never outweigh consequence when one mistake could create durable cross-system trust.',
+                    'The request is safe because high-friction actions are more suspicious than unusually seamless enterprise flows there.',
+                    'The flow is legitimate if no one part seems manipulative enough to justify interrupting the business task at hand.',
+                    'The approval should proceed as long as the seamlessness stays inside real infrastructure and known organizational context.'
+                ],
+                answer: 0,
+                explanation: 'When the downside is durable access expansion, smoothness is not a reason to stop checking.'
+            },
+            {
+                topic: 'Behavioral camouflage',
+                prompt: 'Which clue is easiest to overlook in an operator-blend intrusion because everything else feels coherent?',
+                options: [
+                    'A subtle mismatch between the action being justified and the authority actually needed to complete it.',
+                    'A professional tone because advanced attackers usually cannot maintain believable enterprise language there.',
+                    'A real deadline because legitimate operational timing rarely overlaps with identity and approval workflows.',
+                    'A known platform because trustworthy tools do not meaningfully increase the risk of phishing-like decision errors.'
+                ],
+                answer: 0,
+                explanation: 'The hardest clue is often the mismatch between the stated need and the authority being requested.'
+            },
+            {
+                topic: 'Apex response',
+                prompt: 'Which response best defeats an operator-blend intrusion that feels fully aligned with normal work?',
+                options: [
+                    'Evaluate the exact trust effect of the action from a clean independent standpoint before complying.',
+                    'Proceed because alignment across people, timing, and platform is stronger than a small unresolved concern there.',
+                    'Keep moving if the business deadline is real and the action appears reversible after the workflow completes.',
+                    'Ask one participant to confirm the step and continue if their answer still fits the blended overall story.'
+                ],
+                answer: 0,
+                explanation: 'The safest move is to step outside the blended experience and judge the trust effect independently.'
+            }
+        ]
+    },
+    'decision-fatigue-breaches': {
+        title: 'Decision Fatigue Breaches',
+        description: 'Break down elite pressure stacks that rely on ambiguity, speed, and mental exhaustion.',
+        questions: [
+            {
+                topic: 'Cumulative strain',
+                prompt: 'A case arrives after several real interruptions, multiple moderate-risk choices, and just enough urgency to discourage one more review. Why is that powerful?',
+                options: [
+                    'Decision fatigue lowers resistance, making a merely plausible action feel acceptable when scrutiny is depleted.',
+                    'The request is safer because attackers prefer sharp single-step pressure over long noisy decision environments there.',
+                    'The action is legitimate because real operational strain usually produces exactly this kind of messy workflow context.',
+                    'The final choice should be trusted if every earlier interruption had at least some genuine business basis behind it.'
+                ],
+                answer: 0,
+                explanation: 'Exhaustion changes the user’s threshold, so a risky action can pass simply because the mind wants closure.'
+            },
+            {
+                topic: 'Urgency without panic',
+                prompt: 'The request is not truly panicked, only just urgent enough that pausing feels costly after a long sequence of work. What should you infer?',
+                options: [
+                    'The attacker may be calibrating pressure precisely to exploit fatigue without triggering obvious alarm cues.',
+                    'The request is legitimate because harmful urgency usually appears in louder and more dramatic language there.',
+                    'The action is safe if the pressure stays moderate enough to feel consistent with normal enterprise operations.',
+                    'The situation is low risk because fatigue-based doubt matters less than the visible professionalism of the flow.'
+                ],
+                answer: 0,
+                explanation: 'Advanced manipulation often uses just enough urgency to close off reflection without looking theatrical.'
+            },
+            {
+                topic: 'Exhausted rationalization',
+                prompt: 'You notice yourself wanting the request to be legitimate because rejecting it would require more analysis and more delays. Why is that a warning sign?',
+                options: [
+                    'The desire for closure can become part of the attacker’s leverage, substituting comfort for real verification.',
+                    'The request is safer because fatigue usually makes people overcautious rather than more vulnerable there.',
+                    'The choice is acceptable if the extra analysis would probably reach the same answer after only a small delay.',
+                    'The action should proceed because efficient judgment under pressure is often necessary in high-volume environments.'
+                ],
+                answer: 0,
+                explanation: 'When you want the request to be true for emotional relief, the attacker may already have gained the advantage.'
+            },
+            {
+                topic: 'Cost of delay framing',
+                prompt: 'A message quietly makes delay feel more expensive than risk, even though the downside of one wrong action would be severe. What should matter most?',
+                options: [
+                    'The downside of the wrong action should matter most because fatigue can distort how delay and risk feel in the moment.',
+                    'The request is legitimate because only real work pressure can make small delays feel this operationally costly there.',
+                    'The action is acceptable if the visible delay cost seems more immediate than the abstract security downside.',
+                    'The flow should be trusted when the message never explicitly asks you to ignore policy or skip formal checks.'
+                ],
+                answer: 0,
+                explanation: 'Fatigue changes perception, so immediate inconvenience can feel bigger than long-term harm even when it is not.'
+            },
+            {
+                topic: 'Apex response',
+                prompt: 'Which response best protects you in a decision-fatigue breach scenario when one more review feels expensive?',
+                options: [
+                    'Pause anyway and re-evaluate from a trusted entry point before taking any high-impact action.',
+                    'Proceed because fatigue is a subjective state and should not outweigh the visible structure of the request there.',
+                    'Continue if the request still looks mostly consistent and the impact can probably be contained afterward.',
+                    'Ask for one more confirmation inside the same thread and move ahead if it arrives quickly enough.'
+                ],
+                answer: 0,
+                explanation: 'The protective move is to create a fresh decision moment outside the exhausting sequence before acting.'
+            }
+        ]
+    },
+    'control-plane-misdirection': {
+        title: 'Control Plane Misdirection',
+        description: 'Read cases where admin logic, recovery paths, and security controls are twisted into bait.',
+        questions: [
+            {
+                topic: 'Control misuse',
+                prompt: 'A message frames a dangerous trust change as a routine administrative adjustment inside the same control plane you normally trust. What is the main risk?',
+                options: [
+                    'Familiar control surfaces can normalize catastrophic changes when the user stops judging the actual effect there.',
+                    'The request is safe because attacker infrastructure rarely reaches real admin surfaces closely enough to matter.',
+                    'The adjustment is legitimate because risky actions are usually hidden behind plain interfaces only in real systems.',
+                    'The control-plane step should be trusted if the administrative language matches your normal recovery terminology there.'
+                ],
+                answer: 0,
+                explanation: 'Control-plane familiarity can make an unsafe action feel routine even when its effect is far broader than expected.'
+            },
+            {
+                topic: 'Recovery to control transfer',
+                prompt: 'A narrow recovery issue suddenly becomes an administrator-level configuration action with little explanation of the jump. What should you conclude?',
+                options: [
+                    'The jump from recovery into configuration control suggests the flow is seeking authority beyond the stated problem.',
+                    'The escalation is normal because modern recovery workflows often finish with broad control-plane alignment there.',
+                    'The action is safe if the same system handles both end-user resets and policy-level administrative changes.',
+                    'The request is legitimate because only a real platform could bridge recovery and configuration this seamlessly.'
+                ],
+                answer: 0,
+                explanation: 'Apex phishing often hides a large authority jump inside a plausible administrative continuity story.'
+            },
+            {
+                topic: 'Protective control bait',
+                prompt: 'A request claims you must disable or relax one security control to restore normal protection elsewhere. Why is that dangerous?',
+                options: [
+                    'It uses one protective control as the rationale for weakening another, masking the true direction of risk.',
+                    'The action is legitimate because security systems often require one temporary relaxation to restore another properly.',
+                    'The request is low risk if the relaxation is described as short term and fully reversible after the incident there.',
+                    'The step should proceed when the same administrative console hosts both the disabled control and the restored one.'
+                ],
+                answer: 0,
+                explanation: 'The deception works by making a harmful reduction in protection feel like part of a larger defensive fix.'
+            },
+            {
+                topic: 'Admin trust shortcut',
+                prompt: 'Why can real administrative complexity itself become a phishing advantage in a control-plane misdirection case?',
+                options: [
+                    'Complexity encourages users to trust the surface and wording rather than reason through the actual consequences.',
+                    'Complex systems are safer because attackers cannot easily reproduce enough detail to guide a harmful action there.',
+                    'Administrative complexity reduces risk because it forces every change through too many real checkpoints to abuse.',
+                    'The request is acceptable if the complexity feels authentic enough that an ordinary user would struggle to parse it.'
+                ],
+                answer: 0,
+                explanation: 'When the interface and language feel advanced, users may surrender judgment to the surface instead of the effect.'
+            },
+            {
+                topic: 'Apex response',
+                prompt: 'Which response best handles a control-plane misdirection case where the platform is real but the trust effect feels wrong?',
+                options: [
+                    'Stop and verify the exact configuration impact with a trusted owner before changing any control-plane setting.',
+                    'Proceed because real administrative interfaces rarely present truly dangerous actions without other major warning signs.',
+                    'Continue if the change is framed as temporary and the surrounding recovery timeline still appears technically plausible.',
+                    'Ask the sender which checkbox matters most and move forward once the interface becomes easier to understand there.'
+                ],
+                answer: 0,
+                explanation: 'Real platforms can still carry attacker-directed actions, so the exact impact must be verified before changing trust or control settings.'
+            }
+        ]
+    },
+    'cognitive-overlap-attacks': {
+        title: 'Cognitive Overlap Attacks',
+        description: 'Untangle scenarios where several believable explanations overlap until the wrong choice feels rational.',
+        questions: [
+            {
+                topic: 'Competing explanations',
+                prompt: 'A request can be explained by a real outage, a real policy update, or a phishing setup, and each explanation fits part of the evidence. What should you do?',
+                options: [
+                    'Judge the action by the maximum downside and trusted verification path, not by whichever explanation feels easiest there.',
+                    'Proceed because the existence of several plausible explanations reduces the chance that the request is malicious there.',
+                    'Trust the request if the most operationally convenient explanation still fits enough of the visible evidence overall.',
+                    'Continue when at least one benign explanation remains possible, since certainty is rarely available in real systems.'
+                ],
+                answer: 0,
+                explanation: 'When several explanations overlap, the safest anchor is the effect of the action and the trusted path for verification.'
+            },
+            {
+                topic: 'Rational path to error',
+                prompt: 'Why can a very smart user still make the wrong choice in a cognitive-overlap attack?',
+                options: [
+                    'Because each clue supports a different story, making a bad action feel intellectually defensible from several angles.',
+                    'Because intelligence has little role in phishing once a request reaches a real platform with correct branding there.',
+                    'Because overlapping explanations only matter when the user fails to notice the one strongest technical indicator there.',
+                    'Because careful users usually overthink and therefore become less vulnerable than average in ambiguous high-context flows.'
+                ],
+                answer: 0,
+                explanation: 'The trap is not stupidity; it is the feeling that several respectable lines of reasoning support moving forward.'
+            },
+            {
+                topic: 'Ambiguity comfort',
+                prompt: 'A message gives just enough evidence for multiple benign narratives, but each narrative requires a slightly different assumption. What is the safest interpretation?',
+                options: [
+                    'The need for several charitable assumptions is itself a sign that the action may not be safe to take there.',
+                    'The request is legitimate because flexible interpretation is common in complex enterprise communication there.',
+                    'The action is low risk if each individual assumption looks reasonable when considered separately on its own.',
+                    'The flow should be trusted because attackers usually push toward one rigid story rather than several overlapping ones.'
+                ],
+                answer: 0,
+                explanation: 'When safety depends on stacking several charitable assumptions, the situation may be less trustworthy than it feels.'
+            },
+            {
+                topic: 'Interpretive overload',
+                prompt: 'Which hidden risk grows when a user spends too much time choosing among competing stories inside the suspicious sequence itself?',
+                options: [
+                    'The user may normalize the sequence while reasoning through it, making the final action feel more acceptable there.',
+                    'The request becomes safer because deep interpretation inside the same sequence usually resolves the attacker’s weak points.',
+                    'The action is legitimate if the overlapping explanations remain technically possible after prolonged careful review there.',
+                    'The flow should proceed because interpretive effort is a stronger trust signal than one clean external verification path.'
+                ],
+                answer: 0,
+                explanation: 'The more time spent inside the attacker-controlled sequence, the easier it becomes to adapt to its logic.'
+            },
+            {
+                topic: 'Apex response',
+                prompt: 'Which response best handles a cognitive-overlap attack when several smart interpretations seem possible at once?',
+                options: [
+                    'Exit the sequence and verify the action from a trusted source that does not depend on any of those overlapping stories.',
+                    'Proceed if the most plausible explanation seems slightly more likely than the others after reviewing the clues there.',
+                    'Continue when no single explanation fully dominates, because complex systems often require interpretive tolerance there.',
+                    'Ask the sender which of the competing explanations is correct and follow whichever one they clarify more convincingly.'
+                ],
+                answer: 0,
+                explanation: 'The strongest defense is to leave the interpretive maze and verify from a source that stands outside it.'
+            }
+        ]
+    },
+    'irrecoverable-trust-failures': {
+        title: 'Irrecoverable Trust Failures',
+        description: 'Evaluate final-form cases where one bad action could permanently widen access or exposure.',
+        questions: [
+            {
+                topic: 'One-step permanence',
+                prompt: 'A single approval would create durable access that could be difficult to unwind even if you noticed the mistake minutes later. What should that imply?',
+                options: [
+                    'The tolerance for ambiguity should approach zero because the action’s permanence changes the decision standard.',
+                    'The request is legitimate because durable changes normally appear only inside mature and carefully governed workflows there.',
+                    'The action is acceptable if the likelihood of error seems lower than the immediate business cost of rejecting it there.',
+                    'The flow should proceed as long as the platform offers some documented recovery mechanism after the change is made.'
+                ],
+                answer: 0,
+                explanation: 'When one wrong step creates durable trust or exposure, even small unresolved doubt becomes too expensive to ignore.'
+            },
+            {
+                topic: 'Asymmetric downside',
+                prompt: 'The effort to verify properly is annoying, but the downside of a mistake could expose whole chains of access. What is the safest rule?',
+                options: [
+                    'Asymmetric downside means the verification burden is worth paying before taking the action there.',
+                    'The action is legitimate because high-consequence enterprise workflows usually build enough safety into the interface there.',
+                    'The choice is low risk if the burden of extra verification feels disproportionate to the visible uncertainty there.',
+                    'The request should proceed whenever the likely operational upside appears larger than the immediate inconvenience of delay.'
+                ],
+                answer: 0,
+                explanation: 'The greater the downside asymmetry, the more worthwhile it is to spend extra effort on verification first.'
+            },
+            {
+                topic: 'No clean rollback',
+                prompt: 'A sender reassures you that the action can be undone later, but the actual trust relationship or data exposure may already occur immediately. What should matter most?',
+                options: [
+                    'The immediate effect matters most because rollback promises do not erase what may happen in the first moments there.',
+                    'The action is safe because reversible enterprise features are designed specifically to tolerate honest user mistakes there.',
+                    'The request is legitimate if the rollback instructions sound detailed enough to show the sender understands recovery there.',
+                    'The flow should proceed because the existence of any rollback path meaningfully lowers the decision risk overall.'
+                ],
+                answer: 0,
+                explanation: 'A rollback path does not guarantee that the harm between approval and reversal would be acceptable.'
+            },
+            {
+                topic: 'Catastrophic subtlety',
+                prompt: 'Why are the most dangerous trust failures often the ones that look only slightly unusual rather than obviously malicious?',
+                options: [
+                    'Because small-seeming deviations are easier to rationalize right before a decision with outsized irreversible impact there.',
+                    'Because catastrophic actions always require dramatic red flags that help careful users reject them in time there.',
+                    'Because subtle deviations matter less once the user is already operating inside trusted infrastructure and real workflows.',
+                    'Because advanced users should optimize for continuity unless the request becomes openly manipulative or technically broken there.'
+                ],
+                answer: 0,
+                explanation: 'The most dangerous actions often depend on the victim minimizing a small deviation at exactly the wrong moment.'
+            },
+            {
+                topic: 'Apex response',
+                prompt: 'Which response best handles an irrecoverable trust-failure case where one click could create lasting damage?',
+                options: [
+                    'Decline the action until an independent trusted source confirms the target, scope, and necessity with near certainty.',
+                    'Proceed if the surrounding evidence looks strong enough that the remaining doubt feels operationally tolerable there.',
+                    'Complete the step but document the details carefully so reversal can happen quickly if anything later looks wrong there.',
+                    'Ask the sender for a stronger reassurance and continue if the explanation addresses the permanence concern directly there.'
+                ],
+                answer: 0,
+                explanation: 'When one action could create lasting damage, only near-certain independent verification is an acceptable basis for proceeding.'
+            }
+        ]
     }
 };
 
@@ -2162,11 +4302,258 @@ const quizPointValues = {
     'financial-approval-fraud': 280,
     'cross-channel-takeovers': 290,
     'best-practices': 320,
-    'lab-login-page-check': 100
+    'vendor-portal-breaches': 340,
+    'identity-chain-spoofs': 350,
+    'cloud-consent-traps': 360,
+    'incident-response-bait': 370,
+    'multi-actor-escalations': 380,
+    'trust-layer-collisions': 390,
+    'zero-trust-breakpoints': 410,
+    'live-session-hijacks': 420,
+    'delegated-access-fraud': 430,
+    'forensic-cover-stories': 440,
+    'approval-chain-poisoning': 450,
+    'adaptive-impersonation-loops': 460,
+    'supply-chain-shadowing': 480,
+    'federated-login-pivots': 490,
+    'trust-graph-manipulation': 500,
+    'incident-command-spoofs': 510,
+    'recovery-delegation-loops': 520,
+    'environment-poisoning-cases': 530,
+    'cross-tenant-bleedthrough': 550,
+    'response-playbook-subversion': 560,
+    'consent-laundering-rings': 570,
+    'governance-theater-attacks': 580,
+    'identity-weathering-loops': 590,
+    'signal-fog-exploitation': 600,
+    'trust-collapse-scenarios': 620,
+    'operator-blend-intrusions': 630,
+    'decision-fatigue-breaches': 640,
+    'control-plane-misdirection': 650,
+    'cognitive-overlap-attacks': 660,
+    'irrecoverable-trust-failures': 670,
+    'lab-login-page-check': 100,
+    'lab-email-header-clues': 110,
+    'lab-qr-poster-check': 120,
+    'lab-file-share-trap': 130,
+    'lab-password-reset-sms': 140,
+    'lab-delivery-scam-chat': 150
 };
 
-const loginPageLabAttemptId = 'lab-login-page-check';
-const loginPageLabAttemptTitle = 'Login Page Check Lab';
+const labConfigs = {
+    'login-page-check': {
+        attemptId: 'lab-login-page-check',
+        attemptTitle: 'Login Page Check Lab',
+        renderMode: 'login',
+        title: 'Login Page Check',
+        description: 'Inspect the fake login page and click the strongest red flags.',
+        briefLabel: 'Incoming Message',
+        channel: 'Email Notice',
+        scenarioTitle: 'Your campus email will be suspended unless you verify your account today.',
+        scenarioBody: 'You receive a message that says your school account will be disabled in the next hour unless you log in through <span class="lab-inline-url">https://lcc-student-verify.helpdesk-login.net</span>.',
+        previewUrl: 'https://lcc-student-verify.helpdesk-login.net',
+        brandTitle: 'La Concepcion College Portal',
+        brandSubtitle: 'Student verification required',
+        alertText: 'Your account will be suspended today unless you confirm your credentials immediately.',
+        primaryLabel: 'School email',
+        primaryValue: 'student@lcc.edu.ph',
+        secondaryLabel: 'Password',
+        secondaryValue: 'examplepassword',
+        submitLabel: 'Verify Account',
+        supportText: 'Need help? Contact support@portal-helpdesk-login.net',
+        checklistTitle: 'Click the 3 strongest warning signs',
+        checklistCopy: 'You only get 3 picks, so choose carefully.',
+        correctSpots: new Set(['domain', 'urgency', 'support']),
+        explanationMap: {
+            domain: 'The URL does not clearly match the official school domain, which is a strong phishing signal.',
+            urgency: 'The suspension warning pressures the user to act fast instead of verifying first.',
+            support: 'The support contact uses a suspicious helpdesk-style domain unrelated to the school.',
+            brand: 'A copied logo or school name is not enough proof that a page is legitimate.',
+            submit: 'A submit button by itself is not the strongest red flag; the surrounding context matters more.'
+        },
+        successSummary: 'You found the strongest phishing signals on the page: the suspicious domain, the urgency message, and the fake support contact.',
+        failureSummary: 'The best red flags here are the suspicious domain, the urgency message, and the unrelated support contact.'
+    },
+    'email-header-clues': {
+        attemptId: 'lab-email-header-clues',
+        attemptTitle: 'Email Header Clues Lab',
+        renderMode: 'email',
+        title: 'Email Header Clues',
+        description: 'Inspect the suspicious account notice and click the strongest clues.',
+        briefLabel: 'Inbox Preview',
+        channel: 'Registrar Email',
+        scenarioTitle: 'The registrar office asks you to confirm your enrollment record through a support page.',
+        scenarioBody: 'A message says your enrollment details need same-day correction and directs you to <span class="lab-inline-url">https://registrar-records-confirm.maildesk-center.net</span> before records close.',
+        previewUrl: 'https://registrar-records-confirm.maildesk-center.net',
+        senderLine: 'Registrar Office <records@maildesk-center.net>',
+        replyToLine: 'registrar-update@maildesk-center.net',
+        subjectLine: 'Enrollment record needs confirmation today',
+        brandTitle: 'Registrar Record Support',
+        brandSubtitle: 'Student enrollment update',
+        alertText: 'Records close tonight. Confirm now to avoid processing delays.',
+        primaryLabel: 'Student email',
+        primaryValue: 'freshman@lcc.edu.ph',
+        secondaryLabel: 'Student number',
+        secondaryValue: '2026-10482',
+        submitLabel: 'Confirm Records',
+        supportText: 'Questions? Email registrar-update@maildesk-center.net',
+        emailBodyHtml: `
+            <p>Hello student,</p>
+            <p>Your enrollment details need same-day correction before records close. Review the account notice and confirm your information at once.</p>
+            <p>Use the button below to continue.</p>
+        `,
+        checklistTitle: 'Click the 3 strongest warning signs',
+        checklistCopy: 'Choose the clearest phishing clues in the email-driven page.',
+        correctSpots: new Set(['domain', 'urgency', 'support']),
+        explanationMap: {
+            domain: 'The maildesk-style domain does not match the official school registrar domain.',
+            urgency: 'The same-day deadline is pressure designed to cut down careful checking.',
+            support: 'The support email repeats the suspicious outside domain instead of an official school address.',
+            brand: 'A believable office name can still be copied into a fake support page.',
+            submit: 'The button label sounds normal, but it is not the strongest signal by itself.'
+        },
+        successSummary: 'You caught the strongest clues: the non-school domain, the pressure to act immediately, and the suspicious support address.',
+        failureSummary: 'The strongest header-style warning signs here are the strange domain, the urgency, and the outside support contact.'
+    },
+    'qr-poster-check': {
+        attemptId: 'lab-qr-poster-check',
+        attemptTitle: 'QR Poster Check Lab',
+        renderMode: 'poster',
+        title: 'QR Poster Check',
+        description: 'Review the poster-linked destination and click the strongest warning signs before scanning.',
+        briefLabel: 'Campus Poster',
+        channel: 'Public Notice',
+        scenarioTitle: 'A campus poster says you must reconnect student Wi-Fi by scanning a QR code today.',
+        scenarioBody: 'The QR code leads to <span class="lab-inline-url">https://lcc-wifi-reconnect.portal-device.help</span> and says students should sign in at once to keep internet access active.',
+        previewUrl: 'https://lcc-wifi-reconnect.portal-device.help',
+        posterKicker: 'Campus Connect Notice',
+        posterChip: 'Public Poster',
+        posterTitle: 'Reconnect Student Wi-Fi Today',
+        posterBodyHtml: '<p>Scan the code below to avoid interruption to your campus internet access.</p>',
+        posterLabel: 'Student Wi-Fi Restore',
+        posterSubcopy: 'Open the access page and sign in immediately.',
+        brandTitle: 'Campus Wi-Fi Restore',
+        brandSubtitle: 'Reconnect your student access',
+        alertText: 'Wi-Fi access expires today. Reconnect now to avoid losing internet service.',
+        primaryLabel: 'Student email',
+        primaryValue: 'campus.user@lcc.edu.ph',
+        secondaryLabel: 'Network password',
+        secondaryValue: 'wifipassword',
+        submitLabel: 'Reconnect Wi-Fi',
+        supportText: 'Network help: wifi-fix@portal-device.help',
+        checklistTitle: 'Click the 3 strongest warning signs',
+        checklistCopy: 'Look for the strongest signs that this QR destination should not be trusted.',
+        correctSpots: new Set(['domain', 'urgency', 'support']),
+        explanationMap: {
+            domain: 'The portal-device.help domain is not the official school or trusted network domain.',
+            urgency: 'The expiry warning is meant to rush students into scanning and signing in.',
+            support: 'The support contact stays on the same suspicious outside domain as the fake portal.',
+            brand: 'A school-themed network label is easy to fake on a landing page.',
+            submit: 'The reconnect button matches the story, but the surrounding signs are more important.'
+        },
+        successSummary: 'Nice catch. The fake QR flow depends on the suspicious domain, the rush to reconnect today, and the outside support contact.',
+        failureSummary: 'The strongest clues are the off-domain portal, the urgency to reconnect immediately, and the suspicious support email.'
+    },
+    'file-share-trap': {
+        attemptId: 'lab-file-share-trap',
+        attemptTitle: 'File Share Trap Lab',
+        title: 'File Share Trap',
+        description: 'Inspect the shared-file access page and click the strongest phishing clues.',
+        briefLabel: 'Shared Document',
+        channel: 'Cloud Drive Invite',
+        scenarioTitle: 'A file-sharing notice says a department report is waiting, but access needs a quick recheck.',
+        scenarioBody: 'The shared link opens <span class="lab-inline-url">https://lcc-doc-view.secure-share-access.co</span> and asks you to re-enter details before the file preview unlocks.',
+        previewUrl: 'https://lcc-doc-view.secure-share-access.co',
+        brandTitle: 'Department Document Access',
+        brandSubtitle: 'Sign in to preview the file',
+        alertText: 'File access expires in 15 minutes. Complete the check now to avoid link removal.',
+        primaryLabel: 'School email',
+        primaryValue: 'faculty.share@lcc.edu.ph',
+        secondaryLabel: 'Password',
+        secondaryValue: 'documentpassword',
+        submitLabel: 'Open Shared File',
+        supportText: 'Access support: help@secure-share-access.co',
+        checklistTitle: 'Click the 3 strongest warning signs',
+        checklistCopy: 'Choose the details that make this shared-file page unsafe.',
+        correctSpots: new Set(['domain', 'urgency', 'support']),
+        explanationMap: {
+            domain: 'The secure-share-access.co domain is not the official file-sharing domain you would expect.',
+            urgency: 'The short expiration timer pressures the user to stop verifying and just comply.',
+            support: 'The help address points back to the same suspicious outside sharing domain.',
+            brand: 'A generic document access label can be copied without proving the page is real.',
+            submit: 'The file-open button matches the story but is not one of the strongest clues by itself.'
+        },
+        successSummary: 'You found the strongest shared-file clues: the suspicious domain, the fake urgency window, and the outside support contact.',
+        failureSummary: 'The best red flags are the strange sharing domain, the 15-minute pressure, and the suspicious support email.'
+    },
+    'password-reset-sms': {
+        attemptId: 'lab-password-reset-sms',
+        attemptTitle: 'Password Reset SMS Lab',
+        title: 'Password Reset SMS',
+        description: 'Inspect the mobile reset flow and click the strongest warning signs.',
+        briefLabel: 'SMS Alert',
+        channel: 'Text Message',
+        scenarioTitle: 'A password reset text says someone tried to access your student account and you must secure it right now.',
+        scenarioBody: 'The message sends you to <span class="lab-inline-url">https://lcc-reset-alert.account-protect-now.com</span> and says failure to act may leave your account exposed.',
+        previewUrl: 'https://lcc-reset-alert.account-protect-now.com',
+        brandTitle: 'Student Account Reset',
+        brandSubtitle: 'Secure your access now',
+        alertText: 'Unrecognized access attempt detected. Reset your password immediately to stay protected.',
+        primaryLabel: 'Student email',
+        primaryValue: 'mobile.user@lcc.edu.ph',
+        secondaryLabel: 'Current password',
+        secondaryValue: 'myoldpassword',
+        submitLabel: 'Secure Account',
+        supportText: 'Recovery team: recovery@account-protect-now.com',
+        checklistTitle: 'Click the 3 strongest warning signs',
+        checklistCopy: 'Focus on the 3 details that most clearly point to phishing.',
+        correctSpots: new Set(['domain', 'urgency', 'support']),
+        explanationMap: {
+            domain: 'The account-protect-now.com domain does not match the official school or identity provider domain.',
+            urgency: 'The immediate danger framing is designed to make the user reset through the attacker page.',
+            support: 'The recovery email remains on the same suspicious outside domain instead of a trusted school contact.',
+            brand: 'A generic account reset brand can still be completely fake.',
+            submit: 'The secure account button is not the strongest clue compared with the domain and pressure tactics.'
+        },
+        successSummary: 'You spotted the strongest SMS-reset clues: the off-domain reset site, the immediate pressure, and the fake recovery contact.',
+        failureSummary: 'The strongest phishing signs here are the outside reset domain, the urgent scare tactic, and the suspicious recovery address.'
+    },
+    'delivery-scam-chat': {
+        attemptId: 'lab-delivery-scam-chat',
+        attemptTitle: 'Delivery Scam Chat Lab',
+        title: 'Delivery Scam Chat',
+        description: 'Inspect the fake package help chat and click the strongest warning signs.',
+        briefLabel: 'Chat Transcript',
+        channel: 'Support Chat',
+        scenarioTitle: 'A delivery help chat says your package cannot be released until you verify your account details.',
+        scenarioBody: 'The chat routes you to <span class="lab-inline-url">https://parcel-release.center-chat-help.net</span> and claims action is needed today so the package is not returned.',
+        previewUrl: 'https://parcel-release.center-chat-help.net',
+        brandTitle: 'Parcel Release Help',
+        brandSubtitle: 'Delivery confirmation required',
+        alertText: 'Your parcel will be returned tonight unless release details are confirmed now.',
+        primaryLabel: 'Email address',
+        primaryValue: 'buyer@example.com',
+        secondaryLabel: 'Account password',
+        secondaryValue: 'deliverypassword',
+        submitLabel: 'Release Parcel',
+        supportText: 'Chat support: help@center-chat-help.net',
+        checklistTitle: 'Click the 3 strongest warning signs',
+        checklistCopy: 'Pick the details that most strongly show this delivery chat is unsafe.',
+        correctSpots: new Set(['domain', 'urgency', 'support']),
+        explanationMap: {
+            domain: 'The center-chat-help.net domain is not a trusted official courier or marketplace domain.',
+            urgency: 'The same-night return warning is pressure meant to rush the decision.',
+            support: 'The support email stays on the same suspicious outside help domain as the fake chat flow.',
+            brand: 'A generic parcel-release brand is easy to imitate and does not prove legitimacy.',
+            submit: 'The release button fits the story but is not the clearest phishing clue on its own.'
+        },
+        successSummary: 'You found the strongest delivery-scam clues: the fake help domain, the return-today pressure, and the suspicious support contact.',
+        failureSummary: 'The strongest warning signs here are the outside domain, the urgent return warning, and the fake support address.'
+    }
+};
+
+let activeLabId = 'login-page-check';
+let activeLabConfig = labConfigs[activeLabId];
 
 const quizStartButtons = document.querySelectorAll('.quiz-start-btn[data-quiz]');
 const labStartButtons = document.querySelectorAll('.quiz-start-btn[data-start-lab]');
@@ -2231,6 +4618,44 @@ const loginPageLabSubmit = document.getElementById('loginPageLabSubmit');
 const loginPageLabReset = document.getElementById('loginPageLabReset');
 const loginPageLabFeedback = document.getElementById('loginPageLabFeedback');
 const loginPageLabSpotTargets = [...document.querySelectorAll('.lab-spot-target[data-lab-spot]')];
+const loginPageLabTitle = document.getElementById('loginPageLabTitle');
+const loginPageLabDescription = document.getElementById('loginPageLabDescription');
+const loginPageLabBriefLabel = document.getElementById('loginPageLabBriefLabel');
+const loginPageLabChannel = document.getElementById('loginPageLabChannel');
+const loginPageLabScenarioTitle = document.getElementById('loginPageLabScenarioTitle');
+const loginPageLabScenarioBody = document.getElementById('loginPageLabScenarioBody');
+const loginPageLabUrl = document.getElementById('loginPageLabUrl');
+const loginPageLabBrandTitle = document.getElementById('loginPageLabBrandTitle');
+const loginPageLabBrandSubtitle = document.getElementById('loginPageLabBrandSubtitle');
+const loginPageLabAlert = document.getElementById('loginPageLabAlert');
+const loginPageLabPrimaryLabel = document.getElementById('loginPageLabPrimaryLabel');
+const loginPageLabPrimaryValue = document.getElementById('loginPageLabPrimaryValue');
+const loginPageLabSecondaryLabel = document.getElementById('loginPageLabSecondaryLabel');
+const loginPageLabSecondaryValue = document.getElementById('loginPageLabSecondaryValue');
+const loginPageLabSubmitLabel = document.getElementById('loginPageLabSubmitLabel');
+const loginPageLabSupport = document.getElementById('loginPageLabSupport');
+const loginPageLabChecklistTitle = document.getElementById('loginPageLabChecklistTitle');
+const loginPageLabChecklistCopy = document.getElementById('loginPageLabChecklistCopy');
+const labBrowserBar = document.getElementById('labBrowserBar');
+const labFakeLogin = document.getElementById('labFakeLogin');
+const labEmailPreview = document.getElementById('labEmailPreview');
+const labEmailSenderLine = document.getElementById('labEmailSenderLine');
+const labEmailReplyToLine = document.getElementById('labEmailReplyToLine');
+const labEmailSubjectLine = document.getElementById('labEmailSubjectLine');
+const labEmailBanner = document.getElementById('labEmailBanner');
+const labEmailBody = document.getElementById('labEmailBody');
+const labEmailCta = document.getElementById('labEmailCta');
+const labEmailFooter = document.getElementById('labEmailFooter');
+const labPosterPreview = document.getElementById('labPosterPreview');
+const labPosterKicker = document.getElementById('labPosterKicker');
+const labPosterChip = document.getElementById('labPosterChip');
+const labPosterTitle = document.getElementById('labPosterTitle');
+const labPosterBody = document.getElementById('labPosterBody');
+const labPosterQr = document.getElementById('labPosterQr');
+const labPosterLabel = document.getElementById('labPosterLabel');
+const labPosterSubcopy = document.getElementById('labPosterSubcopy');
+const labPosterUrl = document.getElementById('labPosterUrl');
+const labPosterSupport = document.getElementById('labPosterSupport');
 const quizLeaderboardList = document.getElementById('quizLeaderboardList');
 const quizLeaderboardEmpty = document.getElementById('quizLeaderboardEmpty');
 const quizProfileGuestPrompt = document.getElementById('quizProfileGuestPrompt');
@@ -2277,6 +4702,7 @@ let selectedAnswerIndex = null;
 let score = 0;
 let answers = [];
 let signedInQuizAttempts = [];
+let signedInLeaderboardRank = null;
 let hasInitializedBadgeUnlocks = false;
 let unlockedBadgeSnapshot = new Set();
 let achievementToastQueue = [];
@@ -2284,7 +4710,6 @@ let activeAchievementToast = null;
 let currentQuizPage = 1;
 let currentLabPage = 1;
 let lockedQuizSidebarScrollY = 0;
-const loginPageLabCorrectSpots = new Set(['domain', 'urgency', 'support']);
 let quizSidebarTouchStartY = 0;
 const guestQuizCardsPreviewCount = 6;
 const maxAdaptiveQuizCardsPerPage = 6;
@@ -2672,6 +5097,23 @@ function updateQuizUnlockStates(attempts = []) {
     });
 }
 
+function updateLabCompletionStates(attempts = []) {
+    const completedQuizIds = getCompletedQuizIds(attempts);
+
+    labCards.forEach((card) => {
+        const labId = card.dataset.labCard;
+        const attemptId = labConfigs[labId]?.attemptId || '';
+        const completedChip = document.getElementById(`labCompletedChip-${labId}`);
+        const isCompleted = Boolean(attemptId) && completedQuizIds.has(attemptId);
+
+        card.classList.toggle('is-completed', isCompleted);
+
+        if (completedChip) {
+            completedChip.hidden = !isCompleted;
+        }
+    });
+}
+
 function getRecommendedQuizId(attempts = []) {
     const completedQuizIds = getCompletedQuizIds(attempts);
 
@@ -2705,6 +5147,36 @@ function getRecommendedQuizId(attempts = []) {
         }
     }
 
+    for (const quizId of eliteSeriesQuizIds) {
+        if (!getQuizUnlockState(quizId, attempts).locked && !completedQuizIds.has(quizId)) {
+            return quizId;
+        }
+    }
+
+    for (const quizId of expertSeriesQuizIds) {
+        if (!getQuizUnlockState(quizId, attempts).locked && !completedQuizIds.has(quizId)) {
+            return quizId;
+        }
+    }
+
+    for (const quizId of proSeriesQuizIds) {
+        if (!getQuizUnlockState(quizId, attempts).locked && !completedQuizIds.has(quizId)) {
+            return quizId;
+        }
+    }
+
+    for (const quizId of legendSeriesQuizIds) {
+        if (!getQuizUnlockState(quizId, attempts).locked && !completedQuizIds.has(quizId)) {
+            return quizId;
+        }
+    }
+
+    for (const quizId of apexSeriesQuizIds) {
+        if (!getQuizUnlockState(quizId, attempts).locked && !completedQuizIds.has(quizId)) {
+            return quizId;
+        }
+    }
+
     const summaryByQuizId = new Map();
     attempts.forEach((attempt) => {
         const existing = summaryByQuizId.get(attempt.quizId) || {
@@ -2721,7 +5193,7 @@ function getRecommendedQuizId(attempts = []) {
         summaryByQuizId.set(attempt.quizId, existing);
     });
 
-    const fallbackOrder = [...coreQuizIds, ...skillBuilderQuizIds, ...challengerQuizIds, ...advancedSeriesQuizIds, ...masterySeriesQuizIds];
+    const fallbackOrder = [...coreQuizIds, ...skillBuilderQuizIds, ...challengerQuizIds, ...advancedSeriesQuizIds, ...masterySeriesQuizIds, ...eliteSeriesQuizIds, ...expertSeriesQuizIds, ...proSeriesQuizIds, ...legendSeriesQuizIds, ...apexSeriesQuizIds];
     const reviewCandidate = [...summaryByQuizId.values()]
         .sort((left, right) => {
             if (left.bestScore !== right.bestScore) return left.bestScore - right.bestScore;
@@ -2763,7 +5235,37 @@ function updateQuizCardTierLabels() {
         'recovery-flow-attacks': { badge: 'Mastery Series', difficulty: 'Mastery', accent: 'mastery', difficultyClass: 'mastery' },
         'financial-approval-fraud': { badge: 'Mastery Series', difficulty: 'Mastery', accent: 'mastery', difficultyClass: 'mastery' },
         'cross-channel-takeovers': { badge: 'Mastery Series', difficulty: 'Mastery', accent: 'mastery', difficultyClass: 'mastery' },
-        'best-practices': { badge: 'Mastery Series', difficulty: 'Mastery', accent: 'mastery', difficultyClass: 'mastery' }
+        'best-practices': { badge: 'Mastery Series', difficulty: 'Mastery', accent: 'mastery', difficultyClass: 'mastery' },
+        'vendor-portal-breaches': { badge: 'Elite Series', difficulty: 'Elite', accent: 'elite', difficultyClass: 'hard' },
+        'identity-chain-spoofs': { badge: 'Elite Series', difficulty: 'Elite', accent: 'elite', difficultyClass: 'hard' },
+        'cloud-consent-traps': { badge: 'Elite Series', difficulty: 'Elite', accent: 'elite', difficultyClass: 'hard' },
+        'incident-response-bait': { badge: 'Elite Series', difficulty: 'Elite', accent: 'elite', difficultyClass: 'hard' },
+        'multi-actor-escalations': { badge: 'Elite Series', difficulty: 'Elite', accent: 'elite', difficultyClass: 'hard' },
+        'trust-layer-collisions': { badge: 'Elite Series', difficulty: 'Elite', accent: 'elite', difficultyClass: 'hard' },
+        'zero-trust-breakpoints': { badge: 'Expert Series', difficulty: 'Expert', accent: 'expert', difficultyClass: '' },
+        'live-session-hijacks': { badge: 'Expert Series', difficulty: 'Expert', accent: 'expert', difficultyClass: '' },
+        'delegated-access-fraud': { badge: 'Expert Series', difficulty: 'Expert', accent: 'expert', difficultyClass: '' },
+        'forensic-cover-stories': { badge: 'Expert Series', difficulty: 'Expert', accent: 'expert', difficultyClass: '' },
+        'approval-chain-poisoning': { badge: 'Expert Series', difficulty: 'Expert', accent: 'expert', difficultyClass: '' },
+        'adaptive-impersonation-loops': { badge: 'Expert Series', difficulty: 'Expert', accent: 'expert', difficultyClass: '' },
+        'supply-chain-shadowing': { badge: 'Pro Series', difficulty: 'Pro', accent: 'pro', difficultyClass: '' },
+        'federated-login-pivots': { badge: 'Pro Series', difficulty: 'Pro', accent: 'pro', difficultyClass: '' },
+        'trust-graph-manipulation': { badge: 'Pro Series', difficulty: 'Pro', accent: 'pro', difficultyClass: '' },
+        'incident-command-spoofs': { badge: 'Pro Series', difficulty: 'Pro', accent: 'pro', difficultyClass: '' },
+        'recovery-delegation-loops': { badge: 'Pro Series', difficulty: 'Pro', accent: 'pro', difficultyClass: '' },
+        'environment-poisoning-cases': { badge: 'Pro Series', difficulty: 'Pro', accent: 'pro', difficultyClass: '' },
+        'cross-tenant-bleedthrough': { badge: 'Legend Series', difficulty: 'Legend', accent: 'legend', difficultyClass: '' },
+        'response-playbook-subversion': { badge: 'Legend Series', difficulty: 'Legend', accent: 'legend', difficultyClass: '' },
+        'consent-laundering-rings': { badge: 'Legend Series', difficulty: 'Legend', accent: 'legend', difficultyClass: '' },
+        'governance-theater-attacks': { badge: 'Legend Series', difficulty: 'Legend', accent: 'legend', difficultyClass: '' },
+        'identity-weathering-loops': { badge: 'Legend Series', difficulty: 'Legend', accent: 'legend', difficultyClass: '' },
+        'signal-fog-exploitation': { badge: 'Legend Series', difficulty: 'Legend', accent: 'legend', difficultyClass: '' },
+        'trust-collapse-scenarios': { badge: 'Apex Series', difficulty: 'Apex', accent: 'apex', difficultyClass: '' },
+        'operator-blend-intrusions': { badge: 'Apex Series', difficulty: 'Apex', accent: 'apex', difficultyClass: '' },
+        'decision-fatigue-breaches': { badge: 'Apex Series', difficulty: 'Apex', accent: 'apex', difficultyClass: '' },
+        'control-plane-misdirection': { badge: 'Apex Series', difficulty: 'Apex', accent: 'apex', difficultyClass: '' },
+        'cognitive-overlap-attacks': { badge: 'Apex Series', difficulty: 'Apex', accent: 'apex', difficultyClass: '' },
+        'irrecoverable-trust-failures': { badge: 'Apex Series', difficulty: 'Apex', accent: 'apex', difficultyClass: '' }
     };
 
     Object.entries(tierMap).forEach(([quizId, config]) => {
@@ -2785,7 +5287,7 @@ function updateQuizCardTierLabels() {
             }
         }
 
-        card.classList.remove('is-core', 'is-beginner', 'is-intermediate', 'is-skill-builder', 'is-challenger', 'is-advanced', 'is-mastery');
+        card.classList.remove('is-core', 'is-beginner', 'is-intermediate', 'is-skill-builder', 'is-challenger', 'is-advanced', 'is-mastery', 'is-elite', 'is-expert', 'is-pro', 'is-legend', 'is-apex');
         if (config.accent) {
             card.classList.add(`is-${config.accent}`);
         }
@@ -3083,6 +5585,7 @@ function applyQuizPageState() {
         loadSignedInQuizData();
         setQuizAppView('quiz-library');
         updateQuizUnlockStates();
+        updateLabCompletionStates();
         renderQuizPagination();
         renderLabsPagination();
     } else {
@@ -3115,6 +5618,7 @@ function applyQuizPageState() {
         loadPublicQuizLeaderboard();
         setQuizAppView('quiz-library');
         updateQuizUnlockStates();
+        updateLabCompletionStates();
         renderQuizPagination();
         renderLabsPagination();
     }
@@ -3156,6 +5660,9 @@ async function loadSignedInQuizData() {
         }
 
         signedInQuizAttempts = Array.isArray(attemptData?.attempts) ? attemptData.attempts : [];
+        signedInLeaderboardRank = Number.isFinite(Number(leaderboardData?.currentUserRank))
+            ? Number(leaderboardData.currentUserRank)
+            : null;
         syncBadgeUnlockToasts(signedInQuizAttempts);
         renderQuizHistory(signedInQuizAttempts, {
             listElement: quizHistoryList,
@@ -3164,6 +5671,7 @@ async function loadSignedInQuizData() {
         });
         populateQuizProfile(signedInQuizAttempts);
         updateQuizUnlockStates(signedInQuizAttempts);
+        updateLabCompletionStates(signedInQuizAttempts);
         renderQuizLeaderboard(
             Array.isArray(leaderboardData?.leaderboard) ? leaderboardData.leaderboard : [],
             leaderboardData?.currentUserId || '',
@@ -3174,6 +5682,7 @@ async function loadSignedInQuizData() {
     } catch (error) {
         console.warn('Quiz dashboard data fallback:', error.message || error);
         signedInQuizAttempts = [];
+        signedInLeaderboardRank = null;
         hasInitializedBadgeUnlocks = false;
         unlockedBadgeSnapshot = new Set();
         renderQuizHistory([], {
@@ -3183,6 +5692,7 @@ async function loadSignedInQuizData() {
         });
         populateQuizProfile([]);
         updateQuizUnlockStates([]);
+        updateLabCompletionStates([]);
         renderQuizLeaderboard([], '', 2);
         renderQuizPagination();
         renderLabsPagination();
@@ -3246,6 +5756,49 @@ function buildQuizAttemptReviewData(quiz, answerRecords = []) {
     });
 }
 
+function getLabSpotLabel(spot = '') {
+    const labels = {
+        domain: 'Domain Check',
+        urgency: 'Urgency Language',
+        support: 'Support Contact',
+        brand: 'Branding Claim',
+        submit: 'Action Button'
+    };
+
+    return labels[spot] || String(spot || 'Clue')
+        .replace(/[-_]+/g, ' ')
+        .replace(/\b\w/g, (char) => char.toUpperCase());
+}
+
+function buildLabAttemptReviewData(labConfig, selectedSpots = []) {
+    if (!labConfig) return [];
+
+    const selectedSet = new Set(selectedSpots);
+    const correctSpots = [...(labConfig.correctSpots || [])];
+    const reviewSpots = Array.from(new Set([
+        ...correctSpots,
+        ...selectedSpots
+    ]));
+
+    return reviewSpots.map((spot, index) => {
+        const isSelected = selectedSet.has(spot);
+        const prompt = `Did you flag "${getLabSpotLabel(spot)}" as one of the strongest warning signs?`;
+
+        return {
+            questionIndex: index,
+            topic: 'Lab Clue Review',
+            prompt,
+            options: ['Not flagged', 'Flagged'],
+            selectedIndex: isSelected ? 1 : 0,
+            correctIndex: 1,
+            selectedAnswer: isSelected ? 'Flagged' : 'Not flagged',
+            correctAnswer: 'Flagged',
+            isCorrect: isSelected,
+            explanation: labConfig.explanationMap?.[spot] || ''
+        };
+    });
+}
+
 function populateSignedInDashboard(attempts = []) {
     renderQuizHistory(attempts, {
         listElement: quizHistoryList,
@@ -3272,21 +5825,64 @@ function getQuizRankMeta(pointsCount = 0, averageScore = 0, completedSetsCount =
         {
             label: 'Threat Spotter',
             requirements: [
-                { label: 'points', current: pointsCount, target: 300 },
-                { label: 'completed sets', current: completedSetsCount, target: 4 },
-                { label: 'average score', current: averageScore, target: 80 }
+                { label: 'points', current: pointsCount, target: 250 },
+                { label: 'completed sets', current: completedSetsCount, target: 2 },
+                { label: 'average score', current: averageScore, target: 72 }
             ]
         },
         {
             label: 'Awareness Expert',
             requirements: [
                 { label: 'points', current: pointsCount, target: 500 },
-                { label: 'average score', current: averageScore, target: 88 }
+                { label: 'completed sets', current: completedSetsCount, target: 4 },
+                { label: 'average score', current: averageScore, target: 75 }
+            ]
+        },
+        {
+            label: 'Phish Hunter',
+            requirements: [
+                { label: 'points', current: pointsCount, target: 900 },
+                { label: 'completed sets', current: completedSetsCount, target: 6 },
+                { label: 'average score', current: averageScore, target: 78 }
+            ]
+        },
+        {
+            label: 'Security Specialist',
+            requirements: [
+                { label: 'points', current: pointsCount, target: 1500 },
+                { label: 'completed sets', current: completedSetsCount, target: 9 },
+                { label: 'average score', current: averageScore, target: 80 }
+            ]
+        },
+        {
+            label: 'Threat Analyst',
+            requirements: [
+                { label: 'points', current: pointsCount, target: 2400 },
+                { label: 'completed sets', current: completedSetsCount, target: 13 },
+                { label: 'average score', current: averageScore, target: 82 }
+            ]
+        },
+        {
+            label: 'PhishNet Defender',
+            requirements: [
+                { label: 'points', current: pointsCount, target: 3600 },
+                { label: 'completed sets', current: completedSetsCount, target: 18 },
+                { label: 'average score', current: averageScore, target: 84 }
+            ]
+        },
+        {
+            label: 'Elite Guardian',
+            requirements: [
+                { label: 'points', current: pointsCount, target: 5000 },
+                { label: 'completed sets', current: completedSetsCount, target: 24 },
+                { label: 'average score', current: averageScore, target: 86 }
             ]
         },
         {
             label: 'PhishNet Guardian',
             requirements: [
+                { label: 'points', current: pointsCount, target: 6500 },
+                { label: 'average score', current: averageScore, target: 88 },
                 { label: 'completed sets', current: completedSetsCount, target: totalQuizCount }
             ]
         }
@@ -3637,42 +6233,12 @@ function createPlaceholderQuizCards() {
 
     const desiredCardCount = totalQuizPages * maxAdaptiveQuizCardsPerPage;
     const placeholdersNeeded = Math.max(0, desiredCardCount - quizCards.length);
-    const placeholderSeries = Array.from({ length: placeholdersNeeded }, (_, index) => (
-        index < 6
-            ? {
-                label: 'Elite Series',
-                accentClass: 'is-elite',
-                title: 'Elite Set',
-                difficulty: 'Elite'
-            }
-            : index < 12
-            ? {
-                label: 'Expert Series',
-                accentClass: 'is-expert',
-                title: 'Expert Set',
-                difficulty: 'Expert'
-            }
-            : index < 18
-            ? {
-                label: 'Pro Series',
-                accentClass: 'is-pro',
-                title: 'Pro Set',
-                difficulty: 'Pro'
-            }
-            : index < 24
-            ? {
-                label: 'Legend Series',
-                accentClass: 'is-legend',
-                title: 'Legend Set',
-                difficulty: 'Legend'
-            }
-            : {
-                label: 'Apex Series',
-                accentClass: 'is-apex',
-                title: 'Apex Set',
-                difficulty: 'Apex'
-            }
-    ));
+    const placeholderSeries = Array.from({ length: placeholdersNeeded }, () => ({
+        label: 'Coming Soon',
+        accentClass: '',
+        title: 'Upcoming Quiz Set',
+        difficulty: 'Soon'
+    }));
 
     for (let index = 0; index < placeholdersNeeded; index += 1) {
         const seriesConfig = placeholderSeries[index] || {
@@ -3709,95 +6275,12 @@ function createPlaceholderLabCards() {
     const cardsPerPage = maxAdaptiveQuizCardsPerPage;
     const desiredCardCount = totalLabPages * cardsPerPage;
     const placeholdersNeeded = Math.max(0, desiredCardCount - labCards.length);
-    const placeholderSeries = Array.from({ length: placeholdersNeeded }, (_, index) => {
-        if (index < 5) {
-            return {
-                label: 'Core Lab',
-                accentClass: 'is-core',
-                title: 'Upcoming Core Lab',
-                difficulty: 'Beginner'
-            };
-        }
-
-        if (index < 11) {
-            return {
-                label: 'Skill Builder Lab',
-                accentClass: 'is-skill-builder',
-                title: 'Upcoming Skill Builder Lab',
-                difficulty: 'Intermediate'
-            };
-        }
-
-        if (index < 17) {
-            return {
-                label: 'Challenger Lab',
-                accentClass: 'is-challenger',
-                title: 'Upcoming Challenger Lab',
-                difficulty: 'Hard'
-            };
-        }
-
-        if (index < 23) {
-            return {
-                label: 'Advanced Lab',
-                accentClass: 'is-advanced',
-                title: 'Upcoming Advanced Lab',
-                difficulty: 'Advanced'
-            };
-        }
-
-        if (index < 29) {
-            return {
-                label: 'Mastery Lab',
-                accentClass: 'is-mastery',
-                title: 'Upcoming Mastery Lab',
-                difficulty: 'Mastery'
-            };
-        }
-
-        if (index < 35) {
-            return {
-                label: 'Elite Lab',
-                accentClass: 'is-elite',
-                title: 'Upcoming Elite Lab',
-                difficulty: 'Elite'
-            };
-        }
-
-        if (index < 41) {
-            return {
-                label: 'Expert Lab',
-                accentClass: 'is-expert',
-                title: 'Upcoming Expert Lab',
-                difficulty: 'Expert'
-            };
-        }
-
-        if (index < 47) {
-            return {
-                label: 'Pro Lab',
-                accentClass: 'is-pro',
-                title: 'Upcoming Pro Lab',
-                difficulty: 'Pro'
-            };
-        }
-
-        if (index < 53) {
-            return {
-                label: 'Legend Lab',
-                accentClass: 'is-legend',
-                title: 'Upcoming Legend Lab',
-                difficulty: 'Legend'
-            };
-        }
-
-        return {
-            label: 'Apex Lab',
-            accentClass: 'is-apex',
-            title: 'Upcoming Apex Lab',
-            difficulty: 'Apex'
-        };
-    });
+    const placeholderSeries = Array.from({ length: placeholdersNeeded }, () => ({
+        label: 'Lab Coming Soon',
+        accentClass: '',
+        title: 'Upcoming Lab',
+        difficulty: 'Soon'
+    }));
 
     for (let index = 0; index < placeholdersNeeded; index += 1) {
         const seriesConfig = placeholderSeries[index] || {
@@ -3861,7 +6344,37 @@ function reorderQuizCardsForPagination() {
         'recovery-flow-attacks',
         'financial-approval-fraud',
         'cross-channel-takeovers',
-        'best-practices'
+        'best-practices',
+        'vendor-portal-breaches',
+        'identity-chain-spoofs',
+        'cloud-consent-traps',
+        'incident-response-bait',
+        'multi-actor-escalations',
+        'trust-layer-collisions',
+        'zero-trust-breakpoints',
+        'live-session-hijacks',
+        'delegated-access-fraud',
+        'forensic-cover-stories',
+        'approval-chain-poisoning',
+        'adaptive-impersonation-loops',
+        'supply-chain-shadowing',
+        'federated-login-pivots',
+        'trust-graph-manipulation',
+        'incident-command-spoofs',
+        'recovery-delegation-loops',
+        'environment-poisoning-cases',
+        'cross-tenant-bleedthrough',
+        'response-playbook-subversion',
+        'consent-laundering-rings',
+        'governance-theater-attacks',
+        'identity-weathering-loops',
+        'signal-fog-exploitation',
+        'trust-collapse-scenarios',
+        'operator-blend-intrusions',
+        'decision-fatigue-breaches',
+        'control-plane-misdirection',
+        'cognitive-overlap-attacks',
+        'irrecoverable-trust-failures'
     ];
 
     const orderedCards = [];
@@ -4626,7 +7139,7 @@ function resetLoginPageLabState() {
     }
 
     if (loginPageLabSelectionCount) {
-        loginPageLabSelectionCount.textContent = '0 / 3';
+        loginPageLabSelectionCount.textContent = `0 / ${activeLabConfig?.correctSpots?.size || 3}`;
     }
 
     if (loginPageLabFeedback) {
@@ -4642,8 +7155,116 @@ function resetLoginPageLabState() {
     if (loginPageLabReset) loginPageLabReset.hidden = true;
 }
 
-function openLoginPageLab() {
+function syncLoginPageLabContent(labId = 'login-page-check') {
+    activeLabId = labId in labConfigs ? labId : 'login-page-check';
+    activeLabConfig = labConfigs[activeLabId];
+    if (!activeLabConfig) return;
+    const isEmailMode = activeLabConfig.renderMode === 'email';
+    const isPosterMode = activeLabConfig.renderMode === 'poster';
+
+    if (loginPageLabTitle) loginPageLabTitle.textContent = activeLabConfig.title;
+    if (loginPageLabDescription) loginPageLabDescription.textContent = activeLabConfig.description;
+    if (loginPageLabBriefLabel) loginPageLabBriefLabel.textContent = activeLabConfig.briefLabel;
+    if (loginPageLabChannel) loginPageLabChannel.textContent = activeLabConfig.channel;
+    if (loginPageLabScenarioTitle) loginPageLabScenarioTitle.textContent = activeLabConfig.scenarioTitle;
+    if (loginPageLabScenarioBody) loginPageLabScenarioBody.innerHTML = activeLabConfig.scenarioBody;
+    if (loginPageLabUrl) loginPageLabUrl.textContent = activeLabConfig.previewUrl;
+    if (loginPageLabBrandTitle) loginPageLabBrandTitle.textContent = activeLabConfig.brandTitle;
+    if (loginPageLabBrandSubtitle) loginPageLabBrandSubtitle.textContent = activeLabConfig.brandSubtitle;
+    if (loginPageLabAlert) loginPageLabAlert.textContent = activeLabConfig.alertText;
+    if (loginPageLabPrimaryLabel) loginPageLabPrimaryLabel.textContent = activeLabConfig.primaryLabel;
+    if (loginPageLabPrimaryValue) loginPageLabPrimaryValue.value = activeLabConfig.primaryValue;
+    if (loginPageLabSecondaryLabel) loginPageLabSecondaryLabel.textContent = activeLabConfig.secondaryLabel;
+    if (loginPageLabSecondaryValue) loginPageLabSecondaryValue.value = activeLabConfig.secondaryValue;
+    if (loginPageLabSubmitLabel) loginPageLabSubmitLabel.textContent = activeLabConfig.submitLabel;
+    if (loginPageLabSupport) loginPageLabSupport.textContent = activeLabConfig.supportText;
+    if (loginPageLabChecklistTitle) loginPageLabChecklistTitle.textContent = activeLabConfig.checklistTitle;
+    if (loginPageLabChecklistCopy) loginPageLabChecklistCopy.textContent = activeLabConfig.checklistCopy;
+
+    const fakeLogin = loginPageLab?.querySelector('.lab-fake-login');
+    if (fakeLogin) fakeLogin.hidden = isEmailMode;
+    if (labEmailPreview) labEmailPreview.hidden = !isEmailMode;
+
+    if (isEmailMode) {
+        if (labEmailSenderLine) labEmailSenderLine.innerHTML = `<strong>From:</strong> Registrar Office &lt;records@maildesk-center.net&gt;`;
+        if (labEmailReplyToLine) labEmailReplyToLine.innerHTML = `<strong>Reply-To:</strong> registrar-update@maildesk-center.net`;
+        if (labEmailSubjectLine) labEmailSubjectLine.innerHTML = `<strong>Subject:</strong> Enrollment record needs confirmation today`;
+        if (labEmailBanner) labEmailBanner.textContent = activeLabConfig.alertText;
+        if (labEmailBody) {
+            labEmailBody.innerHTML = `
+                <p>Hello student,</p>
+                <p>Your enrollment details need same-day correction before records close. Review the account notice and confirm your information at once.</p>
+                <p>Use the button below to continue.</p>
+            `;
+        }
+        if (labEmailCta) labEmailCta.textContent = activeLabConfig.submitLabel;
+        if (labEmailFooter) labEmailFooter.textContent = `${activeLabConfig.brandTitle} • ${activeLabConfig.brandSubtitle}`;
+    }
+}
+
+function syncLoginPageLabContent(labId = 'login-page-check') {
+    activeLabId = labId in labConfigs ? labId : 'login-page-check';
+    activeLabConfig = labConfigs[activeLabId];
+    if (!activeLabConfig) return;
+
+    const isEmailMode = activeLabConfig.renderMode === 'email';
+    const isPosterMode = activeLabConfig.renderMode === 'poster';
+
+    if (loginPageLabTitle) loginPageLabTitle.textContent = activeLabConfig.title;
+    if (loginPageLabDescription) loginPageLabDescription.textContent = activeLabConfig.description;
+    if (loginPageLabBriefLabel) loginPageLabBriefLabel.textContent = activeLabConfig.briefLabel;
+    if (loginPageLabChannel) loginPageLabChannel.textContent = activeLabConfig.channel;
+    if (loginPageLabScenarioTitle) loginPageLabScenarioTitle.textContent = activeLabConfig.scenarioTitle;
+    if (loginPageLabScenarioBody) loginPageLabScenarioBody.innerHTML = activeLabConfig.scenarioBody;
+    if (loginPageLabUrl) loginPageLabUrl.textContent = activeLabConfig.previewUrl;
+    if (loginPageLabBrandTitle) loginPageLabBrandTitle.textContent = activeLabConfig.brandTitle;
+    if (loginPageLabBrandSubtitle) loginPageLabBrandSubtitle.textContent = activeLabConfig.brandSubtitle;
+    if (loginPageLabAlert) loginPageLabAlert.textContent = activeLabConfig.alertText;
+    if (loginPageLabPrimaryLabel) loginPageLabPrimaryLabel.textContent = activeLabConfig.primaryLabel;
+    if (loginPageLabPrimaryValue) loginPageLabPrimaryValue.value = activeLabConfig.primaryValue;
+    if (loginPageLabSecondaryLabel) loginPageLabSecondaryLabel.textContent = activeLabConfig.secondaryLabel;
+    if (loginPageLabSecondaryValue) loginPageLabSecondaryValue.value = activeLabConfig.secondaryValue;
+    if (loginPageLabSubmitLabel) loginPageLabSubmitLabel.textContent = activeLabConfig.submitLabel;
+    if (loginPageLabSupport) loginPageLabSupport.textContent = activeLabConfig.supportText;
+    if (loginPageLabChecklistTitle) loginPageLabChecklistTitle.textContent = activeLabConfig.checklistTitle;
+    if (loginPageLabChecklistCopy) loginPageLabChecklistCopy.textContent = activeLabConfig.checklistCopy;
+
+    if (labBrowserBar) labBrowserBar.hidden = isEmailMode || isPosterMode;
+    if (loginPageLabUrl) loginPageLabUrl.hidden = isEmailMode || isPosterMode;
+    if (labFakeLogin) labFakeLogin.hidden = isEmailMode || isPosterMode;
+    if (labEmailPreview) labEmailPreview.hidden = !isEmailMode;
+    if (labPosterPreview) labPosterPreview.hidden = !isPosterMode;
+
+    if (isEmailMode) {
+        if (labEmailSenderLine) labEmailSenderLine.innerHTML = `<strong>From:</strong> ${activeLabConfig.senderLine || ''}`;
+        if (labEmailReplyToLine) labEmailReplyToLine.innerHTML = `<strong>Reply-To:</strong> ${activeLabConfig.replyToLine || ''}`;
+        if (labEmailSubjectLine) labEmailSubjectLine.innerHTML = `<strong>Subject:</strong> ${activeLabConfig.subjectLine || ''}`;
+        if (labEmailBanner) labEmailBanner.textContent = activeLabConfig.alertText;
+        if (labEmailBody) labEmailBody.innerHTML = activeLabConfig.emailBodyHtml || '';
+        if (labEmailCta) labEmailCta.textContent = activeLabConfig.submitLabel;
+        if (labEmailFooter) labEmailFooter.textContent = `${activeLabConfig.brandTitle} • ${activeLabConfig.brandSubtitle}`;
+    }
+
+    if (labEmailFooter) {
+        labEmailFooter.textContent = `${activeLabConfig.brandTitle} - ${activeLabConfig.brandSubtitle}`;
+    }
+
+    if (isPosterMode) {
+        if (labPosterKicker) labPosterKicker.textContent = activeLabConfig.posterKicker || '';
+        if (labPosterChip) labPosterChip.textContent = activeLabConfig.posterChip || '';
+        if (labPosterTitle) labPosterTitle.textContent = activeLabConfig.posterTitle || '';
+        if (labPosterBody) labPosterBody.innerHTML = activeLabConfig.posterBodyHtml || '';
+        if (labPosterLabel) labPosterLabel.textContent = activeLabConfig.posterLabel || '';
+        if (labPosterSubcopy) labPosterSubcopy.textContent = activeLabConfig.posterSubcopy || '';
+        if (labPosterUrl) labPosterUrl.textContent = activeLabConfig.previewUrl || '';
+        if (labPosterSupport) labPosterSupport.textContent = activeLabConfig.supportText || '';
+        if (labPosterQr) labPosterQr.setAttribute('aria-label', activeLabConfig.posterLabel || 'QR code');
+    }
+}
+
+function openLoginPageLab(labId = 'login-page-check') {
     if (!loginPageLab) return;
+    syncLoginPageLabContent(labId);
     resetLoginPageLabState();
     setQuizAppView('current-lab');
     history.replaceState(null, '', '#loginPageLab');
@@ -4666,19 +7287,13 @@ function getLoginPageLabSelections() {
 }
 
 function renderLoginPageLabFeedback(selectedSpots) {
-    if (!loginPageLabFeedback) return;
-    const correctSelections = selectedSpots.filter((spot) => loginPageLabCorrectSpots.has(spot));
-    const missedSpots = [...loginPageLabCorrectSpots].filter((spot) => !selectedSpots.includes(spot));
-    const wrongSelections = selectedSpots.filter((spot) => !loginPageLabCorrectSpots.has(spot));
-    const perfectMatch = correctSelections.length === loginPageLabCorrectSpots.size && wrongSelections.length === 0;
-
-    const explanationMap = {
-        domain: 'The URL does not clearly match the official school domain, which is a strong phishing signal.',
-        urgency: 'The suspension warning pressures the user to act fast instead of verifying first.',
-        support: 'The support contact uses a suspicious helpdesk-style domain unrelated to the school.',
-        brand: 'A copied logo or school name is not enough proof that a page is legitimate.',
-        submit: 'A submit button by itself is not the strongest red flag; the surrounding context matters more.'
-    };
+    if (!loginPageLabFeedback || !activeLabConfig) return;
+    const correctSpots = activeLabConfig.correctSpots || new Set();
+    const explanationMap = activeLabConfig.explanationMap || {};
+    const correctSelections = selectedSpots.filter((spot) => correctSpots.has(spot));
+    const missedSpots = [...correctSpots].filter((spot) => !selectedSpots.includes(spot));
+    const wrongSelections = selectedSpots.filter((spot) => !correctSpots.has(spot));
+    const perfectMatch = correctSelections.length === correctSpots.size && wrongSelections.length === 0;
 
     const notes = [
         ...missedSpots.map((spot) => `<li><strong>Missed:</strong> ${explanationMap[spot]}</li>`),
@@ -4688,7 +7303,7 @@ function renderLoginPageLabFeedback(selectedSpots) {
     loginPageLabFeedback.className = `lab-feedback-card ${perfectMatch ? 'is-success' : 'is-warning'}`;
     const pointsNote = perfectMatch
         ? (isLoggedIn()
-            ? `<p><strong>Points earned:</strong> ${quizPointValues[loginPageLabAttemptId]} training points.</p>`
+            ? `<p><strong>Points earned:</strong> ${quizPointValues[activeLabConfig.attemptId]} training points.</p>`
             : '<p><strong>Nice catch.</strong> Sign in if you want this lab result and its points to count toward your progress.</p>')
         : (isLoggedIn()
             ? '<p><strong>No points yet.</strong> You need all 3 strongest red flags to earn points from this lab.</p>'
@@ -4696,9 +7311,7 @@ function renderLoginPageLabFeedback(selectedSpots) {
 
     loginPageLabFeedback.innerHTML = `
         <strong>${perfectMatch ? 'Nice catch.' : 'Good try.'}</strong>
-        <p>${perfectMatch
-            ? 'You found the strongest phishing signals on the page: the suspicious domain, the urgent scare tactic, and the fake support contact.'
-            : 'The best red flags here are the suspicious domain, the urgency message, and the unrelated support contact.'}</p>
+        <p>${perfectMatch ? activeLabConfig.successSummary : activeLabConfig.failureSummary}</p>
         ${pointsNote}
         ${notes ? `<ul>${notes}</ul>` : ''}
     `;
@@ -4709,19 +7322,20 @@ function renderLoginPageLabFeedback(selectedSpots) {
 }
 
 async function saveLoginPageLabAttempt(selectedSpots = []) {
-    if (!isLoggedIn()) return null;
+    if (!isLoggedIn() || !activeLabConfig) return null;
 
-    const totalQuestions = loginPageLabCorrectSpots.size;
-    const correctSelections = selectedSpots.filter((spot) => loginPageLabCorrectSpots.has(spot)).length;
+    const correctSpots = activeLabConfig.correctSpots || new Set();
+    const totalQuestions = correctSpots.size;
+    const correctSelections = selectedSpots.filter((spot) => correctSpots.has(spot)).length;
     const percentage = Math.round((correctSelections / totalQuestions) * 100);
 
     return saveSignedInAttempt({
-        quizId: loginPageLabAttemptId,
-        quizTitle: loginPageLabAttemptTitle,
+        quizId: activeLabConfig.attemptId,
+        quizTitle: activeLabConfig.attemptTitle,
         score: correctSelections,
         totalQuestions,
         percentage,
-        reviewData: []
+        reviewData: buildLabAttemptReviewData(activeLabConfig, selectedSpots)
     });
 }
 
@@ -4744,8 +7358,8 @@ labStartButtons.forEach((button) => {
     button.addEventListener('click', (event) => {
         event.preventDefault();
         const labId = button.dataset.startLab;
-        if (labId === 'login-page-check') {
-            openLoginPageLab();
+        if (labId && labConfigs[labId]) {
+            openLoginPageLab(labId);
         }
     });
 });
@@ -4763,7 +7377,7 @@ loginPageLabSpotTargets.forEach((button) => {
         button.setAttribute('aria-pressed', button.classList.contains('is-selected') ? 'true' : 'false');
 
         if (loginPageLabSelectionCount) {
-            loginPageLabSelectionCount.textContent = `${getLoginPageLabSelections().length} / 3`;
+            loginPageLabSelectionCount.textContent = `${getLoginPageLabSelections().length} / ${activeLabConfig?.correctSpots?.size || 3}`;
         }
     });
 });
@@ -4774,8 +7388,8 @@ loginPageLabSubmit?.addEventListener('click', () => {
         if (loginPageLabFeedback) {
             loginPageLabFeedback.className = 'lab-feedback-card is-warning';
             loginPageLabFeedback.innerHTML = `
-                <strong>Inspect the page first.</strong>
-                <p>Click the suspicious parts of the fake login page before checking your findings.</p>
+                <strong>Inspect the lab first.</strong>
+                <p>Click the suspicious parts of the scenario before checking your findings.</p>
             `;
             loginPageLabFeedback.hidden = false;
         }
